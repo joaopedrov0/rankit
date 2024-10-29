@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import bcrypt
 
 MONGODB_URI = 'mongodb+srv://rankit:rankitpass@master.jshtk.mongodb.net/?retryWrites=true&w=majority&appName=master' # URI pra conectar as parada
 
@@ -31,7 +32,7 @@ class User():
         self.banner = banner # Código do banner
         self.bio = bio # Bio (até 200 char)
         self.email = email # Email
-        self.password = password # Senha...
+        self.password =  self.hashpw(password)# Senha...
         self.followers = followers # Quem segue ele (lista de ids)
         self.following = following # Quem ele segue (lista de ids)
         self.watched = watched # Mídias que ele já assistiu, em ordem de preferência
@@ -55,6 +56,9 @@ class User():
             "watchList": self.watchList,
             "reviews": self.reviews
         }
+
+    def hashpw(self, password):
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     
 # newUser = User("RainanKaneka", "rainankaneka", "4", "0", "sim", "email.rainan@gmail.com", "12345")
 

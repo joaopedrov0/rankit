@@ -1,0 +1,15 @@
+fazer um codigo pra alterar os usuarios dobanco que foram criados antes de a senha ser armazenada em hash
+
+
+
+fazer login
+
+
+
+pagina de midia
+
+
+
+personalização de perfil
+
+
