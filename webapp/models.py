@@ -21,6 +21,9 @@ MediaCollection = db.media
 ## Reviews
 ReviewsCollection = db.reviews
 
+## Sessions
+SessionsCollection = db.sessions
+
 # Create your models here.
 
 class User():
@@ -67,3 +70,25 @@ class User():
 
 # UsersCollection.insert_one(newUser.toDict())
     
+class LoginManager:
+    """
+    Essa classe deve gerenciar os logins e a autenticação de sessões da aplicação
+    """
+    def __init__():
+        tokenList = {} # "token":"_id"
+
+    def login(self):
+        pass
+
+    def authenticate(self, username, password):
+        user = UsersCollection.find_one({"username": username})
+        if user:
+            passMatches = bcrypt.checkpw(password.encode('utf-8'), user["password"])
+            if passMatches:
+                return True
+            else:
+                return False
+        else:
+            print("Usuário inexistente")
+            return False
+
