@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscando resultados para "???" - rank.it</title>
+
+    <!-- Importing Stylesheets -->
+    <link rel="stylesheet" href="/static/style/base.css">
+    <link rel="stylesheet" href="/static/style/search.css">
+</head>
+<body>
+    
+    <header>
+        <a class="logo" href="/">rank.it</a>
+        <div class="search">
+            <input type="text" placeholder="Search series, movies, animes, etc." id="search_bar" onkeydown="checkEnter(event)">
+            <div class="searchBtn" onclick="search()">Search</div>
+        </div>
+        <div class="menu"></div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="category">
+                <!-- <input type="radio" name="category" id="all" value="all" checked>
+                <label for="all">Todos</label> -->
+                <input type="radio" name="category" id="movies" value="movies" checked onchange="search()">
+                <label for="movies">Filmes</label>
+                <input type="radio" name="category" id="series" value="series" onchange="search()">
+                <label for="series">Series</label>
+                <input type="radio" name="category" id="animes" value="animes" onchange="search()">
+                <label for="animes">Animes</label>
+                <input type="radio" name="category" id="games" value="games" disabled>
+                <label for="games">Jogos</label>
+                <input type="radio" name="category" id="books" value="books" disabled>
+                <label for="books">Livros</label>
+                <input type="radio" name="category" id="users" value="users" disabled>
+                <label for="users">Usuários</label>
+            </div>
+            <div class="resultList">
+                <h2>Seus resultados aparecerão logo abaixo!</h2>
+                <!-- <div class="resultItem">
+                    <img src="https://static.tvmaze.com/uploads/images/medium_portrait/479/1198409.jpg" alt="" class="searchMediaImage">
+                    <div class="searchMediaText">
+                        <div class="mediaHeader">
+                            <div class="mediaTitle">Sousou no Frieren <span class="time">(2023-2025)</span></div>
+                            <div class="score"><span class="stars">⭐⭐⭐⭐⭐</span> | <span class="views">6.9k</span> views</div>
+                        </div>
+                        
+                        <div class="mediaDescription">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae facere, eius aliquam optio quasi debitis cupiditate culpa quas? Aut sint non voluptate quae adipisci architecto modi numquam corrupti doloribus natus.</div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </main>
+    <script src="/static/javascript/search.js"></script>
+</body>
+</html>

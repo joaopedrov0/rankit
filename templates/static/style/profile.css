@@ -8,6 +8,7 @@ header{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-image: url(../img/banner.png);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -16,7 +17,7 @@ header{
 }
 .banner::before{
     content: '';
-    background-image: linear-gradient(to top, rgb(54,54,54) 1%, transparent 25%);
+    background-image: linear-gradient(to top, var(--default-grey-bg) 1%, transparent 25%);
     width: 100vw;
     height: 500px;
     position: absolute;

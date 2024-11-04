@@ -74,21 +74,37 @@ class LoginManager:
     """
     Essa classe deve gerenciar os logins e a autenticação de sessões da aplicação
     """
-    def __init__():
-        tokenList = {} # "token":"_id"
+    def __init__(self):
+        self.tokenList = {} # "token":"_id"
 
-    def login(self):
-        pass
-
-    def authenticate(self, username, password):
+    def login(self, username, password):
+        # Check if user exists
         user = UsersCollection.find_one({"username": username})
         if user:
-            passMatches = bcrypt.checkpw(password.encode('utf-8'), user["password"])
-            if passMatches:
-                return True
+            # Check the password
+            if self.authenticate(user, password):
+                # Generate a session token
+                token = bcrypt.hashpw(user["password"], bcrypt.gensalt())
+                self.tokenList[token] = user["_id"]
             else:
-                return False
+                print("ACCESS DENIED")
         else:
             print("Usuário inexistente")
             return False
+
+
+    def authenticate(self, user, password):
+        print(password)
+        passMatches = bcrypt.checkpw(password.encode('utf-8'), user["password"])
+        if passMatches:
+            return True
+        else:
+            return False
+
+    def validateToken(self, token, origin):
+        return checkpw(origin, token)
+    
+    def getToken(self, hashPassword):
+        return bcrypt.hashpw(hashPassword.encode('utf-8'), bcrypt.gensalt())
+
 

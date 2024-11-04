@@ -1,3 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search');
+@import url('https://fonts.googleapis.com/css2?family=Itim&family=Lilita+One&family=Permanent+Marker&display=swap');
+
+/* 
+INTERATIVO
+font-family: "Permanent Marker", cursive; MUDAR Q TA RUIM ✋🚫
+
+TEXTO
+font-family: "Itim", cursive;
+
+TÍTULO
+font-family: "Lilita One", sans-serif; 
+*/
+
+
+:root{
+    --default-grey-bg: rgb(24, 24, 24);
+}
+
+
+.material-symbols-outlined.filled {
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+  }
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+
+
 *{
     margin: 0;
     padding: 0;
@@ -8,9 +46,24 @@ body{
     width: 100vw;
     height: 100vh;
     overflow-x: hidden;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+    font-family: "Itim", cursive;
     color: aliceblue;
-    background-color: rgb(54, 54, 54);
+    background-color: var(--default-grey-bg);
+}
+
+main{
+    display: flex;
+    justify-content: center;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.container{
+    width: 960px;
 }
 
 .logo{
@@ -23,7 +76,14 @@ body{
 
     text-decoration: none;
 
+
 }
+
+.logo img {
+    
+    width: 150px;
+}
+
 
 
 
@@ -37,43 +97,10 @@ header{
     height: 60px;
     backdrop-filter: blur(7px);
     z-index: 5;
+    padding: 0px 25px;
 }
 
-/* Search Bar */
-.search{
-    width: 40vw;
-    height: 95%;
-    display: flex;
-    align-items: center;
-}
-.search input{
-    width: 80%;
-    height: 45px;
-    background-color: transparent;
-    border: 1px solid rgba(200, 200, 200, 0.8);
-    border-radius: 20px 0 0 20px;
-    padding: 10px;
-    color: aliceblue;
-    background-color: rgba(100, 100, 100, 0.8);
-}
-.searchBtn{
-    transition: all 100ms ease;
-}
-.search .searchBtn{
-    width: 20%;
-    height: 45px;
-    background-color: #004aad;
-    color: aliceblue;
-    border: 1px solid rgba(200, 200, 200, 0.8);
-    border-left: none;
-    border-radius: 0 20px 20px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.search > *:hover{
-    cursor: pointer;
-}
+
 
 
 
@@ -81,4 +108,29 @@ header{
 
 .col6{
     width: 50%;
+}
+
+.col12{
+    width: 100%;
+}
+
+.menu{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 2px solid rgba(200, 200, 200, 0.9);
+    /* margin: 0 15px; */
+}
+
+.menu a {
+    color: rgba(200, 200, 200, 0.9);
+    font-weight: bold;
+    margin: 10px;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    cursor: pointer;
+    color: #fff;
 }

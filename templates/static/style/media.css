@@ -1,0 +1,153 @@
+header{
+    position: absolute;
+    background-color: transparent;
+    backdrop-filter: none;
+}
+
+header .menu{
+    border: none;
+}
+
+.banner{
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(https://image.tmdb.org/t/p/w1920_and_h1080_bestv2/gmECX1DvFgdUPjtio2zaL8BPYPu.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: clamp(300px, 1260px, 80vw);
+    height: 500px;
+    padding: 0 0px;
+}
+.banner::before{
+    content: '';
+    background-image: linear-gradient(to top, var(--default-grey-bg) 1%, transparent 25%),
+    linear-gradient(to bottom, var(--default-grey-bg) 1%, transparent 25%),
+    linear-gradient(to right, var(--default-grey-bg) 1%, transparent 25%),
+    linear-gradient(to left, var(--default-grey-bg) 1%, transparent 25%); 
+    /* radial-gradient(circle, rgba(255,255,255,0) 42%, rgba(185,185,185,0.24413515406162467) 63%, rgba(137,137,137,0.6867121848739496) 75%, rgba(54,54,54,0.9808298319327731) 88%, rgba(54,54,54,1) 91%); */
+    background-size: contain;
+    width: clamp(300px, 1260px, 80vw);
+    height: 500px;
+    position: absolute;
+    top: 0;
+    align-self: center;
+
+}
+
+.col6{
+    width: 50%;
+}
+
+.col3{
+    width: 25%;
+}
+
+.mediaData{
+    padding: 0 15px;
+}
+
+.mediaData > *{
+    margin: 10px 0px;
+}
+
+.mediaData .mediaTitle{
+    font-size: x-large;
+    font-family: "Lilita One", sans-serif;
+}
+
+.mediaData .description{
+    text-overflow: ellipsis;
+    font-size: 1.1rem;
+    color: rgb(200, 207, 212);
+}
+
+.mediaData .description.minimized{
+    max-height: 100px;
+}
+
+.mediaData .mediaTitle span.time{
+    opacity: 0.6;
+}
+
+/* .mediaData .tags{
+    width: 100%;
+} */
+
+.mediaData .tags > span{
+    background-color: #004aad;
+    color: aliceblue;
+    padding: 5px;
+    margin: 0 5px 0 0;
+    text-transform: lowercase;
+    border-radius: 2px;
+}
+
+.mediaData .tags > span::before{
+    content:'#'
+}
+
+.theresNoImage{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-width: 142px;
+    height: 200px;
+    background-color: rgba(100, 100, 100);
+}
+
+.info{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+img.poster{
+    height: 400px;
+    border-radius: 5px;
+    transform: translateY(-10%);
+}
+
+.mediaData{
+    width: 500px;
+}
+
+.btn{
+    width: 100%;
+    background-color: #004aad;
+    color: aliceblue;
+
+    border-radius: 3px;
+    transition: all 100ms ease;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 5px;
+
+    font-size: 0.9rem;
+    font-family: "Permanent Marker", cursive;
+}
+
+.btn:hover{
+    cursor: pointer;
+    background-color: #1567c4;
+}
+
+.season::before{
+    content: 'Temporadas: ';
+}
+
+.episodes::before{
+    content: 'Episódios: ';
+}
+
+.interact>*{
+    margin-bottom: 10px;
+}
+
+.interact>*:last-child{
+    margin-bottom: 0;
+}
