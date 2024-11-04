@@ -22,8 +22,9 @@
                 <a href="/search" class="search">Buscar</a>
                 <a href="/not-found" class="top">Top Rated</a>
                 {% if logged %}
-                    <a href="/not-found" class="top">Top Rated</a>
+                    <a class="profile-btn" href="/profile/{{user.username}}" class="top">{{user.name}}<img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
                 {% endif %}
+                
             </div>
         </header>
         <main style="background-image:url('/static/img/pexels-ron-lach-9807277.jpg');">

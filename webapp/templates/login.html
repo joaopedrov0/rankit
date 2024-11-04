@@ -13,10 +13,10 @@
     </head>
     <body>
         <header>
-            <h2><a class="logo" href="./index.html">rank.it</a></h2>
+            <h2><a class="logo" href="/">rank.it</a></h2>
         </header>
         <main>
-            <form method="GET" action="/login" class="container">
+            <form method="POST" action="/login" class="container">
                 <h1>Login</h1>
                 <div class="field">
                     <label for="username">Usuário</label>
@@ -26,7 +26,9 @@
                     <label for="password">Senha</label>
                     <input type="text" id="password" name="password" placeholder="Digite uma senha">
                 </div>
-                
+                {% if error %}
+                    <span class="wrong">Usuário ou senha incorretos</span>
+                {% endif %}
                 <button type="submit">Login</button>
             </form>
         </main>

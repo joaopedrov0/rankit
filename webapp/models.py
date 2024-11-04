@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import bcrypt
+import secrets
 
 MONGODB_URI = 'mongodb+srv://rankit:rankitpass@master.jshtk.mongodb.net/?retryWrites=true&w=majority&appName=master' # URI pra conectar as parada
 
@@ -76,6 +77,7 @@ class LoginManager:
     """
     def __init__(self):
         self.tokenList = {} # "token":"_id"
+        # self.tokenList = self.getSessionData
 
     def login(self, username, password):
         # Check if user exists
@@ -84,10 +86,13 @@ class LoginManager:
             # Check the password
             if self.authenticate(user, password):
                 # Generate a session token
-                token = bcrypt.hashpw(user["password"], bcrypt.gensalt())
+                token = self.getToken()
                 self.tokenList[token] = user["_id"]
+                # SessionsCollection.insertOne({"token":token,"id":user["_id"]})
+                return token
             else:
                 print("ACCESS DENIED")
+                return False
         else:
             print("Usuário inexistente")
             return False
@@ -104,7 +109,9 @@ class LoginManager:
     def validateToken(self, token, origin):
         return checkpw(origin, token)
     
-    def getToken(self, hashPassword):
-        return bcrypt.hashpw(hashPassword.encode('utf-8'), bcrypt.gensalt())
+    def getToken(self):
+        return secrets.token_urlsafe(32)
 
 
+# def getSessionData():
+#     sessionData = SessionsCollection.find()

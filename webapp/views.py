@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import UsersCollection, User, LoginManager
 import os
 from django.views.decorators.csrf import csrf_exempt
@@ -7,8 +7,22 @@ from django.http import HttpResponse
 LOGIN_MANAGER = LoginManager()
 
 def home(request):
-    return render(request, 'home.html')
-
+    accessToken = request.COOKIES.get('sessionToken')
+    print(request.COOKIES)
+    print(accessToken)
+    print("LOGIN_MANAGER: {}".format(LOGIN_MANAGER.tokenList))
+    if accessToken:
+        userID = ''
+        try:
+            userID = LOGIN_MANAGER.tokenList[accessToken]
+        except:
+            return render(request, 'home.html', {"logged":False})
+        
+        user = UsersCollection.find_one({"_id": userID})
+        return render(request, 'home.html', {"logged":True, "user": user})
+    else:
+        return render(request, 'home.html', {"logged":False})
+        #return redirect('cadastro')
 
 # Create your views here.
 
@@ -51,10 +65,24 @@ def cadastro(request):
 def login(request):
     if request.method == 'GET':
         
-        return render(request, 'login.html')
+        return render(request, 'login.html', {'error':None})
     
     elif request.method == 'POST':
         
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        token = LOGIN_MANAGER.login(username, password)
+
+        if token:
+            response = redirect('home')
+            response.set_cookie('sessionToken', token)
+            print(LOGIN_MANAGER.tokenList)
+            return response
+        else:
+            print(LOGIN_MANAGER.tokenList)
+            return render(request, 'login.html', {'error':True})
+    
         
 
 def search(request):
