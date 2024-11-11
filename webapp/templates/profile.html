@@ -13,11 +13,11 @@
 </head>
 <body>
     <header>
-        <a class="logo" href="/">Rank.it</a>
+        <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
         <div class="menu">
             <a href="/search" class="search">Buscar</a>
-            <a href="/profile" class="perfil">Perfil</a>
             <a href="/not-found" class="top">Top Rated</a>
+            <span class="menu-btn material-symbols-outlined">more_vert</span>
         </div>
     </header>
     <div class="banner" style="background-image: url({% static 'img/banner/'%}{{banner}}.{{'png'}})">
@@ -30,8 +30,11 @@
                     <div class="followers">{{ followers|length }}</div>
                     <div class="following">{{ following|length }}</div>
                 </div>
-                
+                {% if selfProfile %}
+                <div class="editBtn">Editar <span class="material-symbols-outlined filled">edit</span></div>
+                {% else %}
                 <div class="followBtn">Follow</div>
+                {% endif %}
             </div>
         </div>
         <div class="bannerDesc">

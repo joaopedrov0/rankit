@@ -1,23 +1,37 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search'); */
-@import url('https://fonts.googleapis.com/css2?family=Itim&family=Lilita+One&family=Permanent+Marker&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Itim&family=Lilita+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 /* 
 INTERATIVO
-font-family: "Permanent Marker", cursive; MUDAR Q TA RUIM ✋🚫
+font-family: "Roboto", sans-serif; 
+
+MUDAR Q TA RUIM ✋🚫
 
 TEXTO
-font-family: "Itim", cursive;
+font-family: "Onest", sans-serif;
 
 TÍTULO
 font-family: "Lilita One", sans-serif; 
 */
 
+.mobile-only{
+    display: None;
+}
 
 :root{
     --default-grey-bg: rgb(24, 24, 24);
+    --interactive-font: "Roboto", sans-serif;
+    --text-font: "Onest", sans-serif;
+    --title-font: "Lilita One", sans-serif
 }
     
+a.logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .material-symbols-outlined.filled {
     font-variation-settings:
@@ -61,9 +75,41 @@ body{
     height: 100vh;
     overflow-x: hidden;
     /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
-    font-family: "Itim", cursive;
+    font-family: var(--text-font);
     color: aliceblue;
     background-color: var(--default-grey-bg);
+}
+
+
+.profile-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-btn img{
+    margin-left: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.menu-btn{
+    /* width: 50px;
+    height: 50px;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    text-align: center; */
+    padding: 7px;
+    border-radius: 50%;
+
+    transition: all 200ms ease;
+}
+
+.menu-btn:hover{
+    cursor: pointer;
+    background-color: rgba(200, 200, 200, 0.3);
 }
 
 main{
@@ -147,4 +193,17 @@ header{
 .menu a:hover {
     cursor: pointer;
     color: #fff;
+}
+
+
+@media screen and (max-width: 960px){
+    .mobile-hidden{
+        display: None;
+    }
+    .mobile-only{
+        display: flex;
+    }
+    body{
+        overflow-y: auto;
+    }
 }

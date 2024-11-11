@@ -15,11 +15,19 @@
 <body>
     
     <header>
-        <a class="logo" href="/">Rank.it</a>
+        <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
         <div class="menu">
+            {% if not logged %}
+                <a href="/login" class="login">Login</a>
+                <a href="/cadastro" class="cadastro">Cadastro</a>
+            {% endif %}
             <a href="/search" class="search">Buscar</a>
-            <a href="/profile" class="perfil">Perfil</a>
             <a href="/not-found" class="top">Top Rated</a>
+            {% if logged %}
+                <a class="profile-btn" href="/profile/{{user.username}}" class="top">{{user.name}}<img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+            {% endif %}
+            <span class="menu-btn material-symbols-outlined">more_vert</span>
+            
         </div>
     </header>
     <div class="banner">

@@ -108,16 +108,3 @@ main .col12:first-child{
     font-weight: bold;
     font-style: italic;
 }
-
-.profile-btn{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile-btn img{
-    margin-left: 10px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}

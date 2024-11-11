@@ -54,7 +54,7 @@ header .menu{
 
 .mediaData .mediaTitle{
     font-size: x-large;
-    font-family: "Lilita One", sans-serif;
+    font-family: var(--title-font);
 }
 
 .mediaData .description{
@@ -78,7 +78,7 @@ header .menu{
 .mediaData .tags > span{
     background-color: #004aad;
     color: aliceblue;
-    padding: 5px;
+    padding: 0.1rem;
     margin: 0 5px 0 0;
     text-transform: lowercase;
     border-radius: 2px;
@@ -128,7 +128,7 @@ img.poster{
     padding: 5px;
 
     font-size: 0.9rem;
-    font-family: "Permanent Marker", cursive;
+    font-family: var(--interactive-font);
 }
 
 .btn:hover{

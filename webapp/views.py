@@ -31,19 +31,17 @@ def profile(request, username):
     print("LOGIN_MANAGER: {}".format(LOGIN_MANAGER.tokenList))
     currentProfile = UsersCollection.find_one({"username": username})
     print(accessToken)
-    if accessToken in LOGIN_MANAGER.tokenList:
-        requestUser = LOGIN_MANAGER.tokenList[accessToken]
-        try:
-            requestUser = LOGIN_MANAGER.tokenList[accessToken]
-            selfProfile = currentProfile["_id"] == requestUser[accessToken]
-            print("{} logado buscando {}".format(requestUser, currentProfile))
-        except:
-            selfProfile = False
-            print(selfProfile)
-            print("{} logado buscando {}".format(requestUser, currentProfile))
-        print(LOGIN_MANAGER.isLogged(requestUser)) # Consegue identificar se o perfil que está sendo acessado é o mesmo do usuário logado
-    if currentProfile:
     
+    selfProfile = False
+    if accessToken in LOGIN_MANAGER.tokenList:
+        clientID = LOGIN_MANAGER.tokenList[accessToken]
+        print(LOGIN_MANAGER.isLogged(clientID)) # Consegue identificar se o perfil que está sendo acessado é o mesmo do usuário logado
+        selfProfile = True if currentProfile["_id"] == clientID else False
+        print("\n\n{}\n{}\n\n".format(currentProfile["_id"], clientID))
+
+    if currentProfile:
+        currentProfile["selfProfile"] = selfProfile
+        print(currentProfile)
         return render(request, 'profile.html', currentProfile) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
     else:
@@ -100,10 +98,32 @@ def login(request):
         
 
 def search(request):
-    return render(request, 'search.html')
+    accessToken = request.COOKIES.get('sessionToken')
+    if accessToken:
+        userID = ''
+        try:
+            userID = LOGIN_MANAGER.tokenList[accessToken]
+        except:
+            return render(request, 'search.html', {"logged":False})
+        
+        user = UsersCollection.find_one({"_id": userID})
+        return render(request, 'search.html', {"logged":True, "user": user})
+    else:
+        return render(request, 'search.html', {"logged":False})
 
 def media(request):
-    return render(request, 'media.html')
+    accessToken = request.COOKIES.get('sessionToken')
+    if accessToken:
+        userID = ''
+        try:
+            userID = LOGIN_MANAGER.tokenList[accessToken]
+        except:
+            return render(request, 'media.html', {"logged":False})
+        
+        user = UsersCollection.find_one({"_id": userID})
+        return render(request, 'media.html', {"logged":True, "user": user})
+    else:
+        return render(request, 'media.html', {"logged":False})
 
 def notfound(request):
     return render(request, 'not-found.html')
