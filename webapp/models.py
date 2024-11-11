@@ -58,7 +58,8 @@ class User():
             "following": self.following,
             "watched": self.watched,
             "watchList": self.watchList,
-            "reviews": self.reviews
+            "reviews": self.reviews,
+            "config": self.config
         }
 
     def hashpw(self, password):

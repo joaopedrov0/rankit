@@ -40,9 +40,15 @@
     <main>
         <div class="container">
             <div class="col6">
+                {% if bio %}
+
                 <div class="bio">
                     {{ bio }}
                 </div>
+                
+                {% endif %}
+
+                {% if reviews %}
                 <div class="reviews">
                     <h2>Reviews</h2>
                     <div class="reviewCard">
@@ -66,10 +72,12 @@
     
                     </div>
                 </div>
+                {% endif %}
             </div>
             
             <div class="col6">
                 <div class="stats">
+                    {% if watchlist %}
                     <div class="preferences">
                         <div class="favorite favorite-anime">
                             <div class="favorite-text-area">
@@ -85,6 +93,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     
                     <div class="currentViewing"></div>
                 </div>

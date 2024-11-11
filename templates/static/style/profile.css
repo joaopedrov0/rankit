@@ -118,7 +118,7 @@ header{
     width: 960px;
     margin: auto;
     display: flex;
-    background-color: rgb(53,53,53);
+    /* background-color: rgb(53,53,53); */
 }
 
 /* Bio */
