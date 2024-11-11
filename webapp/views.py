@@ -38,3 +38,6 @@ def cadastro(request):
         return HttpResponse("Success")
         # UsersCollection.insert_one()
     
+@csrf_exempt
+def login(request):
+    print(request)

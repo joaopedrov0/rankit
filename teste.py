@@ -1,6 +1,8 @@
 from webapp.models import UsersCollection
 import bcrypt
 
+print(bcrypt)
+
 # simulando login 
 
 temp = UsersCollection.find_one({"username": "seila"}) # pegando usuario do banco
