@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>rank.it | Home</title>
+
+        <!-- Importing Stylesheets -->
+        <link rel="stylesheet" href="/static/style/base.css">
+        <link rel="stylesheet" href="/static/style/home.css">
+        
+    </head>
+    <body>
+        <header>
+            <a class="logo" href="/">Rank.it</a>
+            <div class="menu">
+                {% if not logged %}
+                    <a href="/login" class="login">Login</a>
+                    <a href="/cadastro" class="cadastro">Cadastro</a>
+                {% endif %}
+                <a href="/search" class="search">Buscar</a>
+                <a href="/not-found" class="top">Top Rated</a>
+                {% if logged %}
+                    <a class="profile-btn" href="/profile/{{user.username}}" class="top">{{user.name}}<img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                {% endif %}
+                <span class="menu-btn material-symbols-outlined">more_vert</span>
+                
+            </div>
+        </header>
+        <main style="background-image:url('/static/img/pexels-ron-lach-9807277.jpg');">
+            <div class="col12">
+                <div class="text-box-home">
+                    <p>Mantenha o controle do que viu.</p>
+                    <p>Salve o que ainda quer ver.</p>
+                </div>
+            </div>
+            <div class="col12">
+                <div class="col6 categoriesMenu">
+                    <div class="categoriesTitle">
+                        <div class="categoriesTitle-item">Filme</div>
+                        <div class="categoriesTitle-item">Série</div>
+                        <div class="categoriesTitle-item">Anime</div>
+                        <div class="categoriesTitle-item">Livro</div>
+                        <div class="categoriesTitle-item">Jogo</div>
+                    </div>
+                    <div class="categoriesBanner">
+                        <img src="/static/img/batman.jpg" alt="" class="categoriesBanner-item">
+                        <img src="/static/img/breaking.jpg" alt="" class="categoriesBanner-item">
+                        <img src="/static/img/deathnote.jpg" alt="" class="categoriesBanner-item">
+                        <img src="/static/img/harry.jpg" alt="" class="categoriesBanner-item">
+                        <img src="/static/img/rivia.jpg" alt="" class="categoriesBanner-item">
+                    </div>
+                </div>
+                <div class="col6 getStarted">
+                    Avalie e compartilhe com amigos.
+                    <h2>Tudo em um só lugar!</h2>
+                    <div class="getStartedBtn">Comece já!</div>
+                </div>
+            </div>
+            
+        </main>
+    </body>
+</html>
