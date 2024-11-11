@@ -113,6 +113,9 @@ class LoginManager:
     def getToken(self):
         return secrets.token_urlsafe(32)
 
+    def isLogged(self, id):
+        return id in list(self.tokenList.values())
+
 
 # def getSessionData():
 #     sessionData = SessionsCollection.find()

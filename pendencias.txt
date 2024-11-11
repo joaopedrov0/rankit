@@ -13,3 +13,9 @@ pagina de midia
 personalização de perfil
 
 
+menu
+    editar perfil
+    log out
+    estou com sorte
+
+implementar método LoginManager.isLogged()

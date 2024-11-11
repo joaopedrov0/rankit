@@ -10,6 +10,7 @@
         <!-- Importing Stylesheets -->
         <link rel="stylesheet" href="/static/style/base.css">
         <link rel="stylesheet" href="/static/style/home.css">
+        
     </head>
     <body>
         <header>
@@ -24,6 +25,7 @@
                 {% if logged %}
                     <a class="profile-btn" href="/profile/{{user.username}}" class="top">{{user.name}}<img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
                 {% endif %}
+                <span class="menu-btn material-symbols-outlined">more_vert</span>
                 
             </div>
         </header>

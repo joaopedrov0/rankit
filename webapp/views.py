@@ -27,11 +27,24 @@ def home(request):
 # Create your views here.
 
 def profile(request, username):
-    currentUser = UsersCollection.find_one({"username": username})
-
-    if currentUser:
+    accessToken = request.COOKIES.get('sessionToken')
+    print("LOGIN_MANAGER: {}".format(LOGIN_MANAGER.tokenList))
+    currentProfile = UsersCollection.find_one({"username": username})
+    print(accessToken)
+    if accessToken in LOGIN_MANAGER.tokenList:
+        requestUser = LOGIN_MANAGER.tokenList[accessToken]
+        try:
+            requestUser = LOGIN_MANAGER.tokenList[accessToken]
+            selfProfile = currentProfile["_id"] == requestUser[accessToken]
+            print("{} logado buscando {}".format(requestUser, currentProfile))
+        except:
+            selfProfile = False
+            print(selfProfile)
+            print("{} logado buscando {}".format(requestUser, currentProfile))
+        print(LOGIN_MANAGER.isLogged(requestUser)) # Consegue identificar se o perfil que está sendo acessado é o mesmo do usuário logado
+    if currentProfile:
     
-        return render(request, 'profile.html', currentUser) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        return render(request, 'profile.html', currentProfile) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
     else:
 
