@@ -13,13 +13,22 @@
 </head>
 <body>
     <header>
+        <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
         <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
-        <div class="menu">
-            <a href="/search" class="search">Buscar</a>
-            <a href="/not-found" class="top">Top Rated</a>
-            <span class="menu-btn material-symbols-outlined">more_vert</span>
-        </div>
-    </header>
+            <div class="menu">
+                {% if not logged %}
+                    <a href="/login" class="login">Login</a>
+                    <a href="/cadastro" class="cadastro">Cadastro</a>
+                {% endif %}
+                <a href="/search" class="search">Buscar</a>
+                <a href="/not-found" class="top">Top Rated</a>
+                {% if logged %}
+                    <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                {% endif %}
+                <span class="menu-btn material-symbols-outlined">more_vert</span>
+                
+            </div>
+        </header>
     <div class="banner" style="background-image: url({% static 'img/banner/'%}{{banner}}.{{'png'}})">
         <div class="user">
             <img src="{% static 'img/icon/'%}{{icon}}.{{'png'}}" alt="user icon" class="icon">

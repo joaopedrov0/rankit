@@ -1,6 +1,6 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search'); */
 @import url('https://fonts.googleapis.com/css2?family=Itim&family=Lilita+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 @import url('https://fonts.googleapis.com/css2?family=Onest:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 /* 
@@ -33,21 +33,13 @@ a.logo{
     align-items: center;
 }
 
-.material-symbols-outlined.filled {
-    font-variation-settings:
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-  }
-
 .material-symbols-outlined {
     font-variation-settings:
     'FILL' 0,
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
-
+    
     font-family: 'Material Symbols Outlined';
     font-weight: normal;
     font-style: normal;
@@ -59,8 +51,16 @@ a.logo{
     word-wrap: normal;
     white-space: nowrap;
     direction: ltr;
-  
+    
 }
+
+.material-symbols-outlined.filled {
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  }
 
 
 
@@ -197,6 +197,11 @@ header{
 
 
 @media screen and (max-width: 960px){
+    *{
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
     .mobile-hidden{
         display: None;
     }
@@ -204,6 +209,43 @@ header{
         display: flex;
     }
     body{
+        min-width: 100vw;
+        min-height: 100vh;
         overflow-y: auto;
+    }
+    .logo img{
+        /* width: 30vw;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0; */
+        display: none;
+    }
+    .profile-btn{
+        width: 60px;
+        height: 60px;
+        margin: 0;
+        padding: 0;
+    }
+    img.profile-icon{
+        margin: 0;
+    }
+    .menu{
+        width: 90vw;
+        justify-content: space-evenly;
+    }
+    .menu a{
+        /* padding: 5px 1px; */
+        /* margin: 1px; */
+        width: 20vw;
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    header{
+        padding: 0;
+        justify-content: center;
     }
 }
