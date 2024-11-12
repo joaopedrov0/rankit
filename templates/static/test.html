@@ -1,97 +1,53 @@
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>rank.it | Home</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>??? - rank.it</title>
 
-        <!-- Importing Stylesheets -->
-        <link rel="stylesheet" href="./style/base.css">
-        <link rel="stylesheet" href="./style/profile.css">
+    <!-- Importing Stylesheets -->
+    <link rel="stylesheet" href="./style/base.css">
+    <link rel="stylesheet" href="./style/media.css">
+
+</head>
+<body>
+    
+    <header>
+        <a class="logo" href="/"><img src="./img/logo.png"/></a>
+        <div class="menu">
+                fodase
+        </div>
+    </header>
+    <div class="banner">
         
-    </head>
-    <body>
-        <header>
-            <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
-            <a class="logo" href="/"><img src="./img/logo.png"/></a>
-            <div class="menu">
-                <a href="/search" class="search">Buscar</a>
-                <a href="/not-found" class="top">Top Rated</a>
-                <a class="profile-btn" href="./profile/mastergamerjp" class="top"><span class="mobile-hidden">Jucelino Perigoso</span><img class="profile-icon" src="./img/icon/3.png"></img></a>
-                <span class="menu-btn material-symbols-outlined">more_vert</span>
-            </div>
-        </header>
-        <div class="banner" style="background-image: url(./img/banner/5.png)">
-        <div class="user">
-            <img src="./img/icon/3.png" alt="user icon" class="icon">
-            <div class="identify">
-                <div class="name">Jucelino Perigoso</div>
-                <div class="username">mastergamerjp</div>
-                <div class="followArea">
-                    <div class="followers">231</div>
-                    <div class="following">146</div>
-                </div>
-                <div class="followBtn">Follow</div>
-            </div>
-        </div>
-        <div class="bannerDesc mobile-hidden">
-            Jujutsu Kaisen
-        </div>
     </div>
     <main>
         <div class="container">
-            <div class="col6">
-                <div class="bio">
-                    Biografia
-                </div>
-                <div class="reviews">
-                    <h2>Reviews</h2>
-                    <div class="reviewCard">
-                        <div class="reviewCard-header">
-                            <div class="mediaName">Jujutsu Kaisen</div>
-                            <div class="evaluation">A A A A A</div>
-                        </div>
-                        <div class="reviewCard-body">
-                            <div class="reviewDescription">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel itaque eum quo non quaerat, repellat voluptates repellendus temporibus provident est maxime distinctio dignissimos esse quos ut voluptate, rerum ipsam molestiae?</div>
-                        </div>
-    
-                    </div>
-                    <div class="reviewCard">
-                        <div class="reviewCard-header">
-                            <div class="mediaName">Sousou No Frieren</div>
-                            <div class="evaluation">A A A A A</div>
-                        </div>
-                        <div class="reviewCard-body">
-                            <div class="reviewDescription">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel itaque eum quo non quaerat, repellat voluptates repellendus temporibus provident est maxime distinctio dignissimos esse quos ut voluptate, rerum ipsam molestiae?</div>
-                        </div>
-    
-                    </div>
-                </div>
+
+            <div class="info">
+                <img src="https://image.tmdb.org/t/p/w300_and_h450_bestv2/qykTIEJQF8cunKD0CKOqab15wns.jpg" alt="" class="poster">
+                <div class="mediaData">
+                     <div class="mediaTitle">Frieren e a Jornada para o Além <span class="time">(2023)</span></div>
+                     <div class="score"><span class="stars">⭐⭐⭐⭐⭐</span> | <span class="views">6.9k</span> views</div>
+                     <div class="tags"><span>Animação</span><span>Action &amp; Adventure</span><span>Sci-Fi &amp; Fantasy</span><span>Drama</span></div>
+                     <div class="description" onclick="toggleExpand(event)">Após uma missão de 10 anos ao lado do herói Himmel e seu grupo, a poderosa maga Frieren derrotou o Rei Demônio e trouxe paz ao reino. Como uma elfa, Frieren tem uma vida de mais de mil anos pela frente. Ela promete retornar para seus amigos e, assim, parte em uma jornada solitária. 50 anos se passam quando Frieren finalmente volta para visitar Himmel e os outros. Embora ela não tenha envelhecido nada, seus amigos têm pouco tempo de vida restante. É então que Frieren testemunha a morte de Himmel, o que a leva a lamentar não ter passado mais tempo junto dele. Com esse arrependimento em seu coração, ela embarca em uma nova jornada com o objetivo de se conectar e conhecer melhor as pessoas. Ao longo dessa viagem, a elfa Frieren encontrará diversas pessoas e viverá incontáveis aventuras emocionantes!</div>
+                 </div>
+                 <div class="interact">
+                    <!-- os botao pra marcar como visto -->
+                     <div class="size">
+                        <div class="season">3</div>
+                        <div class="episodes">42</div>
+                     </div>
+                     <div class="btn watched">Marcar como visto</div>
+                     <div class="btn watchList">Adicionar na watchlist</div>
+                 </div>
             </div>
-            
-            <div class="col6">
-                <div class="stats">
-                    <div class="preferences">
-                        <div class="favorite favorite-anime">
-                            <div class="favorite-text-area">
-                                <h3>Jujutsu Kaisen</h3>
-                                <p>Favorite Anime</p>
-                            </div>
-                            
-                        </div>
-                        <div class="favorite favorite-character">
-                            <div class="favorite-text-area">
-                                <h3>Frieren</h3>
-                                <p>Favorite Character</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="currentViewing"></div>
-                </div>
-            </div>
-            
+           
         </div>
     </main>
+    
+    <script src="./javascript/toggleExpand.js"></script>
+    <script src="./javascript/media.js"></script>
 </body>
 </html>

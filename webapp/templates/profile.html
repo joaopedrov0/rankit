@@ -13,14 +13,15 @@
 </head>
 <body>
     <header>
-        <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
         <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
-            <div class="menu">
+        <div class="menu">
+                <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
                 {% if not logged %}
                     <a href="/login" class="login">Login</a>
                     <a href="/cadastro" class="cadastro">Cadastro</a>
                 {% endif %}
-                <a href="/search" class="search">Buscar</a>
+                <a href="/search" class="search mobile-hidden">Buscar</a>
+                <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
                 <a href="/not-found" class="top">Top Rated</a>
                 {% if logged %}
                     <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
@@ -46,7 +47,7 @@
                 {% endif %}
             </div>
         </div>
-        <div class="bannerDesc">
+        <div class="bannerDesc mobile-hidden">
             Jujutsu Kaisen
         </div>
     </div>

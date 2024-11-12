@@ -16,17 +16,13 @@ TÍTULO
 font-family: "Lilita One", sans-serif; 
 */
 
-.mobile-only{
-    display: None;
-}
-
 :root{
     --default-grey-bg: rgb(24, 24, 24);
     --interactive-font: "Roboto", sans-serif;
     --text-font: "Onest", sans-serif;
     --title-font: "Lilita One", sans-serif
 }
-    
+
 a.logo{
     display: flex;
     justify-content: center;
@@ -60,7 +56,7 @@ a.logo{
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
-  }
+}
 
 
 
@@ -103,7 +99,7 @@ body{
     text-align: center; */
     padding: 7px;
     border-radius: 50%;
-
+    
     transition: all 200ms ease;
 }
 
@@ -131,12 +127,12 @@ a{
     font-style: italic;
     font-weight: 800;
     color: #004aad;
-
+    
     cursor: pointer;
-
+    
     text-decoration: none;
-
-
+    
+    
 }
 
 .logo img {
@@ -195,6 +191,14 @@ header{
     color: #fff;
 }
 
+a.profile-btn{
+    margin: 0 auto;
+}
+
+.mobile-only{
+    display: None;
+}
+
 
 @media screen and (max-width: 960px){
     *{
@@ -231,7 +235,7 @@ header{
         margin: 0;
     }
     .menu{
-        width: 90vw;
+        width: 95vw;
         justify-content: space-evenly;
     }
     .menu a{
@@ -239,7 +243,7 @@ header{
         /* margin: 1px; */
         width: 20vw;
         margin: 0;
-        padding: 0;
+        padding: 3px;
         justify-content: center;
         align-items: center;
         text-align: center;
@@ -247,5 +251,8 @@ header{
     header{
         padding: 0;
         justify-content: center;
+        backdrop-filter: none;
+        background-color: rgba(20, 20, 20, 0.7);
+        height: fit-content;
     }
 }

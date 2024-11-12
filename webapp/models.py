@@ -78,6 +78,7 @@ class LoginManager:
     """
     def __init__(self):
         self.tokenList = {} # "token":"_id"
+        self.cacheLogged = {} # "_id" {"username": username, "name": name, "icon": icon}
         # self.tokenList = self.getSessionData
 
     def login(self, username, password):

@@ -15,26 +15,51 @@
 <body>
     
     <header>
-        <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
         <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
         <div class="menu">
-            {% if not logged %}
-                <a href="/login" class="login">Login</a>
-                <a href="/cadastro" class="cadastro">Cadastro</a>
-            {% endif %}
-            <a href="/search" class="search">Buscar</a>
-            <a href="/not-found" class="top">Top Rated</a>
-            {% if logged %}
-                <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
-            {% endif %}
-            <span class="menu-btn material-symbols-outlined">more_vert</span>
-                
+                <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
+                {% if not logged %}
+                    <a href="/login" class="login">Login</a>
+                    <a href="/cadastro" class="cadastro">Cadastro</a>
+                {% endif %}
+                <a href="/search" class="search mobile-hidden">Buscar</a>
+                <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
+                <a href="/not-found" class="top">Top Rated</a>
+                {% if logged %}
+                    <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                {% endif %}
+                <span class="menu-btn material-symbols-outlined">more_vert</span>
+            
         </div>
     </header>
     <div class="banner">
         
     </div>
     <main>
+        <div class="container">
+
+            <div class="info">
+                <img src="https://image.tmdb.org/t/p/w300_and_h450_bestv2/qykTIEJQF8cunKD0CKOqab15wns.jpg" alt="" class="poster">
+                <div class="mediaData">
+                     <div class="mediaTitle">Frieren e a Jornada para o Além <span class="time">(2023)</span></div>
+                     <div class="score"><span class="stars">⭐⭐⭐⭐⭐</span> | <span class="views">6.9k</span> views</div>
+                     <div class="tags"><span>Animação</span><span>Action &amp; Adventure</span><span>Sci-Fi &amp; Fantasy</span><span>Drama</span></div>
+                     <div class="description minimized" onclick="toggleExpand(event)">Após uma missão de 10 anos ao lado do herói Himmel e seu grupo, a poderosa maga Frieren derrotou o Rei Demônio e trouxe paz ao reino. Como uma elfa, Frieren tem uma vida de mais de mil anos pela frente. Ela promete retornar para seus amigos e, assim, parte em uma jornada solitária. 50 anos se passam quando Frieren finalmente volta para visitar Himmel e os outros. Embora ela não tenha envelhecido nada, seus amigos têm pouco tempo de vida restante. É então que Frieren testemunha a morte de Himmel, o que a leva a lamentar não ter passado mais tempo junto dele. Com esse arrependimento em seu coração, ela embarca em uma nova jornada com o objetivo de se conectar e conhecer melhor as pessoas. Ao longo dessa viagem, a elfa Frieren encontrará diversas pessoas e viverá incontáveis aventuras emocionantes!</div>
+                 </div>
+                 <div class="interact">
+                    <!-- os botao pra marcar como visto -->
+                     <div class="size">
+                        <div class="season">3</div>
+                        <div class="episodes">42</div>
+                     </div>
+                     <div class="btn watched">Marcar como visto</div>
+                     <div class="btn watchList">Adicionar na watchlist</div>
+                 </div>
+            </div>
+           
+        </div>
+    </main>
+    {% comment %} <main>
         <div class="container">
 
             <div class="info">
@@ -57,7 +82,7 @@
             </div>
            
         </div>
-    </main>
+    </main> {% endcomment %}
     <script src="/static/javascript/toggleExpand.js"></script>
     <script src="/static/javascript/media.js"></script>
 </body>

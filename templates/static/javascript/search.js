@@ -149,7 +149,7 @@ function fixImage(media){
 
 function fixDescription(media){
     if (media.overview) {
-        MAX_DESC_LENGTH = 200
+        MAX_DESC_LENGTH = window.innerWidth > 960 ? 200 : 100
         // description = media.overview.slice(3, -4)
         description = media.overview
         if (description.length > MAX_DESC_LENGTH){

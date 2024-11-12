@@ -151,3 +151,88 @@ img.poster{
 .interact>*:last-child{
     margin-bottom: 0;
 }
+
+@media screen and (max-width: 960px){
+    .container{
+        position: absolute;
+        padding: 7px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+    }
+    .info{
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        transform: translateY(-20px);
+    }
+    
+    .info .interact {
+        display: flex;
+        justify-content: space-around;
+        flex-direction: row;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+
+    }
+
+    .info .interact > *{
+        margin: 0;
+        width: 27vw;
+    }
+
+    .size > *{
+        display: flex;
+        justify-content: center;
+    }
+
+    .info .mediaData{
+        width: calc(99vw - 150px);
+    }
+
+    .tags{
+        font-size: 0.8rem;
+        flex-wrap: wrap;
+    }
+
+    .mediaData .tags > span{
+        margin: 0px
+    }
+
+    .banner{
+        width: 100vw;
+        height: 200px;
+        background-size: 99vw;
+    }
+    .banner::before{
+        width: 100vw;
+        height: 201px;
+        background-image: linear-gradient(to top, var(--default-grey-bg) 0%, transparent 26%),
+    linear-gradient(to bottom, var(--default-grey-bg) 0%, transparent 26%),
+    linear-gradient(to right, var(--default-grey-bg) 0%, transparent 26%),
+    linear-gradient(to left, var(--default-grey-bg) 0%, transparent 26%); 
+    }
+
+    img.poster{
+        width: 100px;
+        height: 150px;
+        transform: translate(0);
+    }
+
+    .info .mediaData .description{
+        position: absolute;
+        width:95%;
+        height: auto;
+        left: 0;
+        right: 0;
+        margin: auto;
+        text-align: justify;
+        top: 110%;
+        font-size: 1rem;
+        align-self: center;
+    }
+
+}

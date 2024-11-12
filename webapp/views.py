@@ -33,14 +33,16 @@ def profile(request, username):
     print(accessToken)
     
     selfProfile = False
-    if accessToken in LOGIN_MANAGER.tokenList:
+    if accessToken in LOGIN_MANAGER.tokenList: # SE ESTIVER LOGADO
         clientID = LOGIN_MANAGER.tokenList[accessToken]
         print(LOGIN_MANAGER.isLogged(clientID)) # Consegue identificar se o perfil que está sendo acessado é o mesmo do usuário logado
         selfProfile = True if currentProfile["_id"] == clientID else False
         print("\n\n{}\n{}\n\n".format(currentProfile["_id"], clientID))
+        currentProfile["user"] = LOGIN_MANAGER.cacheLogged[clientID]
 
-    if currentProfile:
+    if currentProfile:  # SE O PERFIL EXISTIR
         currentProfile["selfProfile"] = selfProfile
+        currentProfile["logged"] = accessToken in LOGIN_MANAGER.tokenList
         print(currentProfile)
         return render(request, 'profile.html', currentProfile) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
@@ -87,7 +89,16 @@ def login(request):
         token = LOGIN_MANAGER.login(username, password)
 
         if token:
+            user = UsersCollection.find_one({"_id": LOGIN_MANAGER.tokenList[token]})
+
+            LOGIN_MANAGER.cacheLogged[user["_id"]] = {
+                "username": user["username"],
+                "name": user["name"],
+                "icon": user["icon"]
+            }
+
             response = redirect('home')
+
             response.set_cookie('sessionToken', token)
             print(LOGIN_MANAGER.tokenList)
             return response

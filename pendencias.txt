@@ -19,3 +19,6 @@ menu
     estou com sorte
 
 implementar método LoginManager.isLogged()
+
+
+pesquisa de usuario
