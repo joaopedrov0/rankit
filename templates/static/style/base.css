@@ -16,12 +16,47 @@ TÍTULO
 font-family: "Lilita One", sans-serif; 
 */
 
-:root{
-    --default-grey-bg: rgb(24, 24, 24);
-    --interactive-font: "Roboto", sans-serif;
-    --text-font: "Onest", sans-serif;
-    --title-font: "Lilita One", sans-serif
+/* Componentes padrão */
+@import url('./vars.css');
+@import url('./footer.css');
+@import url('./header.css');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
+body{
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+    font-family: var(--text-font);
+    color: aliceblue;
+    background-color: var(--default-grey-bg);
+    
+    /* testando */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+main{
+    display: flex;
+    justify-content: center;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.container{
+    width: 960px;
+}
+
 
 a.logo{
     display: flex;
@@ -60,104 +95,6 @@ a.logo{
 
 
 
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body{
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
-    /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
-    font-family: var(--text-font);
-    color: aliceblue;
-    background-color: var(--default-grey-bg);
-}
-
-
-.profile-btn{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile-btn img{
-    margin-left: 10px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
-.menu-btn{
-    /* width: 50px;
-    height: 50px;
-    display: flex;
-    align-self: center;
-    justify-content: center;
-    text-align: center; */
-    padding: 7px;
-    border-radius: 50%;
-    
-    transition: all 200ms ease;
-}
-
-.menu-btn:hover{
-    cursor: pointer;
-    background-color: rgba(200, 200, 200, 0.3);
-}
-
-main{
-    display: flex;
-    justify-content: center;
-}
-
-a{
-    text-decoration: none;
-    color: inherit;
-}
-
-.container{
-    width: 960px;
-}
-
-.logo{
-    font-size: 24px;
-    font-style: italic;
-    font-weight: 800;
-    color: #004aad;
-    
-    cursor: pointer;
-    
-    text-decoration: none;
-    
-    
-}
-
-.logo img {
-    
-    width: 150px;
-}
-
-
-
-
-
-/* Header */
-header{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100vw;
-    height: 60px;
-    backdrop-filter: blur(7px);
-    z-index: 5;
-    padding: 0px 25px;
-}
-
-
-
 
 
 /* grid */
@@ -168,31 +105,6 @@ header{
 
 .col12{
     width: 100%;
-}
-
-.menu{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border-bottom: 2px solid rgba(200, 200, 200, 0.9);
-    /* margin: 0 15px; */
-}
-
-.menu a {
-    color: rgba(200, 200, 200, 0.9);
-    font-weight: bold;
-    margin: 10px;
-    padding: 10px;
-    text-decoration: none;
-}
-
-.menu a:hover {
-    cursor: pointer;
-    color: #fff;
-}
-
-a.profile-btn{
-    margin: 0 auto;
 }
 
 .mobile-only{

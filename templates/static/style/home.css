@@ -1,8 +1,12 @@
+/* Importanto componentes */
+@import url('./header.css');
+
+
 header{
     backdrop-filter: none;
     position: absolute;
-    display: flex;
-    justify-content: space-between;
+    /* display: flex;
+    justify-content: space-between; */
 }
 
 
@@ -107,4 +111,13 @@ main .col12:first-child{
     border: 2px solid rgba(200, 200, 200, 0.9);
     font-weight: bold;
     font-style: italic;
+}
+
+@media screen and (max-width: 960px){
+    main .col12{
+        flex-direction: column;
+    }
+    main .col12 .col6 {
+        width: 100%;
+    }
 }
