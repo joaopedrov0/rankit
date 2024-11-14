@@ -5,13 +5,13 @@ name = "pypi"
 
 [packages]
 pymongo = "*"
-django = "*"
 bcrypt = "*"
+django = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12"
+python_version = "3.13"
 
 [scripts]
 app = "python manage.py runserver"

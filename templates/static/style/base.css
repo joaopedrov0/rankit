@@ -36,10 +36,10 @@ body{
     color: aliceblue;
     background-color: var(--default-grey-bg);
     
-    /* testando */
-    display: flex;
+    /* testando (DEU ERRADO) */
+    /* display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; */ 
 }
 
 
