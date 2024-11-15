@@ -9,5 +9,6 @@ urlpatterns = [
     path('search', views.search, name='search'),
     path('', views.home, name='home'),
     path('media', views.media, name='media'),
-    path('not-found', views.notfound, name='notfound')
+    path('not-found', views.notfound, name='notfound'),
+    path('markAsSeen/<str:mediaType>/<str:mediaID>', views.markAsSeen, name='markAsSeen'),
 ]

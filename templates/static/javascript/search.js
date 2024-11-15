@@ -17,22 +17,22 @@ async function search(){
     switch(CATEGORY_OPTION.value){
         // case 'all':
         //     url = `https://api.themoviedb.org/3/search/multi?query=${input}&include_adult=false&language=pt-BR&page=1`
-        case 'movies':
+        case 'movie':
             url = `https://api.themoviedb.org/3/search/movie?query=${input}&include_adult=false&language=pt-BR&page=1`
             break
-        case 'series':
+        case 'serie':
             url = `https://api.themoviedb.org/3/search/tv?query=${input}&include_adult=false&language=pt-BR&page=1`
             break
-        case 'animes':
+        case 'anime':
             url = `https://api.themoviedb.org/3/search/tv?query=${input}&include_adult=false&language=pt-BR&page=1`
             break
-        case 'jogos':
+        case 'game':
             url = ``
             break
-        case 'books':
+        case 'book':
             url = ``
             break
-        case 'users':
+        case 'user':
             url = ``
             break
     }
@@ -43,6 +43,7 @@ async function search(){
           Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlZTEyYmNkYzc1ODMwOWFlZjU2YWI3YTFmYmQ3YzIyOCIsIm5iZiI6MTcyOTUxODIzMy41ODU4NTMsInN1YiI6IjY3MTNjMjM1ZDViNzkyNmU5NDZmYzQ5NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.iPRn6COPbdHZ0BgkJ4hGeRZUjSrPVWGg-dfYs7ejka0'
         }
     }
+    console.log(url)
 
     let res = await fetch(url, options).then(x => x.json()).catch(err => console.error(err))
 
@@ -80,12 +81,11 @@ function renderResult(res, category){
     if (res.length != 0){
         for (i in res){
             media = res[i]
-            if (category == 'animes' && media.origin_country[0] != 'JP') continue
-            if (category == 'series' && media.origin_country[0] == 'JP') continue
+            if (category == 'anime' && media.origin_country[0] != 'JP') continue
+            if (category == 'serie' && media.origin_country[0] == 'JP') continue
             empty = false
-            let media_type = category=='animes'||category=='series' ? 'tv' : 'movie'
             resultHTML += `
-            <a href="/media?id=${media.id}&category=${media_type}" class="resultItem">
+            <a href="/media?id=${media.id}&category=${category}" class="resultItem">
                 ${fixImage(media)}
                 <div class="searchMediaText">
                     <div class="mediaHeader">

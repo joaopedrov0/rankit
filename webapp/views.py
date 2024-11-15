@@ -141,16 +141,23 @@ def notfound(request):
 
 
 # ! EM DESENVOLVIMENTO
-def markAsSeen(request):
+@csrf_exempt
+def markAsSeen(request, mediaType, mediaID):
     accessToken = request.COOKIES.get('sessionToken')
+    response = HttpResponse()
     if accessToken:
         userID = ''
         try:
             userID = LOGIN_MANAGER.tokenList[accessToken]
         except:
-            return HttpResponse('not-logged')
+            response.headers = {"request-status": "Invalid Token"}
+            return response
         
-        # user = UsersCollection.find_one({"_id": userID})
-        return HttpResponse('accepted')
+        user = UsersCollection.find_one({"_id": userID})
+        print("mediaType: {}".format(mediaType))
+        print("mediaID: {}".format(mediaID))
+        response.headers = {"request-status": "Accepted"}
+        return response
     else:
-        return HttpResponse('not-logged')
+        response.headers["request-status"] = "Without Token"
+        return response

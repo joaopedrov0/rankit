@@ -164,11 +164,11 @@ a.logo{
     .header-container{
         
         backdrop-filter: none;
+        background-color: rgba(20, 20, 20, 0.7);
     }
     header{
         padding: 0;
         justify-content: center;
-        background-color: rgba(20, 20, 20, 0.7);
         height: fit-content;
     }
 }

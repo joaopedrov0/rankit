@@ -22,3 +22,7 @@ implementar método LoginManager.isLogged()
 
 
 pesquisa de usuario
+
+
+adicionar de fato as obras vistas no perfil do usuario
+exibir obras vistas com opção pra apagar na pagina do usuario (caso seja o dono do perfil)

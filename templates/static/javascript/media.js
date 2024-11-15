@@ -3,11 +3,20 @@ const CURRENT_URL = new URL(window.location.href)
 const MEDIA_ID = CURRENT_URL.searchParams.get('id')
 const MEDIA_CATEGORY = CURRENT_URL.searchParams.get('category')
 
+
 // a url tem que chegar tipo assim:    https://fodase.com?id={o id da obra}&category={a categoria da obra}
 
-async function getMedia(){
 
-    let url = `https://api.themoviedb.org/3/${MEDIA_CATEGORY}/${MEDIA_ID}?language=pt-BR`
+
+async function getMedia(){
+    
+    if (MEDIA_CATEGORY == 'serie' || MEDIA_CATEGORY == 'anime'){
+        category = 'tv'
+    } else if (MEDIA_CATEGORY == 'movie'){
+        category = 'movie'
+    }
+
+    let url = `https://api.themoviedb.org/3/${category}/${MEDIA_ID}?language=pt-BR`
 
     const options = {
         method: 'GET',
@@ -19,7 +28,8 @@ async function getMedia(){
 
     let res = await fetch(url, options).then(x => x.json()).catch(err => console.error(err))
 
-    renderResult(res)
+    return res
+
 }
 
 function renderResult(media){
@@ -81,5 +91,6 @@ function renderResult(media){
 //     }
 // }
 
-
-getMedia()
+getMedia().then((res) => {
+    renderResult(res)
+})
