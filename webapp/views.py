@@ -138,3 +138,19 @@ def media(request):
 
 def notfound(request):
     return render(request, 'not-found.html')
+
+
+# ! EM DESENVOLVIMENTO
+def markAsSeen(request):
+    accessToken = request.COOKIES.get('sessionToken')
+    if accessToken:
+        userID = ''
+        try:
+            userID = LOGIN_MANAGER.tokenList[accessToken]
+        except:
+            return HttpResponse('not-logged')
+        
+        # user = UsersCollection.find_one({"_id": userID})
+        return HttpResponse('accepted')
+    else:
+        return HttpResponse('not-logged')

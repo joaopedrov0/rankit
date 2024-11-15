@@ -1,9 +1,10 @@
 /* Search Bar */
 .search{
-    width: 40vw;
-    height: 95%;
+    width: inherit;
+    /* height: 95%; */
     display: flex;
     align-items: center;
+    margin: 20px 0;
 }
 .search input{
     width: 80%;

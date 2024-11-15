@@ -149,6 +149,7 @@ a.logo{
     .menu{
         width: 95vw;
         justify-content: space-evenly;
+        min-height: 60px;
     }
     .menu a{
         /* padding: 5px 1px; */
@@ -160,10 +161,13 @@ a.logo{
         align-items: center;
         text-align: center;
     }
+    .header-container{
+        
+        backdrop-filter: none;
+    }
     header{
         padding: 0;
         justify-content: center;
-        backdrop-filter: none;
         background-color: rgba(20, 20, 20, 0.7);
         height: fit-content;
     }

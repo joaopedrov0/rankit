@@ -13,25 +13,27 @@
 
 </head>
 <body>
+    <div class="header-container">
     
-    <header>
-        <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
-        <div class="menu">
-                <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
-                {% if not logged %}
-                    <a href="/login" class="login">Login</a>
-                    <a href="/cadastro" class="cadastro">Cadastro</a>
-                {% endif %}
-                <a href="/search" class="search mobile-hidden">Buscar</a>
-                <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
-                <a href="/not-found" class="top">Top Rated</a>
-                {% if logged %}
-                    <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
-                {% endif %}
-                <span class="menu-btn material-symbols-outlined">more_vert</span>
-            
-        </div>
-    </header>
+        <header>
+            <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
+            <div class="menu">
+                    <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
+                    {% if not logged %}
+                        <a href="/login" class="login">Login</a>
+                        <a href="/cadastro" class="cadastro">Cadastro</a>
+                    {% endif %}
+                    <a href="/search" class="search mobile-hidden">Buscar</a>
+                    <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
+                    <a href="/not-found" class="top">Top Rated</a>
+                    {% if logged %}
+                        <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                    {% endif %}
+                    <span class="menu-btn material-symbols-outlined">more_vert</span>
+                
+            </div>
+        </header>
+    </div>
     <div class="banner">
         
     </div>
@@ -83,7 +85,7 @@
            
         </div>
     </main> {% endcomment %}
-    <script src="/static/javascript/toggleExpand.js"></script>
+    <script src="/static/javascript/markAsSeen.js"></script>
     <script src="/static/javascript/media.js"></script>
 </body>
 </html>

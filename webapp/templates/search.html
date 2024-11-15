@@ -12,29 +12,32 @@
     <link rel="stylesheet" href="/static/style/search.css">
 </head>
 <body>
+    <div class="header-container">
     
-    <header>
-        <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
-        <div class="search">
-            <input type="text" placeholder="Search series, movies, animes, etc." id="search_bar" onkeydown="checkEnter(event)">
-            <div class="searchBtn material-symbols-outlined" onclick="search()">search</div>
-        </div>
-        <div class="menu">
-            <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
-            {% if not logged %}
-                <a href="/login" class="login">Login</a>
-                <a href="/cadastro" class="cadastro">Cadastro</a>
-            {% endif %}
-            <a href="/not-found" class="top">Top Rated</a>
-            {% if logged %}
-                <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
-            {% endif %}
-            <span class="menu-btn material-symbols-outlined">more_vert</span>
+        <header>
+            <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
             
-        </div>
-    </header>
+            <div class="menu">
+                <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
+                {% if not logged %}
+                    <a href="/login" class="login">Login</a>
+                    <a href="/cadastro" class="cadastro">Cadastro</a>
+                {% endif %}
+                <a href="/not-found" class="top">Top Rated</a>
+                {% if logged %}
+                    <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                {% endif %}
+                <span class="menu-btn material-symbols-outlined">more_vert</span>
+                
+            </div>
+        </header>
+    </div>
     <main>
         <div class="container">
+            <div class="search">
+                    <input type="text" placeholder="Search series, movies, animes, etc." id="search_bar" onkeydown="checkEnter(event)">
+                    <div class="searchBtn material-symbols-outlined" onclick="search()">search</div>
+            </div>
             <div class="category">
                 <!-- <input type="radio" name="category" id="all" value="all" checked>
                 <label for="all">Todos</label> -->

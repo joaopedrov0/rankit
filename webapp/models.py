@@ -29,7 +29,7 @@ SessionsCollection = db.sessions
 
 class User():
     
-    def __init__(self, name, username, email, password, icon=0, banner=0, bio='', followers=[], following=[], watched=[], watchList=[], reviews=[], config={}):
+    def __init__(self, name, username, email, password, icon=0, banner=0, bio='', followers=[], following=[], watched={}, watchList={}, reviews=[], config={}):
         self.name = name # Nome qualquer
         self.username = username # Nome de usuário (único)
         self.icon = icon # Código do ícone
