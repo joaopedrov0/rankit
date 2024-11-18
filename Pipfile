@@ -11,7 +11,7 @@ django = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.13"
+python_version = "3.12.6,3.13"
 
 [scripts]
 app = "python manage.py runserver"
