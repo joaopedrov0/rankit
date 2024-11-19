@@ -13,12 +13,12 @@
 
 </head>
 <body>
-    <div class="modal-blocker">
+    <div class="modal-blocker hidden">
         <div class="modal">
-            <span class="material-symbols-outlined close-modal">close</span>
+            <span class="material-symbols-outlined close-modal" onclick="toggleFormModal()">close</span>
             <h2>Deixe sua opinião a respeito da obra!</h2>
             <h3>(Opcional)</h3>
-            <form action="">
+            <form action="", method="POST">
                 <fieldset>
                     <select name="review-quality" id="review-quality">
                         <option value="" selected disabled>O que achou da obra?</option>
@@ -80,7 +80,7 @@
                         <div class="season">3</div>
                         <div class="episodes">42</div>
                      </div>
-                     <div class="btn watched" onclick="markAsSeen()">Marcar como visto</div>
+                     <div class="btn watched" onclick="toggleFormModal()">Marcar como visto</div>
                      <div class="btn watchList">Adicionar na watchlist</div>
                  </div>
             </div>

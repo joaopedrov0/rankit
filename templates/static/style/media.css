@@ -165,10 +165,17 @@ img.poster{
 
     z-index: 10;
     background-color: rgba(0, 0, 0, 0.8);
+
+
+    /* temp */
+}
+
+.modal-blocker.hidden{
+    display: none;
 }
 
 .modal{
-    width: clamp(300px, 100vw, 500px);
+    width: clamp(300px, 95vw, 500px);
     padding: 25px;
     background-color: var(--default-grey-bg-light);
     color: var(--default-text-color);
@@ -180,7 +187,7 @@ img.poster{
 }
 
 .modal h3{
-    opacity: 0.5';
+    opacity: 0.5;
 }
 
 .modal .close-modal{
