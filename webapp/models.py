@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import bcrypt
 import secrets
 
-import modules # Nossas classes estão aqui
+import webapp.modules as modules # Nossas classes estão aqui
 modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
 modules.DBElemensInterface.register(modules.Media) # mesma coisa com media
 

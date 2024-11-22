@@ -1,4 +1,4 @@
-from utils import db, users_collection, media_collection, ObjectId
+from .utils import db, UsersCollection, MediaCollection
 from pymongo.errors import PyMongoError
 
 '''Special parameters to collections funcs
@@ -13,7 +13,7 @@ class Database:
     @staticmethod
     def registerUser(user_obj):
         try:
-            users_collection.insert_one(user_obj)
+            UsersCollection.insert_one(user_obj)
         
         except:
             return Database.insertionError()
@@ -22,7 +22,7 @@ class Database:
     @staticmethod
     def registerMedia(media_obj):
         try:
-            media_collection.insert_one(media_obj)
+            MediaCollection.insert_one(media_obj)
         
         except:
             return Database.insertionError()
@@ -31,7 +31,7 @@ class Database:
     @staticmethod
     def registerReview(media_obj, review_obj):
         try:
-            media_collection.update_one(media_obj, {"$push": {"reviews": review_obj}})
+            MediaCollection.update_one(media_obj, {"$push": {"reviews": review_obj}})
         
         except:
             return Database.insertionError()
@@ -47,11 +47,11 @@ class Database:
     def searchUser(username=None, id=None): # Returns User dictionary
         try:
             if id:
-                res = users_collection.find_one({'_id': ObjectId(id)})
+                res = UsersCollection.find_one({'_id': (id)})
                 return res
 
             else:
-                res = users_collection.find_one({'name': username})
+                res = UsersCollection.find_one({'name': username})
                 return res
         
         except:
@@ -63,11 +63,11 @@ class Database:
     def searchMedia(media_title=None, id=None): # Returns Media dictionary
         try:
             if id:
-                res = media_collection.find_one({'_id': ObjectId(id)})
+                res = MediaCollection.find_one({'_id': (id)})
                 return res
 
             else:
-                res = media_collection.find_one({'title': media_title})
+                res = MediaCollection.find_one({'title': media_title})
                 return res
         
         except:
@@ -79,11 +79,11 @@ class Database:
     def searchReview(review_comment=None, id=None): # return Media dictionary with review
         try:
             if id:
-                res = media_collection.find_one({'_id': ObjectId(id)})
+                res = MediaCollection.find_one({'_id': (id)})
                 return res
 
             else:
-                res = media_collection.find_one({'reviews.comment': review_comment})
+                res = MediaCollection.find_one({'reviews.comment': review_comment})
                 return res
         
         except:

@@ -1,4 +1,4 @@
-from dbElementsInterface import DBElemensInterface
+from .dbElementsInterface import DBElemensInterface
 import bcrypt
 
 class User:
