@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import UsersCollection, User, LoginManager
 import os
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotModified
 
 LOGIN_MANAGER = LoginManager()
 
@@ -143,8 +143,18 @@ def notfound(request):
 # ! EM DESENVOLVIMENTO
 @csrf_exempt
 def markAsSeen(request, mediaType, mediaID):
+    """
+    Recebe uma requisição de um usuário idealmente logado com um tipo de mídia e seu respectivo id, 
+    - Marca a obra na lista de vistos do usuário
+    - Adiciona a avaliação no diário dele
+    - Adiciona a avaliação do usuário na listas de avaliações da obra
+    """
     accessToken = request.COOKIES.get('sessionToken')
-    response = HttpResponse()
+    response = HttpResponseNotModified()
+    if not request.method == "POST":
+        response.headers = {"request-status":"Not POST method"}
+        return response
+    print(request.POST)
     if accessToken:
         userID = ''
         try:

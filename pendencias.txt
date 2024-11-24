@@ -19,3 +19,12 @@ adicionar de fato as obras vistas no perfil do usuario
 exibir obras vistas com opção pra apagar na pagina do usuario (caso seja o dono do perfil)
 
 feed na home
+
+filtrar os botoes pra quando a obra ja tiver sido vista
+
+
+implementar no back a parte de marcar cmo visto
+
+mostrar na pagina da obra as avaliações não-vazias
+
+mostrar no perfil do usuario as avaliações dele

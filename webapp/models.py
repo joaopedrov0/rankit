@@ -2,6 +2,14 @@ from pymongo import MongoClient
 import bcrypt
 import secrets
 
+import webapp.modules as modules # Nossas classes estão aqui
+modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
+modules.DBElemensInterface.register(modules.Media) # mesma coisa com media
+
+'''AVISO:
+- Criei uma pasta modules e copiei todas as classes abaixo nela, além de classes que eu havia criado no outro repositório.
+- Modificação feita por Nathan (19/11/24 - 10:00)'''
+
 MONGODB_URI = 'mongodb+srv://rankit:rankitpass@master.jshtk.mongodb.net/?retryWrites=true&w=majority&appName=master' # URI pra conectar as parada
 
 # Mongo Client
@@ -146,6 +154,7 @@ class LoginManager:
             return False
 
     def validateToken(self, token, origin):
+        #return bcrypt.checkpw(origin, token) Talvez isso resolva a linha abaixo
         return checkpw(origin, token)
     
     def getToken(self):

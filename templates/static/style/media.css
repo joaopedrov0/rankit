@@ -152,6 +152,103 @@ img.poster{
     margin-bottom: 0;
 }
 
+
+
+/* Modal de Review */
+.modal-blocker{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.8);
+
+
+    /* temp */
+}
+
+.modal-blocker.hidden{
+    display: none;
+}
+
+.modal{
+    width: clamp(300px, 95vw, 500px);
+    padding: 25px;
+    background-color: var(--default-grey-bg-light);
+    color: var(--default-text-color);
+
+    text-align: center;
+
+    border-radius: 7px;
+    position: relative;
+}
+
+.modal h3{
+    opacity: 0.5;
+}
+
+.modal .close-modal{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    opacity: 0.9;
+    transition: all 200ms ease;
+    border-radius: 2px;
+}
+
+.modal .close-modal:hover{
+    background-color: rgba(200, 200, 200, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+form{
+    margin-top: 25px;
+}
+
+form > *{
+    margin-bottom: 25px;
+}
+
+form button{
+    margin-bottom: 0;
+    border-radius: 3px;
+    border: 1px solid rgba(200, 200, 200, 0.2);
+}
+
+.modal form .btn.cancel{
+    background-color: var(--default-grey-bg);
+    border: 1px solid rgba(200, 200, 200, 0.5)
+}
+
+.modal form .btn.cancel:hover{
+    background-color: rgba(200, 200, 200, 0.3);
+}
+
+form fieldset{
+    border: none;
+}
+
+form fieldset >*{
+    width: 100%;
+    background-color: var(--default-grey-bg);
+    padding: 7px;
+    color: var(--default-text-color);
+    border: 1px solid rgba(200, 200, 200, 0.2);
+    border-radius: 7px;
+}
+
+form fieldset select, form fieldset select option{
+    color: var(--default-text-color);
+    background-color: var(--default-grey-bg);
+}
+
+
+
 @media screen and (max-width: 960px){
     .container{
         position: absolute;

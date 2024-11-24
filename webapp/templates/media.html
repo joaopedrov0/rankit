@@ -13,6 +13,32 @@
 
 </head>
 <body>
+    <div class="modal-blocker hidden">
+        <div class="modal">
+            <span class="material-symbols-outlined close-modal" onclick="toggleFormModal()">close</span>
+            <h2>Deixe sua opinião a respeito da obra!</h2>
+            <h3>(Opcional)</h3>
+            <form action="", method="POST">
+                <fieldset>
+                    <select name="review-quality" id="review-quality">
+                        <option value="" selected disabled>O que achou da obra?</option>
+                        <option value="1">Péssimo</option>
+                        <option value="2">Muito ruim</option>
+                        <option value="3">Ruim</option>
+                        <option value="4">Mediano</option>
+                        <option value="5">Bom</option>
+                        <option value="6">Muito bom</option>
+                        <option value="7">Perfeito</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <textarea name="review-text" id="review-text" placeholder="Descreva um pouco mais de como foi sua experiência!" rows="7"></textarea>
+                </fieldset>
+                <div class="btn cancel" onclick="toggleFormModal()">Cancelar</div>
+                <button type="submit" class="btn watched">Marcar como visto</button>
+            </form>
+        </div>
+    </div>
     <div class="header-container">
     
         <header>
@@ -54,7 +80,7 @@
                         <div class="season">3</div>
                         <div class="episodes">42</div>
                      </div>
-                     <div class="btn watched" onclick="markAsSeen()">Marcar como visto</div>
+                     <div class="btn watched" onclick="toggleFormModal()">Marcar como visto</div>
                      <div class="btn watchList">Adicionar na watchlist</div>
                  </div>
             </div>

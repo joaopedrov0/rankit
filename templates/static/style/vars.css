@@ -1,5 +1,8 @@
 :root{
+
+    --default-text-color: aliceblue;
     --default-grey-bg: rgb(24, 24, 24);
+    --default-grey-bg-light: rgb(34, 34, 34);
     --interactive-font: "Roboto", sans-serif;
     --text-font: "Onest", sans-serif;
     --title-font: "Lilita One", sans-serif
