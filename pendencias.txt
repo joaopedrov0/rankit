@@ -1,28 +1,21 @@
 fazer um codigo pra alterar os usuarios dobanco que foram criados antes de a senha ser armazenada em hash
 
+fazer login ✅
 
-
-fazer login
-
-
-
-pagina de midia
-
-
+pagina de midia ✅
 
 personalização de perfil
-
 
 menu
     editar perfil
     log out
     estou com sorte
 
-implementar método LoginManager.isLogged()
-
+implementar método LoginManager.isLogged() ✅
 
 pesquisa de usuario
 
-
 adicionar de fato as obras vistas no perfil do usuario
 exibir obras vistas com opção pra apagar na pagina do usuario (caso seja o dono do perfil)
+
+feed na home

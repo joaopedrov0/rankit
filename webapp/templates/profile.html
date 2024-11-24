@@ -43,9 +43,9 @@
                     <div class="following">{{ following|length }}</div>
                 </div>
                 {% if selfProfile %}
-                <div class="editBtn">Editar <span class="material-symbols-outlined filled">edit</span></div>
+                <a href="/editProfile" class="editBtn">Editar <span class="material-symbols-outlined filled">edit</span></a>
                 {% else %}
-                <div class="followBtn">Follow</div>
+                <a href="/follow" class="followBtn">Follow</a>
                 {% endif %}
             </div>
         </div>

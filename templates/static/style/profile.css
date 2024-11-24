@@ -198,6 +198,19 @@
     background-image: url(../img/character.jpg);
 }
 
+
+.editable::after{
+    content: 'edit';
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    
+    font-family: 'Material Symbols Outlined';
+}
+
+
 @media screen and (max-width: 960px){
     .banner{
         width: 100vw;

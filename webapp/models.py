@@ -79,7 +79,7 @@ class Media():
         self.releaseDate = releaseDate # Data de lançamento
         self.viewsList = viewsList
         self.viewsNumber = len(viewsList)
-        self.reviews = reviews # {"owener_id": review_object ou review_id}
+        self.reviews = reviews # {"owner_id": review_object ou review_id}
         
     def toDict(self):
         """Converte a obra pra um dicionário (pra poder colocar no db 😉)"""

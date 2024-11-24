@@ -161,3 +161,34 @@ def markAsSeen(request, mediaType, mediaID):
     else:
         response.headers["request-status"] = "Without Token"
         return response
+    
+
+def editProfile(request):
+    # accessToken = request.COOKIES.get('sessionToken')
+    # if accessToken:
+    #     userID = ''
+    #     try:
+    #         userID = LOGIN_MANAGER.tokenList[accessToken]
+    #     except:
+    #         # logged false
+    #         return render(request, 'home.html', {"logged":False})
+        
+    #     user = UsersCollection.find_one({"_id": userID})
+    #     # logged true
+    #     return render(request, 'home.html', {"logged":True, "user": user})
+    # else:
+    #     # logged false
+    #     return render(request, 'home.html', {"logged":False})
+    accessToken = request.COOKIES.get('sessionToken')
+    
+    if not accessToken or not accessToken in LOGIN_MANAGER.tokenList:
+        return render(request, 'not-found.html')
+    
+    currentProfile = UsersCollection.find_one({"_id": LOGIN_MANAGER.tokenList[accessToken]})
+    
+    if currentProfile:  # SE O PERFIL EXISTIR
+        return render(request, 'editProfile.html', currentProfile) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+
+    else:
+
+        return render(request, 'not-found.html')

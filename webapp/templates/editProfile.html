@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }} - rank.it</title>
+
+    <!-- Importing Stylesheets -->
+    <link rel="stylesheet" href="/static/style/base.css">
+    <link rel="stylesheet" href="/static/style/profile.css">
+    <link rel="stylesheet" href="/static/style/editProfile.css">
+</head>
+<body>
+    <div class="header-container">
+        <header>
+            <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
+            <div class="menu">
+                <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
+                {% if not logged %}
+                    <a href="/login" class="login">Login</a>
+                    <a href="/cadastro" class="cadastro">Cadastro</a>
+                {% endif %}
+                <a href="/search" class="search mobile-hidden">Buscar</a>
+                <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
+                <a href="/not-found" class="top">Top Rated</a>
+                {% if logged %}
+                    <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                {% endif %}
+                <span class="menu-btn material-symbols-outlined">more_vert</span>
+                
+            </div>
+        </header>
+    </div>
+    <div class="banner" style="background-image: url({% static 'img/banner/'%}{{banner}}.{{'png'}})">
+        <div class="user">
+            <img src="{% static 'img/icon/'%}{{icon}}.{{'png'}}" alt="user icon" class="icon">
+            <div class="identify">
+                <div class="name">{{ name }}</div>
+                <div class="username" style="cursor:not-allowed;">{{ username }}</div>
+                <div class="followArea">
+                    <div class="followers">{{ followers|length }}</div>
+                    <div class="following">{{ following|length }}</div>
+                </div>
+                <a class="followBtn" style="cursor:not-allowed;" disabled >Editando...</a>
+            </div>
+        </div>
+        <div class="bannerDesc mobile-hidden">
+            Jujutsu Kaisen
+        </div>
+    </div>
+    <main>
+        <div class="container">
+            <form method="POST" target="/editProfile">
+                <div class="field">
+                    <label for="name">Nome</label>
+                    <input type="text" id="name" name="name" placeholder="Digite seu novo nome!" value="{{ name }}">
+                </div>
+                <div class="field">
+                    <label for="name">Biografia</label>
+                    <input type="text" id="bio" name="bio" placeholder="Digite sua nova biografia!" value="{{ bio }}">
+                </div>
+                <div class="field">
+                    <input type="radio" name="icon" value="0" style="background-image: url('/static/img/icon/0.png');" checked onchange="refresh()">
+                    <input type="radio" name="icon" value="0" onchange="refresh()">
+                </div>
+                
+                <div class="field">
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
