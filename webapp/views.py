@@ -182,7 +182,12 @@ def searchMedia(request, category, query):
     res = JsonResponse({"result":queryResult})
     return res
 
-def media(request):
+def media(request, category, id):
+
+    # Recuperando a mídia
+    # ! Pendente...
+
+    # Verificando se está logado
     accessToken = request.COOKIES.get('sessionToken')
     if accessToken:
         userID = ''
