@@ -5,3 +5,6 @@ from .utils import *
 from .media import Media
 from .rawgGames import RawgGames
 from .googleBooks import GoogleBooks
+from .tmdb import TMDB
+from .mediaModelPage import MediaModelPage
+from .mediaModelSearch import MediaModelSearch
