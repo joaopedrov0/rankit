@@ -11,4 +11,5 @@ urlpatterns = [
     path('media', views.media, name='media'),
     path('not-found', views.notfound, name='notfound'),
     path('markAsSeen/<str:mediaType>/<str:mediaID>', views.markAsSeen, name='markAsSeen'),
+    path('searchMedia/<str:category>/<str:query>', views.searchMedia, name='searchMedia'),
 ]

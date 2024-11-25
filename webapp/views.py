@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from .models import UsersCollection, User, LoginManager
 import os
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseNotModified
+from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
+from .modules import TMDB, GoogleBooks, RawgGames, MediaModelSearch, MediaModelPage
 
 LOGIN_MANAGER = LoginManager()
 
@@ -121,6 +122,65 @@ def search(request):
         return render(request, 'search.html', {"logged":True, "user": user})
     else:
         return render(request, 'search.html', {"logged":False})
+
+def searchMedia(request, category, query):
+    queryResult = []
+    if category == "movie":
+        temp = TMDB.search("movie", query)
+        for result in temp:
+            queryResult.append(
+                MediaModelSearch.build(
+                    "movie",
+                    result["id"],
+                    result["title"],
+                    result["overview"],
+                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
+                    result["vote_average"],
+                    result["release_date"]
+                )
+            )
+    elif category == "serie":
+        temp = TMDB.search("tv", query)
+        for result in temp:
+            print(result["origin_country"])
+            if result["origin_country"] == [] or result["origin_country"][0] == "JP": continue
+            queryResult.append(
+                MediaModelSearch.build(
+                    "serie",
+                    result["id"],
+                    result["name"],
+                    result["overview"],
+                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
+                    result["vote_average"],
+                    result["first_air_date"]
+                )
+            )
+    elif category == "anime":
+        temp = TMDB.search("tv", query)
+        for result in temp:
+            if result["origin_country"] == [] or result["origin_country"][0] != "JP": continue
+            queryResult.append(
+                MediaModelSearch.build(
+                    "anime",
+                    result["id"],
+                    result["name"],
+                    result["overview"],
+                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
+                    result["vote_average"],
+                    result["first_air_date"]
+                )
+            )
+    elif category == "game":
+        pass
+    elif category == "book":
+        pass
+    elif category == "user":
+        pass
+    else:
+        print("Erro na categoria da requisição")
+        return
+    res = JsonResponse({"result":queryResult})
+    return res
 
 def media(request):
     accessToken = request.COOKIES.get('sessionToken')

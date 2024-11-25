@@ -12,43 +12,20 @@ async function search(){
 
     
     // let res = await fetch(`https://api.tvmaze.com/search/shows?q=${input}`).then((x) => x.json())
-    let url = ''
+    let url = `/searchMedia/${CATEGORY_OPTION.value}/${input}`
 
-    switch(CATEGORY_OPTION.value){
-        // case 'all':
-        //     url = `https://api.themoviedb.org/3/search/multi?query=${input}&include_adult=false&language=pt-BR&page=1`
-        case 'movie':
-            url = `https://api.themoviedb.org/3/search/movie?query=${input}&include_adult=false&language=pt-BR&page=1`
-            break
-        case 'serie':
-            url = `https://api.themoviedb.org/3/search/tv?query=${input}&include_adult=false&language=pt-BR&page=1`
-            break
-        case 'anime':
-            url = `https://api.themoviedb.org/3/search/tv?query=${input}&include_adult=false&language=pt-BR&page=1`
-            break
-        case 'game':
-            url = ``
-            break
-        case 'book':
-            url = ``
-            break
-        case 'user':
-            url = ``
-            break
-    }
-    const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlZTEyYmNkYzc1ODMwOWFlZjU2YWI3YTFmYmQ3YzIyOCIsIm5iZiI6MTcyOTUxODIzMy41ODU4NTMsInN1YiI6IjY3MTNjMjM1ZDViNzkyNmU5NDZmYzQ5NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.iPRn6COPbdHZ0BgkJ4hGeRZUjSrPVWGg-dfYs7ejka0'
-        }
-    }
+
     console.log(url)
 
-    let res = await fetch(url, options).then(x => x.json()).catch(err => console.error(err))
+    let headers = {
+        method: "GET"
+    }
 
+    let res = await fetch(url, headers).then(x => x.json()).catch(err => console.error(err))
 
-    renderResult(resResolver(res), CATEGORY_OPTION.value)
+    console.log(res)
+
+    renderResult(res.result, CATEGORY_OPTION.value)
 }
 
 
@@ -65,12 +42,6 @@ function cleanFilter(){
     }
 }
 
-function resResolver(origin){
-    res = origin.results
-    console.log(res)
-    return res
-}
-
 const titleHTML = document.querySelector('title')
 
 function renderResult(res, category){
@@ -81,15 +52,13 @@ function renderResult(res, category){
     if (res.length != 0){
         for (i in res){
             media = res[i]
-            if (category == 'anime' && media.origin_country[0] != 'JP') continue
-            if (category == 'serie' && media.origin_country[0] == 'JP') continue
             empty = false
             resultHTML += `
-            <a href="/media?id=${media.id}&category=${category}" class="resultItem">
+            <a href="/media?id=${media.id}&category=${media.category}" class="resultItem">
                 ${fixImage(media)}
                 <div class="searchMediaText">
                     <div class="mediaHeader">
-                        <div class="mediaTitle">${solveMediaName(media)} <span class="time">${fixDate(media)}</span></div>
+                        <div class="mediaTitle">${media.title} <span class="time">${fixDate(media)}</span></div>
                         <div class="score"><span class="stars">⭐⭐⭐⭐⭐</span> | <span class="views">6.9k</span> views</div>
                     </div>
                     
@@ -107,39 +76,18 @@ function renderResult(res, category){
 }
 
 
-function solveMediaName(media){
-    if (media.media_type){
-        switch(media.media_type){
-            case 'movie':
-                return media.title
-            case 'tv':
-                return media.name
-        }
-
-    } else {
-        if (media.title){
-            return media.title
-        }
-        return media.name
-    }
-}
-
 
 function fixDate(media){
-    if (media.first_air_date != null){
-        if (media.status == "Ended"){
-            return `(${media.first_air_date.slice(0, 4)}-${media.ended.slice(0, 4)})`
-        } else {
-            return `(${media.first_air_date.slice(0, 4)})`
-        }
+    if (media.release_date != null){
+        return `(${media.release_date.slice(0, 4)})`
     }
     return ''
 }
 
 function fixImage(media){
 
-    if (media.poster_path != null){
-        return `<img src="https://image.tmdb.org/t/p/w300_and_h450_bestv2${media.poster_path}" alt="" class="searchMediaImage"></img>`
+    if (media.poster_path){
+        return `<img src="${media.poster_path}" alt="" class="searchMediaImage"></img>`
     } else {
         return '<div class="theresNoImage">Sem imagem</div>'
     }
@@ -148,10 +96,10 @@ function fixImage(media){
 }
 
 function fixDescription(media){
-    if (media.overview) {
+    if (media.description) {
         MAX_DESC_LENGTH = window.innerWidth > 960 ? 200 : 100
         // description = media.overview.slice(3, -4)
-        description = media.overview
+        description = media.description
         if (description.length > MAX_DESC_LENGTH){
             description = description.slice(0, MAX_DESC_LENGTH)
             description = description.split(' ')
