@@ -1,5 +1,6 @@
-from .utils import db, UsersCollection, MediaCollection
+from utils import db, UsersCollection, MediaCollection, ReviewsCollection
 from pymongo.errors import PyMongoError
+from bson.objectid import ObjectId
 
 '''Special parameters to collections funcs
 $push: Insert at an array
@@ -29,9 +30,9 @@ class Database:
 
 
     @staticmethod
-    def registerReview(media_obj, review_obj):
+    def registerReview(review_obj):
         try:
-            MediaCollection.update_one(media_obj, {"$push": {"reviews": review_obj}})
+            ReviewsCollection.insert_one(review_obj)
         
         except:
             return Database.insertionError()
@@ -47,7 +48,7 @@ class Database:
     def searchUser(username=None, id=None): # Returns User dictionary
         try:
             if id:
-                res = UsersCollection.find_one({'_id': (id)})
+                res = UsersCollection.find_one({'_id': ObjectId(id)})
                 return res
 
             else:
@@ -63,7 +64,7 @@ class Database:
     def searchMedia(media_title=None, id=None): # Returns Media dictionary
         try:
             if id:
-                res = MediaCollection.find_one({'_id': (id)})
+                res = MediaCollection.find_one({'_id': ObjectId(id)})
                 return res
 
             else:
@@ -76,16 +77,35 @@ class Database:
 
 
     @staticmethod
-    def searchReview(review_comment=None, id=None): # return Media dictionary with review
+    def searchReview(review_comment=None, id=None, author_id=None): # return Media dictionary with review
         try:
             if id:
-                res = MediaCollection.find_one({'_id': (id)})
+                res = ReviewsCollection.find_one({'_id': ObjectId(id)})
+
+            elif author_id:
+                res = ReviewsCollection.find_one({'author_id': author_id})
+
+            else:
+                res = ReviewsCollection.find_one({'text': review_comment})
+            
+            return res
+        
+        except:
+            print('Erro ao buscar review!')
+            return False
+    
+
+    @staticmethod
+    def searchUserReviews(author_id=None, author_username=None):
+        try:
+            if author_id:
+                res = list(ReviewsCollection.find({'author_id': author_id}))
                 return res
 
             else:
-                res = MediaCollection.find_one({'reviews.comment': review_comment})
+                res = list(ReviewsCollection.find({'author_username': author_username}))
                 return res
-        
+
         except:
             print('Erro ao buscar review!')
             return False

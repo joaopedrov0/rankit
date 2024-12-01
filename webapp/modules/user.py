@@ -1,8 +1,11 @@
-from .dbElementsInterface import DBElemensInterface
+from dbElementsInterface import DBElemensInterface
+from database import Database
+from typing import Type
 import bcrypt
 
 class User:
-    def __init__(self, name, username, email, password, icon=0, banner=0, bio='', followers=[], following=[], watched={}, watchList={}, reviews=[], config={}):
+    def __init__(self, name, username, email, password, icon=0, banner=0, bio='', followers=None, following=None, watched={}, watchList={}, reviews=[], config={}, id=None):
+        self.id = id
         self.name = name # Nome qualquer
         self.username = username # Nome de usuário (único)
         self.icon = icon # Código do ícone
@@ -10,8 +13,8 @@ class User:
         self.bio = bio # Bio (até 200 char)
         self.email = email # Email
         self.password =  self.hashpw(password)# Senha...
-        self.followers = followers # Quem segue ele (lista de ids)
-        self.following = following # Quem ele segue (lista de ids)
+        self.followers = followers if followers is not None else [] # Quem segue ele (lista de ids)
+        self.following = following if following is not None else [] # Quem ele segue (lista de ids)
         self.watched = watched # Mídias que ele já assistiu, em ordem de preferência
         self.watchList = watchList # Mídias que pretende consumir // está assistindo {estado: pretende assistir | assistindo}
         self.reviews = reviews # Lista com códigos das reviews do usuário
@@ -37,6 +40,30 @@ class User:
 
     def hashpw(self, password):
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+
+    def follow_user(self, another_user: 'User'): # Agregação de Classes (Lazy evaluation)
+        self.get_following().append(another_user.get_id())
+        another_user.get_followers().append(self.get_id())
+
+
+    def get_reviews_array(self): # Transformar reviews de lista com IDs para lista com objetos
+        res = Database.searchUserReviews(author_username=self.get_username())
+        return res
+
+    def get_following_array(self):
+        res = []
+        for ele in self.get_following():
+            res += Database.searchUser(id=ele)
+        
+        return res
+
+    def get_followers_array(self):
+        res = []
+        for ele in self.get_followers():
+            res += Database.searchUser(id=ele)
+        
+        return res
 
 
     '''Getters e Setters'''
@@ -130,3 +157,27 @@ class User:
 
     def set_config(self, config):
         self.config = config
+    
+
+    def get_id(self):
+        return self.id
+    
+    def set_id(self, id):
+        self.id = id
+
+
+if __name__ == "__main__":
+    user1 = User(name="Nathan", username='nathanhgo', email="email@gmail.com", password="pass")
+    user2 = User(name="Nome",username='fabio_vivarelli', email="email@gmail.com", password="pass")
+
+    user1.follow_user(user2)
+
+    print('Username: ', user1.get_username())
+    print('Following: ', user1.get_following())
+    print('Followers: ', user1.get_followers())
+
+    print()
+
+    print('Username: ', user2.get_username())
+    print('Following: ', user2.get_following())
+    print('Followers: ', user2.get_followers())
