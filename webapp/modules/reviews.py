@@ -10,8 +10,8 @@ class Reviews:
             return True
         return False
 
-    def push(self, new_data): # Insere uma avaliação no começo da lista
-        new_node = Review(new_data)
+    def push(self, new_data, author_id): # Insere uma avaliação no começo da lista
+        new_node = Review(new_data, author_id)
 
         if self.isEmpty():
             self.head = new_node
@@ -21,9 +21,9 @@ class Reviews:
             new_node.next = self.head
             self.head = new_node
 
-    def pushArray(self, array): # Insere várias avaliações no começo da lista
+    def pushArray(self, array, author_id): # Insere várias avaliações no começo da lista
         for review in array:
-            self.push(review)
+            self.push(review, author_id)
     
     def print(self): # Imprime a lista de avaliações
         if self.isEmpty():
