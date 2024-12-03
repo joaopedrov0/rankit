@@ -530,3 +530,5 @@ def editProfile(request):
     
 def logout(request):
     response = redirect('home')
+    response.delete_cookie('sessionToken')
+    return response
