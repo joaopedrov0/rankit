@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import UsersCollection, User, LoginManager
+from .models import UsersCollection, User, LoginManager, Media, Review, MediaCollection, ReviewsCollection
 import os
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
@@ -61,7 +61,7 @@ def cadastro(request):
     
     elif request.method == 'POST':
         if UsersCollection.find_one({"username": "{}".format(request.POST.get('username'))}) == None:
-            pass # cria
+            # cria
             newUser = User(
                 request.POST.get('name'),
                 request.POST.get('username'),
@@ -70,9 +70,10 @@ def cadastro(request):
             )
             UsersCollection.insert_one(newUser.toDict())
         else :
-            pass # nao cria
+            # nao cria
+            return render(request, 'cadastro.html', {"error": True})
         print(request.POST.get('name'))
-        return HttpResponse("Success")
+        return redirect("login")
         # UsersCollection.insert_one()
     
 @csrf_exempt
@@ -183,6 +184,9 @@ def searchMedia(request, category, query):
     return res
 
 def media(request, category, id):
+    
+    
+    
     # Recuperando a mídia
     if category == "movie":
         mediaObj = TMDB.getByID("movie", id)
@@ -250,6 +254,13 @@ def media(request, category, id):
     else:
         print("Erro na categoria da requisição")
         return
+    
+    universalMediaId = "{}_{}".format(category, id)
+    
+    # Cria uma instância no banco se já não houver
+    if MediaCollection.find_one({"_id": "{}".format(universalMediaId)}) == None:
+            ## Cria uma instância no banco caso não exista
+            MediaCollection.insert_one(Media(id, category, mediaObj["title"], mediaObj["description"], mediaObj["score"], mediaObj["poster_path"], mediaObj["banner_path"], None, mediaObj["release_year"]).toDict())
 
     # Verificando se está logado
     accessToken = request.COOKIES.get('sessionToken')
@@ -287,7 +298,9 @@ def markAsSeen(request, mediaType, mediaID):
     if not request.method == "POST":
         response.headers = {"request-status":"Not POST method"}
         return response
-    print(request.POST)
+    
+    
+    
     if accessToken:
         userID = ''
         try:
@@ -300,12 +313,50 @@ def markAsSeen(request, mediaType, mediaID):
         
         universalMediaId = "{}_{}".format(mediaType, mediaID)
         
-        user["watched"][mediaType].append(universalMediaId)
-        UsersCollection.replace_one({"_id": user["_id"]}, user)
+        reviewQuality = request.POST.get('review-quality')
+        reviewText = request.POST.get('review-text')
+        
+        contentReview = {
+            "review-quality": reviewQuality if reviewQuality else None,
+            "review-text": reviewText if reviewText else None,
+        }
+    
+        # Adicionando nas reviews do usuário
+        user["watched"][mediaType][universalMediaId] = True if contentReview["review-quality"] or contentReview["review-text"] else False
         print("mediaType: {}".format(mediaType))
         print("mediaID: {}".format(mediaID))
         print("universalMediaId: {}".format(universalMediaId))
         response.headers = {"request-status": "Accepted"}
+        
+        # Adicionando na tabela de reviews
+        
+        print(contentReview)
+        
+        if contentReview["review-quality"] or contentReview["review-text"]:
+            user["reviewsNumber"] += 1
+            reviewID = Review.generateReviewId(user["username"], mediaType, mediaID)
+            review = Review(user["username"], mediaType, mediaID, contentReview)
+            if ReviewsCollection.find_one({"_id": reviewID}) == None:
+                # cria review
+                print(review)
+                print(review.toDict())
+                ReviewsCollection.insert_one(review.toDict())
+            else:
+                # atualiza review
+                ReviewsCollection.replace_one({"_id": reviewID}, review.toDict())
+        
+        # Atualizando perfil do usuário
+        UsersCollection.replace_one({"_id": user["_id"]}, user)
+        
+        # Adicionando nas reviews da mídia
+        
+        media = MediaCollection.find_one({"_id": universalMediaId})
+        media["viewsList"].append(user["username"])
+        media["viewsNumber"] = len(media["viewsList"])
+        MediaCollection.replace_one({"_id": universalMediaId}, media)
+        
+        
+        
         return response
     else:
         response.headers["request-status"] = "Without Token"

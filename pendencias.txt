@@ -28,3 +28,6 @@ implementar no back a parte de marcar cmo visto
 mostrar na pagina da obra as avaliações não-vazias
 
 mostrar no perfil do usuario as avaliações dele
+
+
+adicionar edição de review

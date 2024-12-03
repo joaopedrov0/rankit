@@ -48,20 +48,22 @@ class User():
                  followers=[], 
                  following=[], 
                  watched={
-                    "movie": [],
-                    "serie": [],
-                    "anime": [],
-                    "game": [],
-                    "book": []
-                }, 
+                    "movie": {},
+                    "serie": {},
+                    "anime": {},
+                    "game": {},
+                    "book": {}
+                },
+                 watchedNumber=0,
                  watchList={
                     "movie": [],
                     "serie": [],
                     "anime": [],
                     "game": [],
                     "book": []
-                }, 
-                 reviews=[],
+                },
+                 watchListSize=0,
+                 reviewsNumber=0,
                  config={}):
         self.name = name # Nome qualquer
         self.username = username # Nome de usuário (único)
@@ -71,13 +73,15 @@ class User():
         self.email = email # Email
         self.password =  self.hashpw(password)# Senha...
         self.followers = followers # Quem segue ele (lista de ids)
+        self.followersCount = len(followers)
         self.following = following # Quem ele segue (lista de ids)
+        self.followingCount = len(following)
         self.watched = watched # Mídias que ele já assistiu, em ordem de preferência
-        self.watchedNumber = 0
+        self.watchedNumber = watchedNumber
         self.watchList = watchList # Mídias que pretende consumir // está assistindo {estado: pretende assistir | assistindo}
-        self.watchListSize = 0
-        self.reviews = reviews # Lista com códigos das reviews do usuário
-        self.reviewsNumber = 0
+        self.watchListSize = watchListSize
+        # self.reviews = reviews # Lista com códigos das reviews do usuário
+        self.reviewsNumber = reviewsNumber
         self.config = config # Configurações de personalização do usuário
         
     def toDict(self):
@@ -91,12 +95,13 @@ class User():
             "email": self.email,
             "password": self.password,
             "followers": self.followers,
+            "followersCount": self.followersCount,
             "following": self.following,
+            "followingCount": self.followingCount,
             "watched": self.watched,
             "watchedNumber": self.watchedNumber,
             "watchList": self.watchList,
             "watchListSize": self.watchListSize,
-            "reviews": self.reviews,
             "reviewsNumber": self.reviewsNumber,
             "config": self.config
         }
@@ -105,8 +110,13 @@ class User():
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     
 class Media():
-    def __init__(self, api, api_id, category, name, description, score, posterPath, bannerPath, originCountry, releaseDate, viewsList=[], reviews={}):
-        self.api = api
+    
+    @staticmethod
+    def generateMediaId(category, api_id):
+        return "{}_{}".format(category, api_id)
+    
+    def __init__(self, api_id, category, name, description, score, posterPath, bannerPath, originCountry, releaseDate, viewsList=[]):
+        self._id = Media.generateMediaId(category, api_id)
         self.api_id = api_id
         self.category = category
         self.name = name
@@ -116,15 +126,15 @@ class Media():
         self.bannerPath = bannerPath
         self.originCountry = originCountry # País de origem
         self.releaseDate = releaseDate # Data de lançamento
-        self.viewsList = viewsList
+        self.viewsList = viewsList # Lista de usuários que viram
         self.viewsNumber = len(viewsList)
-        self.reviews = reviews # {"owner_id": review_object ou review_id}
+        # self.reviews = reviews # {"owner_id": review_object ou review_id}
         
     def toDict(self):
         """Converte a obra pra um dicionário (pra poder colocar no db 😉)"""
 
         return {
-            "api": self.api,
+            "_id": self._id,
             "api_id": self.api_id,
             "category": self.category,
             "name": self.name,
@@ -136,7 +146,26 @@ class Media():
             "releaseDate": self.releaseDate,
             "viewsList": self.viewsList,
             "viewsNumber": self.viewsNumber,
-            "reviews": self.reviews,
+        }
+        
+class Review:
+    
+    @staticmethod
+    def generateReviewId(origin, category, mediaId):
+        return "{}_{}_{}".format(origin, category, mediaId)
+    
+    def __init__(self, user_origin, category, mediaId, content={}):
+        self._id = Review.generateReviewId(user_origin, category, mediaId)
+        self.user_origin = user_origin
+        self.mediaTarget = Media.generateMediaId(category, mediaId)
+        self.content = content
+        
+    def toDict(self):
+        return {
+            "_id": self._id,
+            "user_origin": self.user_origin,
+            "mediaTarget": self.mediaTarget,
+            "content": self.content
         }
     
 

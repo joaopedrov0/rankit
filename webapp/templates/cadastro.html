@@ -40,7 +40,9 @@
                     <label for="password-confirm">Confirmar senha</label>
                     <input type="text" id="password-confirm" name="confirm-password" placeholder="Confirme sua senha"/>
                 </div>
-                
+                {% if error %}
+                    <span class="wrong">Já existe um usuário com este nome de usuário.</span>
+                {% endif %}
                 
                 <button type="submit">Cadastrar</button>
             </form>
