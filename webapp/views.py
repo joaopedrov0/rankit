@@ -521,3 +521,12 @@ def editProfile(request):
     else:
 
         return render(request, 'not-found.html')
+    
+    
+    
+    
+    
+    
+    
+def logout(request):
+    response = redirect('home')

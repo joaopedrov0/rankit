@@ -1,0 +1,37 @@
+.floating-menu{
+	background-color: transparent;
+	color: var(--default-text-color);
+	width: 200px;
+	display: flex;
+	flex-direction: column;
+	padding:7px;
+	margin: 5px;
+	position: absolute;
+	top:5px;
+	right:5px;
+}
+
+.floating-menu > * {
+    padding: 10px;
+	font-size: 1.1rem;
+	background-color: var(--default-grey-bg);
+	width: 100%;
+	text-align: end;
+	transition: all 500ms ease calc(var(--i) * 100ms);
+    z-index: 9;
+}
+
+.floating-menu > *:hover{
+    background-color: var(--default-grey-bg-light);
+}
+
+.floating-menu > *:first-child{
+	border-radius:7px 7px 0 0;
+}
+.floating-menu > *:last-child{
+	border-radius: 0 0 7px 7px
+}
+
+.floating-menu.floating-menu-closed > *{
+	transform: translateX(50%) rotateY(90deg);
+}

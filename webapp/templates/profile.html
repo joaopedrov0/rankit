@@ -13,6 +13,14 @@
     <link rel="stylesheet" href="/static/style/reviews.css">
 </head>
 <body>
+    <div class="floating-menu floating-menu-closed">
+        <span style="--i:1" onclick="toggleMenu()"><span class="material-symbols-outlined filled">close</span></span>
+        {% if currentProfile.logged %}
+        <a href="/editProfile" style="--i:2">Editar perfil</a>
+        <a href="/logout" style="--i:3">Log Out</a>
+        {% endif %}
+        <a href="/search" style="--i:4">Estou com sorte</a>
+    </div>
     <div class="header-container">
         <header>
             <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
@@ -28,7 +36,7 @@
                 {% if currentProfile.logged %}
                     <a class="profile-btn" href="/profile/{{currentProfile.user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{currentProfile.user.icon}}.png"/></a>
                 {% endif %}
-                <span class="menu-btn material-symbols-outlined">more_vert</span>
+                <span class="menu-btn material-symbols-outlined" onclick="toggleMenu()">more_vert</span>
                 
             </div>
         </header>
@@ -120,5 +128,6 @@
             
         </div>
     </main>
+    <script src="/static/javascript/floatingMenu.js"></script>
 </body>
 </html>
