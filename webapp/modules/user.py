@@ -1,5 +1,5 @@
-from dbElementsInterface import DBElemensInterface
-from database import Database
+from .dbElementsInterface import DBElemensInterface
+from .database import Database
 from typing import Type
 import bcrypt
 

@@ -5,9 +5,10 @@ name = "pypi"
 
 [packages]
 pymongo = "*"
-bcrypt = "*"
 django = "*"
 google-api-python-client = "*"
+requests = "*"
+bcrypt = "*"
 
 [dev-packages]
 

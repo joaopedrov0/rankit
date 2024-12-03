@@ -183,9 +183,73 @@ def searchMedia(request, category, query):
     return res
 
 def media(request, category, id):
-
     # Recuperando a mídia
-    # ! Pendente...
+    if category == "movie":
+        mediaObj = TMDB.getByID("movie", id)
+        temp_size = str(mediaObj["runtime"]) + 'm' if mediaObj["runtime"] < 60 else (str(mediaObj["runtime"]//60) + 'h' + str(mediaObj["runtime"]%60) + 'm')
+        print(mediaObj)
+        mediaObj = MediaModelPage.build(
+                    "movie",
+                    mediaObj["id"],
+                    mediaObj["title"],
+                    mediaObj["overview"],
+                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
+                    mediaObj["vote_average"],
+                    str(mediaObj["release_date"])[0:4:1],
+                    "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
+                    mediaObj["genres"],
+                    {
+                        "time": temp_size
+                    }
+                )
+    elif category == "serie":
+        mediaObj = TMDB.getByID("tv", id)
+        temp_episode = 0
+        for season in mediaObj["seasons"]:
+            temp_episode += season["episode_count"]
+        mediaObj = MediaModelPage.build(
+                    "serie",
+                    mediaObj["id"],
+                    mediaObj["name"],
+                    mediaObj["overview"],
+                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
+                    mediaObj["vote_average"],
+                    str(mediaObj["first_air_date"])[0:4:1],
+                    "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
+                    mediaObj["genres"],
+                    {
+                        "seasons": len(mediaObj["seasons"]),
+                        "episode_count": temp_episode
+                    },
+                )
+    elif category == "anime":
+        mediaObj = TMDB.getByID("tv", id)
+        temp_episode = 0
+        for season in mediaObj["seasons"]:
+            temp_episode += season["episode_count"]
+        mediaObj = MediaModelPage.build(
+                    "anime",
+                    mediaObj["id"],
+                    mediaObj["name"],
+                    mediaObj["overview"],
+                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
+                    mediaObj["vote_average"],
+                    str(mediaObj["first_air_date"])[0:4:1],
+                    "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
+                    mediaObj["genres"],
+                    {
+                        "seasons": len(mediaObj["seasons"]),
+                        "episode_count": temp_episode
+                    }
+                    ,
+                )
+    elif category == "game":
+        pass
+    elif category == "book":
+        pass
+    else:
+        print("Erro na categoria da requisição")
+        return
 
     # Verificando se está logado
     accessToken = request.COOKIES.get('sessionToken')
@@ -194,12 +258,16 @@ def media(request, category, id):
         try:
             userID = LOGIN_MANAGER.tokenList[accessToken]
         except:
-            return render(request, 'media.html', {"logged":False})
+            return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False})
         
         user = UsersCollection.find_one({"_id": userID})
-        return render(request, 'media.html', {"logged":True, "user": user})
+        
+        universalMediaId = "{}_{}".format(category, id)
+        
+        seen = True if universalMediaId in user["watched"][category] else False
+        return render(request, 'media.html', {"logged":True, "user": user, "seen": seen,"media": mediaObj})
     else:
-        return render(request, 'media.html', {"logged":False})
+        return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False})
 
 def notfound(request):
     return render(request, 'not-found.html')
@@ -226,16 +294,22 @@ def markAsSeen(request, mediaType, mediaID):
             userID = LOGIN_MANAGER.tokenList[accessToken]
         except:
             response.headers = {"request-status": "Invalid Token"}
-            return response
+            return redirect(login)
         
         user = UsersCollection.find_one({"_id": userID})
+        
+        universalMediaId = "{}_{}".format(mediaType, mediaID)
+        
+        user["watched"][mediaType].append(universalMediaId)
+        UsersCollection.replace_one({"_id": user["_id"]}, user)
         print("mediaType: {}".format(mediaType))
         print("mediaID: {}".format(mediaID))
+        print("universalMediaId: {}".format(universalMediaId))
         response.headers = {"request-status": "Accepted"}
         return response
     else:
         response.headers["request-status"] = "Without Token"
-        return response
+        return redirect(login)
     
 
 def editProfile(request):

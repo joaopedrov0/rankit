@@ -13,7 +13,7 @@ header .menu{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url(https://image.tmdb.org/t/p/w1920_and_h1080_bestv2/gmECX1DvFgdUPjtio2zaL8BPYPu.jpg);
+    /* background-image: url(https://image.tmdb.org/t/p/w1920_and_h1080_bestv2/gmECX1DvFgdUPjtio2zaL8BPYPu.jpg); */
     background-repeat: no-repeat;
     background-position: center center;
     background-size: clamp(300px, 1260px, 80vw);
@@ -142,6 +142,10 @@ img.poster{
 
 .episodes::before{
     content: 'Episódios: ';
+}
+
+.size .time::before{
+    content: 'Duração: ';
 }
 
 .interact>*{

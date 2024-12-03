@@ -1,4 +1,4 @@
-from utils import db, UsersCollection, MediaCollection, ReviewsCollection
+from .utils import db, UsersCollection, MediaCollection, ReviewsCollection
 from pymongo.errors import PyMongoError
 from bson.objectid import ObjectId
 

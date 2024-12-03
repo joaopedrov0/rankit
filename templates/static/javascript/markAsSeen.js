@@ -17,7 +17,7 @@ formHTML.addEventListener('submit', (e) => {
     watchedHTML.innerHTML = "Visto <span class='material-symbols-outlined'>done</span>"
 })
 
-document.querySelector('form').action = `markAsSeen/${MEDIA_CATEGORY}/${MEDIA_ID}`
+document.querySelector('form').action = `${location.origin}/markAsSeen/${MEDIA_CATEGORY}/${MEDIA_ID}`
 
 function toggleFormModal(){
     const model = document.querySelector('.modal-blocker')

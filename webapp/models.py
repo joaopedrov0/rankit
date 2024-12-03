@@ -2,9 +2,9 @@ from pymongo import MongoClient
 import bcrypt
 import secrets
 
-import webapp.modules as modules # Nossas classes estão aqui
-modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
-modules.DBElemensInterface.register(modules.Media) # mesma coisa com media
+# import webapp.modules as modules # Nossas classes estão aqui
+# modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
+# modules.DBElemensInterface.register(modules.Media) # mesma coisa com media
 
 '''AVISO:
 - Criei uma pasta modules e copiei todas as classes abaixo nela, além de classes que eu havia criado no outro repositório.
@@ -37,7 +37,32 @@ SessionsCollection = db.sessions
 
 class User():
     
-    def __init__(self, name, username, email, password, icon=0, banner=0, bio='', followers=[], following=[], watched={}, watchList={}, reviews=[], config={}):
+    def __init__(self, 
+                 name, 
+                 username, 
+                 email, 
+                 password, 
+                 icon=0, 
+                 banner=0, 
+                 bio='', 
+                 followers=[], 
+                 following=[], 
+                 watched={
+                    "movie": [],
+                    "serie": [],
+                    "anime": [],
+                    "game": [],
+                    "book": []
+                }, 
+                 watchList={
+                    "movie": [],
+                    "serie": [],
+                    "anime": [],
+                    "game": [],
+                    "book": []
+                }, 
+                 reviews=[],
+                 config={}):
         self.name = name # Nome qualquer
         self.username = username # Nome de usuário (único)
         self.icon = icon # Código do ícone
@@ -48,8 +73,11 @@ class User():
         self.followers = followers # Quem segue ele (lista de ids)
         self.following = following # Quem ele segue (lista de ids)
         self.watched = watched # Mídias que ele já assistiu, em ordem de preferência
+        self.watchedNumber = 0
         self.watchList = watchList # Mídias que pretende consumir // está assistindo {estado: pretende assistir | assistindo}
+        self.watchListSize = 0
         self.reviews = reviews # Lista com códigos das reviews do usuário
+        self.reviewsNumber = 0
         self.config = config # Configurações de personalização do usuário
         
     def toDict(self):
@@ -65,8 +93,11 @@ class User():
             "followers": self.followers,
             "following": self.following,
             "watched": self.watched,
+            "watchedNumber": self.watchedNumber,
             "watchList": self.watchList,
+            "watchListSize": self.watchListSize,
             "reviews": self.reviews,
+            "reviewsNumber": self.reviewsNumber,
             "config": self.config
         }
 

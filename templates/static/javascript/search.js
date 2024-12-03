@@ -54,7 +54,7 @@ function renderResult(res, category){
             media = res[i]
             empty = false
             resultHTML += `
-            <a href="/media?id=${media.id}&category=${media.category}" class="resultItem">
+            <a href="/media/${media.category}/${media.id}" class="resultItem">
                 ${fixImage(media)}
                 <div class="searchMediaText">
                     <div class="mediaHeader">
@@ -78,8 +78,8 @@ function renderResult(res, category){
 
 
 function fixDate(media){
-    if (media.release_date != null){
-        return `(${media.release_date.slice(0, 4)})`
+    if (media.release_year != null){
+        return `(${media.release_year})`
     }
     return ''
 }
