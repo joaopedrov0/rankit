@@ -1,0 +1,98 @@
+/* REVIEWS */
+
+.review-box{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 5px 0;
+    padding: 10px 0;
+    border-top: 1px solid rgba(200, 200, 200, 0.2);
+}
+
+.review-header{
+    display: flex;
+    flex-direction: row;
+    font-size: 1.3rem;
+}
+.review-header > * {
+    display: flex;
+    align-items: center;
+}
+.review-name{
+    margin: 0 5px;
+}
+.review-username{
+    font-size: 1rem;
+    opacity: 0.7;
+}
+.review-username::before{
+    content: '@';
+}
+.review-body{
+    display: flex;
+    flex-direction: column;
+    margin-left: 45px;
+}
+.review-body .review-text{
+    padding: 3px 0;
+}
+.review-box img.profile-icon{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* reviewTranslator = {
+    "0":"undefined",
+    "1":"Péssimo",
+    "2":"Muito ruim",
+    "3":"Ruim",
+    "4":"Mediano",
+    "5":"Bom",
+    "6":"Muito bom",
+    "7":"Perfeito"
+} */
+
+.review-body span{
+    padding: 3px;
+    border-radius: 3px;
+}
+
+span.quality-1{
+    background-color: rgb(128, 13, 13);
+}
+span.quality-2{
+    background-color: rgb(180, 17, 17);
+}
+span.quality-3{
+    background-color: rgb(255, 0, 0);
+}
+span.quality-4{
+    color: rgb(255, 255, 255);
+    background-color: black;
+}
+span.quality-5{
+    background-color: rgb(13, 128, 13);
+}
+span.quality-6{
+    background-color: rgb(32, 128, 13);
+}
+span.quality-7{
+    background-color: rgb(168, 157, 0);
+}
+@media screen and (max-width: 960px){
+    .container{
+        /* position: absolute; */
+        padding: 0 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+    }
+
+    .reviews-area{
+        width: 100%;
+        position: absolute;
+    }
+}

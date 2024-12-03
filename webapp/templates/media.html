@@ -10,6 +10,7 @@
     <!-- Importing Stylesheets -->
     <link rel="stylesheet" href="/static/style/base.css">
     <link rel="stylesheet" href="/static/style/media.css">
+    <link rel="stylesheet" href="/static/style/reviews.css">
 
 </head>
 <body>
@@ -55,7 +56,7 @@
                     <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
                     <a href="/not-found" class="top">Top Rated</a>
                     {% if logged %}
-                        <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                        <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"/></a>
                     {% endif %}
                     <span class="menu-btn material-symbols-outlined">more_vert</span>
                 
@@ -78,7 +79,7 @@
                             <span>{{genre.name}}</span>
                         {% endfor %}
                      </div>
-                     <div class="description minimized">{{media.description}}</div>
+                     <div class="description mobile-hidden">{{media.description}}</div>
                  </div>
                  <div class="interact">
                     <!-- os botao pra marcar como visto -->
@@ -97,11 +98,54 @@
                      <div class="btn watched">Visto <span class="material-symbols-outlined">done</span></div>
                      {% else %}
                      <div class="btn watched" onclick="toggleFormModal()">Marcar como visto</div>
-                     <div class="btn watchList">Adicionar na watchlist</div>
+                     {% comment %} <div class="btn watchList">Adicionar na watchlist</div> {% endcomment %}
                      {% endif %}
                  </div>
+                 <div class="description mobile-description mobile-only">{{media.description}}</div>
             </div>
            
+            <div class="reviews-area">
+                {% if reviews.self %}
+                    <h2>Sua avaliação</h2>
+                    <div class="review-box">
+                        <a class="review-header" href="/profile/{{reviews.self.username}}">
+                            <img class="profile-icon" src="/static/img/icon/{{reviews.self.icon}}.png"/> <div class="review-name">{{reviews.self.name}}</div> <div class="review-username">{{reviews.self.username}}</div>
+                        </a>
+                        <div class="review-body">
+                            {% if reviews.self.qualityText %}
+                            <div class="review-quality"><span class="quality-{{reviews.self.quality}}">{{reviews.self.qualityText}}</span></div>
+                            {% endif %}
+                            {% if reviews.self.text %}
+                            <div class="review-text">{{reviews.self.text}}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if reviews.reviewList %}
+                <h2>Todas as avaliações</h2>
+
+                    {% for review in reviews.reviewList %}
+                        <div class="review-box">
+                            <a class="review-header" href="/profile/{{review.username}}">
+                                <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/> <div class="review-name">{{review.name}}</div> <div class="review-username">{{review.username}}</div>
+                            </a>
+                            <div class="review-body">
+                                {% if review.quality %}
+                                <div class="review-quality"><span class="quality-{{review.quality}}">{{review.qualityText}}</span></div>
+                                {% endif %}
+                                {% if review.text %}
+                                <div class="review-text">{{review.text}}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+                    Nenhuma avaliação encontrada.
+                {% endif %}
+
+            </div>
         </div>
     </main>
     {% comment %} <main>

@@ -33,6 +33,45 @@ def profile(request, username):
     currentProfile = UsersCollection.find_one({"username": username})
     print(accessToken)
     
+    reviews = list(ReviewsCollection.find({"user_origin": currentProfile["username"]}))
+    reviews = reviews if len(reviews) > 0 else None
+    
+    watchedMedia = list(MediaCollection.find({"viewsList": {"$all": [currentProfile["username"]]}}))
+    
+    if reviews:
+        reviewList = []
+        
+        reviewTranslator = {
+            "0":"undefined",
+            "1":"Péssimo",
+            "2":"Muito ruim",
+            "3":"Ruim",
+            "4":"Mediano",
+            "5":"Bom",
+            "6":"Muito bom",
+            "7":"Perfeito"
+        }
+        
+        for rev in reviews:
+            media_id = rev["mediaTarget"]
+            currentMedia = None
+            for med in watchedMedia:
+                if med["_id"] == media_id:
+                    currentMedia = med
+                    break
+            reviewList.append({
+                "icon": currentProfile["icon"],
+                "name": currentProfile["name"],
+                "username": currentProfile["username"],
+                "quality": rev["content"]["review-quality"],
+                "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
+                "text": rev["content"]["review-text"],
+                "target_name": currentMedia["name"],
+                "target_category": currentMedia["category"],
+                "target_api_id": currentMedia["api_id"]
+            })
+        reviews = [*reviewList]
+    
     selfProfile = False
     if accessToken in LOGIN_MANAGER.tokenList: # SE ESTIVER LOGADO
         clientID = LOGIN_MANAGER.tokenList[accessToken]
@@ -45,7 +84,7 @@ def profile(request, username):
         currentProfile["selfProfile"] = selfProfile
         currentProfile["logged"] = accessToken in LOGIN_MANAGER.tokenList
         print(currentProfile)
-        return render(request, 'profile.html', currentProfile) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
     else:
 
@@ -137,7 +176,7 @@ def searchMedia(request, category, query):
                     result["overview"],
                     "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
                     result["vote_average"],
-                    result["release_date"]
+                    str(result["release_date"])[0:4:1]
                 )
             )
     elif category == "serie":
@@ -153,7 +192,7 @@ def searchMedia(request, category, query):
                     result["overview"],
                     "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
                     result["vote_average"],
-                    result["first_air_date"]
+                    str(result["first_air_date"])[0:4:1]
                 )
             )
     elif category == "anime":
@@ -168,7 +207,7 @@ def searchMedia(request, category, query):
                     result["overview"],
                     "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
                     result["vote_average"],
-                    result["first_air_date"]
+                    str(result["first_air_date"])[0:4:1]
                 )
             )
     elif category == "game":
@@ -262,6 +301,48 @@ def media(request, category, id):
             ## Cria uma instância no banco caso não exista
             MediaCollection.insert_one(Media(id, category, mediaObj["title"], mediaObj["description"], mediaObj["score"], mediaObj["poster_path"], mediaObj["banner_path"], None, mediaObj["release_year"]).toDict())
 
+    # Gerando lista de reviews
+    reviewList = []
+    reviewTranslator = {
+        "0":"undefined",
+        "1":"Péssimo",
+        "2":"Muito ruim",
+        "3":"Ruim",
+        "4":"Mediano",
+        "5":"Bom",
+        "6":"Muito bom",
+        "7":"Perfeito"
+    }
+    otherReviews = list(ReviewsCollection.find({"mediaTarget": universalMediaId}))
+    if len(otherReviews) == 0:
+        otherReviews = None
+    else:
+        
+        usersThatReview = list(UsersCollection.find({"watched.{}.{}".format(category, universalMediaId): True}))
+        print("USUÁRIO DESLOGADO:")
+        print(not request.COOKIES.get('sessionToken') or not LOGIN_MANAGER.isLoggedToken(request.COOKIES.get('sessionToken')))
+        if not request.COOKIES.get('sessionToken') or not LOGIN_MANAGER.isLoggedToken(request.COOKIES.get('sessionToken')):
+            reviewList = []
+                
+            for rev in otherReviews:
+                currentUser = None
+                for u in usersThatReview:
+                    if rev["user_origin"] == u["username"]:
+                        currentUser = u
+                        break
+                    continue
+                if not currentUser:
+                    continue
+                reviewList.append({
+                    "icon": currentUser["icon"],
+                    "name": currentUser["name"],
+                    "username": currentUser["username"],
+                    "quality": rev["content"]["review-quality"],
+                    "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
+                    "text": rev["content"]["review-text"]
+                })
+
+
     # Verificando se está logado
     accessToken = request.COOKIES.get('sessionToken')
     if accessToken:
@@ -269,16 +350,64 @@ def media(request, category, id):
         try:
             userID = LOGIN_MANAGER.tokenList[accessToken]
         except:
-            return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False})
+            return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False, "reviews":{
+            "reviewList": reviewList if reviewList else None
+        }})
         
         user = UsersCollection.find_one({"_id": userID})
         
         universalMediaId = "{}_{}".format(category, id)
         
         seen = True if universalMediaId in user["watched"][category] else False
-        return render(request, 'media.html', {"logged":True, "user": user, "seen": seen,"media": mediaObj})
+        
+        
+        selfReview = None
+            
+        
+        
+        
+        if otherReviews:
+            for rev in otherReviews:
+                currentUser = None
+                for u in usersThatReview:
+                    if u["username"] == user["username"]:
+                        currentUser = None
+                        selfReview = {
+                            "icon": u["icon"],
+                            "name": u["name"],
+                            "username": u["username"],
+                            "quality": rev["content"]["review-quality"],
+                            "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
+                            "text": rev["content"]["review-text"]
+                        }
+                        continue
+                    if rev["user_origin"] == u["username"]:
+                        currentUser = u
+                        break
+                    continue
+                if not currentUser:
+                    continue
+                reviewList.append({
+                    "icon": currentUser["icon"],
+                    "name": currentUser["name"],
+                    "username": currentUser["username"],
+                    "quality": rev["content"]["review-quality"],
+                    "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
+                    "text": rev["content"]["review-text"]
+                })
+        
+        
+        return render(request, 'media.html', {"logged":True, "user": user, "seen": seen,"media": mediaObj, "reviews":{
+            "self": selfReview,
+            # "friends": friendsReview,
+            "reviewList": reviewList,
+        }})
     else:
-        return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False})
+        
+        
+        return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False, "reviews":{
+            "reviewList": reviewList
+        }})
 
 def notfound(request):
     return render(request, 'not-found.html')

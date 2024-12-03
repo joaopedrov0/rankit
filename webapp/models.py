@@ -215,13 +215,16 @@ class LoginManager:
 
     def validateToken(self, token, origin):
         #return bcrypt.checkpw(origin, token) Talvez isso resolva a linha abaixo
-        return checkpw(origin, token)
+        return bcrypt.checkpw(origin, token)
     
     def getToken(self):
         return secrets.token_urlsafe(32)
 
     def isLogged(self, id):
         return id in list(self.tokenList.values())
+    
+    def isLoggedToken(self, token):
+        return token in list(self.tokenList.keys())
 
 
 # def getSessionData():

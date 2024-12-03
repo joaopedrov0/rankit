@@ -5,11 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ name }} - rank.it</title>
+    <title>{{ currentProfile.name }} - rank.it</title>
 
     <!-- Importing Stylesheets -->
     <link rel="stylesheet" href="/static/style/base.css">
     <link rel="stylesheet" href="/static/style/profile.css">
+    <link rel="stylesheet" href="/static/style/reviews.css">
 </head>
 <body>
     <div class="header-container">
@@ -17,32 +18,35 @@
             <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
             <div class="menu">
                 <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
-                {% if not logged %}
+                {% if not currentProfile.logged %}
                     <a href="/login" class="login">Login</a>
                     <a href="/cadastro" class="cadastro">Cadastro</a>
                 {% endif %}
                 <a href="/search" class="search mobile-hidden">Buscar</a>
                 <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
                 <a href="/not-found" class="top">Top Rated</a>
-                {% if logged %}
-                    <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                {% if currentProfile.logged %}
+                    <a class="profile-btn" href="/profile/{{currentProfile.user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{currentProfile.user.icon}}.png"/></a>
                 {% endif %}
                 <span class="menu-btn material-symbols-outlined">more_vert</span>
                 
             </div>
         </header>
     </div>
-    <div class="banner" style="background-image: url({% static 'img/banner/'%}{{banner}}.{{'png'}})">
+    <div class="banner" style="background-image: url({% static 'img/banner/'%}{{currentProfile.banner}}.{{'png'}})">
         <div class="user">
-            <img src="{% static 'img/icon/'%}{{icon}}.{{'png'}}" alt="user icon" class="icon">
+            <img src="{% static 'img/icon/'%}{{currentProfile.icon}}.{{'png'}}" alt="user icon" class="icon">
             <div class="identify">
-                <div class="name">{{ name }}</div>
-                <div class="username">{{ username }}</div>
+                <div class="name">{{ currentProfile.name }}</div>
+                <div class="username">{{ currentProfile.username }}</div>
                 <div class="followArea">
-                    <div class="followers">{{ followers|length }}</div>
-                    <div class="following">{{ following|length }}</div>
+                    <div class="followers">{{ currentProfile.followersCount }}</div>
+                    <div class="following">{{ currentProfile.followingCount }}</div> 
+                    {% comment "" %}
+                    antes usava followers|length
+                    {% endcomment %}
                 </div>
-                {% if selfProfile %}
+                {% if currentProfile.selfProfile %}
                 <a href="/editProfile" class="editBtn">Editar <span class="material-symbols-outlined filled">edit</span></a>
                 {% else %}
                 <a href="/follow" class="followBtn">Follow</a>
@@ -50,16 +54,16 @@
             </div>
         </div>
         <div class="bannerDesc mobile-hidden">
-            Jujutsu Kaisen
+            {% comment %} futuramente vai ter o nome do banner aq {% endcomment %}
         </div>
     </div>
     <main>
         <div class="container">
             <div class="col6">
-                {% if bio %}
+                {% if currentProfile.bio %}
 
                 <div class="bio">
-                    {{ bio }}
+                    {{ currentProfile.bio }}
                 </div>
                 
                 {% endif %}
@@ -67,31 +71,30 @@
                 {% if reviews %}
                 <div class="reviews">
                     <h2>Reviews</h2>
-                    <div class="reviewCard">
-                        <div class="reviewCard-header">
-                            <div class="mediaName">Jujutsu Kaisen</div>
-                            <div class="evaluation">A A A A A</div>
-                        </div>
-                        <div class="reviewCard-body">
-                            <div class="reviewDescription">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel itaque eum quo non quaerat, repellat voluptates repellendus temporibus provident est maxime distinctio dignissimos esse quos ut voluptate, rerum ipsam molestiae?</div>
-                        </div>
-    
-                    </div>
-                    <div class="reviewCard">
-                        <div class="reviewCard-header">
-                            <div class="mediaName">Sousou No Frieren</div>
-                            <div class="evaluation">A A A A A</div>
-                        </div>
-                        <div class="reviewCard-body">
-                            <div class="reviewDescription">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel itaque eum quo non quaerat, repellat voluptates repellendus temporibus provident est maxime distinctio dignissimos esse quos ut voluptate, rerum ipsam molestiae?</div>
-                        </div>
+                    {% for review in reviews %}
+                        <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">{{review.target_name}}</a>
+                        <a class="review-box" href="/media/{{review.target_category}}/{{review.target_api_id}}">
+                            <div class="review-header">
+                                <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/> <div class="review-name">{{review.name}}</div> <div class="review-username">{{review.username}}</div>
+                            </div>
+                            <div class="review-body">
+                                {% if review.quality %}
+                                <div class="review-quality"><span class="quality-{{review.quality}}">{{review.qualityText}}</span></div>
+                                {% endif %}
+                                {% if review.text %}
+                                <div class="review-text">{{review.text}}</div>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+
     
                     </div>
                 </div>
                 {% endif %}
             </div>
             
-            <div class="col6">
+            {% comment %} <div class="col6">
                 <div class="stats">
                     {% if watchlist %}
                     <div class="preferences">
@@ -113,7 +116,7 @@
                     
                     <div class="currentViewing"></div>
                 </div>
-            </div>
+            </div> {% endcomment %}
             
         </div>
     </main>

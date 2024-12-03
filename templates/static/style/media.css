@@ -1,3 +1,5 @@
+
+
 .header-container{
     position: absolute;
     background-color: transparent;
@@ -253,16 +255,18 @@ form fieldset select, form fieldset select option{
 
 
 
+
 @media screen and (max-width: 960px){
     .container{
-        position: absolute;
-        padding: 7px;
+        /* position: absolute; */
+        padding: 0 15px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         width: 100vw;
     }
+
     .info{
         display: flex;
         flex-wrap: wrap;
@@ -277,8 +281,10 @@ form fieldset select, form fieldset select option{
         align-items: center;
         text-align: center;
         width: 100%;
+        margin: 10px 0;
 
     }
+
 
     .info .interact > *{
         margin: 0;
@@ -336,4 +342,6 @@ form fieldset select, form fieldset select option{
         align-self: center;
     }
 
+
+    
 }
