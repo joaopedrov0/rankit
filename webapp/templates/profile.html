@@ -102,29 +102,17 @@
                 {% endif %}
             </div>
             
-            {% comment %} <div class="col6">
+            <div class="col6">
                 <div class="stats">
-                    {% if watchlist %}
-                    <div class="preferences">
-                        <div class="favorite favorite-anime">
-                            <div class="favorite-text-area">
-                                <h3>Jujutsu Kaisen</h3>
-                                <p>Favorite Anime</p>
-                            </div>
-                            
-                        </div>
-                        <div class="favorite favorite-character">
-                            <div class="favorite-text-area">
-                                <h3>Frieren</h3>
-                                <p>Favorite Character</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
+                    {% comment %} <div class="preferences">
+                        
+                    </div> {% endcomment %}
                     
-                    <div class="currentViewing"></div>
+                    {% if diary %}
+                    <div class="diary"></div>
+                    {% endif %}
                 </div>
-            </div> {% endcomment %}
+            </div>
             
         </div>
     </main>

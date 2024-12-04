@@ -33,3 +33,5 @@ mostrar no perfil do usuario as avaliações dele
 adicionar edição de review
 
 watchlist
+
+pagina de creditos
