@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import bcrypt
 import secrets
+from datetime import date, datetime
 
 # import webapp.modules as modules # Nossas classes estão aqui
 # modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
@@ -72,6 +73,8 @@ class User():
                     "game": [],
                     "book": []
                  },
+                 realDate=None,
+                 strDate=None,
                  config={}):
         self.name = name # Nome qualquer
         self.username = username # Nome de usuário (único)
@@ -93,6 +96,8 @@ class User():
         self.diary = diary
         self.favorites = favorites
         self.config = config # Configurações de personalização do usuário
+        self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
         
     def toDict(self):
         """Converte o usuário pra um dicionário (pra poder colocar no db 😉)"""
@@ -115,7 +120,10 @@ class User():
             "reviewsNumber": self.reviewsNumber,
             "diary": self.diary,
             "favorites": self.favorites,
-            "config": self.config
+            "config": self.config,
+            "strDate": self.strDate,
+            "realDate": self.realDate
+            
         }
 
     def hashpw(self, password):
@@ -127,7 +135,7 @@ class Media():
     def generateMediaId(category, api_id):
         return "{}_{}".format(category, api_id)
     
-    def __init__(self, api_id, category, name, description, score, posterPath, bannerPath, originCountry, releaseDate, viewsList=[]):
+    def __init__(self, api_id, category, name, description, score, posterPath, bannerPath, originCountry, releaseDate, viewsList=[], realDate=None, strDate=None):
         self._id = Media.generateMediaId(category, api_id)
         self.api_id = api_id
         self.category = category
@@ -140,6 +148,8 @@ class Media():
         self.releaseDate = releaseDate # Data de lançamento
         self.viewsList = viewsList # Lista de usuários que viram
         self.viewsNumber = len(viewsList)
+        self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
         # self.reviews = reviews # {"owner_id": review_object ou review_id}
         
     def toDict(self):
@@ -158,6 +168,8 @@ class Media():
             "releaseDate": self.releaseDate,
             "viewsList": self.viewsList,
             "viewsNumber": self.viewsNumber,
+            "realDate": self.realDate,
+            "strDate": self.strDate
         }
         
 class Review:
@@ -166,18 +178,23 @@ class Review:
     def generateReviewId(origin, category, mediaId):
         return "{}_{}_{}".format(origin, category, mediaId)
     
-    def __init__(self, user_origin, category, mediaId, content={}):
+    def __init__(self, user_origin, category, mediaId, content={}, realDate=None, strDate=None):
         self._id = Review.generateReviewId(user_origin, category, mediaId)
         self.user_origin = user_origin
         self.mediaTarget = Media.generateMediaId(category, mediaId)
         self.content = content
+        self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
+        
         
     def toDict(self):
         return {
             "_id": self._id,
             "user_origin": self.user_origin,
             "mediaTarget": self.mediaTarget,
-            "content": self.content
+            "content": self.content,
+            "realDate": self.realDate,
+            "strDate": self.strDate
         }
     
 

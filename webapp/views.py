@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from .models import UsersCollection, User, LoginManager, Media, Review, MediaCollection, ReviewsCollection
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
-from .modules import TMDB, GoogleBooks, RawgGames, MediaModelSearch, MediaModelPage
+from .modules import TMDB, GoogleBooks, RawgGames, MediaModelSearch, MediaModelPage, QuickSort
+from datetime import datetime, date
 
 # Recuperando icons e banners
 import os
@@ -75,9 +76,14 @@ def profile(request, username):
                 "text": rev["content"]["review-text"],
                 "target_name": currentMedia["name"],
                 "target_category": currentMedia["category"],
-                "target_api_id": currentMedia["api_id"]
+                "target_api_id": currentMedia["api_id"],
+                "date": rev["strDate"],
+                "realDate": rev["realDate"]
             })
         reviews = [*reviewList]
+        reviews = QuickSort(reviews, -1, 'realDate').sorted
+    
+    
     
     selfProfile = False
     if accessToken in LOGIN_MANAGER.tokenList: # SE ESTIVER LOGADO
@@ -91,7 +97,13 @@ def profile(request, username):
         currentProfile["selfProfile"] = selfProfile
         currentProfile["logged"] = accessToken in LOGIN_MANAGER.tokenList
         print(currentProfile)
-        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        
+        
+        # Gerando diário
+        diary = QuickSort(currentProfile["diary"], -1, 'realDate').sorted
+        
+        
+        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews, "diary": diary}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
     else:
 
@@ -346,8 +358,13 @@ def media(request, category, id):
                     "username": currentUser["username"],
                     "quality": rev["content"]["review-quality"],
                     "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                    "text": rev["content"]["review-text"]
+                    "text": rev["content"]["review-text"],
+                    "date": rev["strDate"],
+                    "realDate": rev["realDate"]
                 })
+                
+            if len(reviewList) > 0:
+                reviewList = QuickSort(reviewList, -1, 'realDate').sorted
 
 
     # Verificando se está logado
@@ -385,7 +402,8 @@ def media(request, category, id):
                             "username": u["username"],
                             "quality": rev["content"]["review-quality"],
                             "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                            "text": rev["content"]["review-text"]
+                            "text": rev["content"]["review-text"],
+                            "date": rev["strDate"],
                         }
                         continue
                     if rev["user_origin"] == u["username"]:
@@ -400,10 +418,12 @@ def media(request, category, id):
                     "username": currentUser["username"],
                     "quality": rev["content"]["review-quality"],
                     "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                    "text": rev["content"]["review-text"]
+                    "text": rev["content"]["review-text"],
+                    "date": rev["strDate"],
+                    "realDate": rev["realDate"]
                 })
-        
-        
+        if len(reviewList) > 0:
+            reviewList = QuickSort(reviewList, -1, 'realDate').sorted
         return render(request, 'media.html', {"logged":True, "user": user, "seen": seen,"media": mediaObj, "reviews":{
             "self": selfReview,
             # "friends": friendsReview,
@@ -411,7 +431,7 @@ def media(request, category, id):
         }})
     else:
         
-        
+        reviewList = QuickSort(reviewList, -1, 'realDate').sorted
         return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False, "reviews":{
             "reviewList": reviewList
         }})
@@ -456,6 +476,18 @@ def markAsSeen(request, mediaType, mediaID):
             "review-quality": reviewQuality if reviewQuality else None,
             "review-text": reviewText if reviewText else None,
         }
+    
+        # Adicionando ao diário
+        currentMedia = MediaCollection.find_one({"_id": Media.generateMediaId(mediaType, mediaID)})
+        user["diary"].append({
+            "media_id": currentMedia["_id"],
+            "realDate": datetime.now().datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "strDate": date.today().strftime("%d/%m/%Y"),
+            "name": currentMedia["name"],
+            "api_id": currentMedia["api_id"],
+            "category": currentMedia["category"],
+            "banner_path": currentMedia["bannerPath"],
+        })
     
         # Adicionando nas reviews do usuário
         user["watched"][mediaType][universalMediaId] = True if contentReview["review-quality"] or contentReview["review-text"] else False

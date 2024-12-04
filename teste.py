@@ -1,8 +1,10 @@
-from webapp.models import UsersCollection, LoginManager, User, Review, MediaCollection
+from webapp.models import UsersCollection, LoginManager, User, Review, MediaCollection, ReviewsCollection
 
+from webapp.modules import QuickSort
 
+from datetime import date, datetime
 
-print(home_fs.listdir('/'))
+# print(home_fs.listdir('/'))
 # review = Review("rainankaneka", "anime", 92382)
 # print(review)
 # print(review.toDict())
@@ -12,17 +14,52 @@ print(home_fs.listdir('/'))
 
 
 
-# allUsers = list(UsersCollection.find())
+# allUsers = list(ReviewsCollection.find())
 # for user in allUsers:
-#     user["favorites"] = {
-#             "movie": [],
-#             "serie": [],
-#             "anime": [],
-#             "game": [],
-#             "book": []
-#             }
-#     user["diary"] = []
-#     UsersCollection.replace_one({"username": user["username"]}, user)
+#     user["realDate"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#     user["strDate"] = date.today().strftime("%d/%m/%Y")
+#     ReviewsCollection.replace_one({"_id": user["_id"]}, user)
+    
+allUsers = list(UsersCollection.find())
+for user in allUsers:
+    # anime = list(user["watched"]["anime"].keys())
+    # movie = list(user["watched"]["movie"].keys())
+    # serie = list(user["watched"]["serie"].keys())
+    # temp = [*anime, *movie, *serie]
+    # for page in temp:
+    #     user["diary"].append({
+    #         "media_id": page,
+    #         "realDate": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    #         "strDate": date.today().strftime("%d/%m/%Y")
+    #     })
+    # print(temp)
+    diary = QuickSort(user["diary"], -1, 'realDate').sorted
+        
+    watchedMedia = list(MediaCollection.find({"viewsList": {"$all": [user["username"]]}}))
+    
+    
+    for page in diary:
+        currentPage = page["media_id"]
+        
+        for media in watchedMedia:
+            if currentPage == media["_id"]:
+                page["name"] = media["name"]
+                page["api_id"] = media["api_id"]
+                page["category"] = media["category"]
+                page["banner_path"] = media["bannerPath"]
+    
+    # user["watchedNumber"] = len(user["diary"])
+    
+    user["diary"] = diary
+    
+    UsersCollection.replace_one({"_id": user["_id"]}, user)
+    
+# allUsers = list(MediaCollection.find())
+# for user in allUsers:
+#     user["realDate"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#     user["strDate"] = date.today().strftime("%d/%m/%Y")
+#     MediaCollection.replace_one({"_id": user["_id"]}, user)
+
 
 
 

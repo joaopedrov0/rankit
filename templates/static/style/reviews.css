@@ -33,6 +33,15 @@
     flex-direction: column;
     margin-left: 45px;
 }
+
+a.review_target{
+    font-size: 1.2rem;
+}
+
+.review-body > * {
+    margin: 5px 0;
+}
+
 .review-body .review-text{
     padding: 3px 0;
 }
@@ -56,6 +65,14 @@
 .review-body span{
     padding: 3px;
     border-radius: 3px;
+}
+
+.review-body .review-date{
+    padding: 6px;
+    border-radius: 12px;
+    background-color: var(--default-grey-bg-light);
+    display: flex;
+    width: fit-content;
 }
 
 span.quality-1{

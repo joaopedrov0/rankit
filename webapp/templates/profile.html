@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/style/base.css">
     <link rel="stylesheet" href="/static/style/profile.css">
     <link rel="stylesheet" href="/static/style/reviews.css">
+    <link rel="stylesheet" href="/static/style/diary.css">
 </head>
 <body>
     <div class="floating-menu floating-menu-closed">
@@ -92,6 +93,7 @@
                                 {% if review.text %}
                                 <div class="review-text">{{review.text}}</div>
                                 {% endif %}
+                                <div class="review-date">{{review.date}}</div>
                             </div>
                         </a>
                     {% endfor %}
@@ -100,7 +102,6 @@
                     </div>
                 </div>
                 {% endif %}
-            </div>
             
             <div class="col6">
                 <div class="stats">
@@ -109,9 +110,22 @@
                     </div> {% endcomment %}
                     
                     {% if diary %}
-                    <div class="diary"></div>
+                    <div class="diary">
+                    <h2>Diário</h2>
+                    
+                        {% for page in diary %}
+                            <a href="/media/{{page.category}}/{{page.api_id}}" class="diary-page">
+                                <img src="{{page.banner_path}}"/>
+                                <div class="diary-page-name">
+                                {{page.name}}
+                                <span class="diary-page-date">{{page.strDate}}</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
                     {% endif %}
                 </div>
+            </div>
             </div>
             
         </div>

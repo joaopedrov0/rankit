@@ -8,3 +8,4 @@ from .googleBooks import GoogleBooks
 from .tmdb import TMDB
 from .mediaModelPage import MediaModelPage
 from .mediaModelSearch import MediaModelSearch
+from .QuickSort import QuickSort
