@@ -331,8 +331,8 @@ form fieldset select, form fieldset select option{
         transform: translate(0);
     }
 
-    .info .mediaData .description{
-        position: absolute;
+    .description{
+        /* position: absolute; */
         width:95%;
         height: auto;
         left: 0;

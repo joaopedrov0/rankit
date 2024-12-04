@@ -57,8 +57,10 @@
                 </div>
                 {% if currentProfile.selfProfile %}
                 <a href="/editProfile" class="editBtn">Editar <span class="material-symbols-outlined filled">edit</span></a>
+                {% elif following %}
+                <a class="followBtn" onclick="unfollow()">Unfollow</a>
                 {% else %}
-                <a href="/follow" class="followBtn">Follow</a>
+                <a class="followBtn" onclick="follow()">Follow</a>
                 {% endif %}
             </div>
         </div>
@@ -131,5 +133,6 @@
         </div>
     </main>
     <script src="/static/javascript/floatingMenu.js"></script>
+    <script src="/static/javascript/followingLogic.js"></script>
 </body>
 </html>

@@ -86,12 +86,19 @@ def profile(request, username):
     
     
     selfProfile = False
+    following = False
     if accessToken in LOGIN_MANAGER.tokenList: # SE ESTIVER LOGADO
         clientID = LOGIN_MANAGER.tokenList[accessToken]
         print(LOGIN_MANAGER.isLogged(clientID)) # Consegue identificar se o perfil que está sendo acessado é o mesmo do usuário logado
         selfProfile = True if currentProfile["_id"] == clientID else False
         print("\n\n{}\n{}\n\n".format(currentProfile["_id"], clientID))
         currentProfile["user"] = LOGIN_MANAGER.cacheLogged[clientID]
+        
+        if selfProfile:
+            following = False
+        else:
+            if LOGIN_MANAGER.cacheLogged[clientID]["username"] in currentProfile["followers"]:
+                following = True
 
     if currentProfile:  # SE O PERFIL EXISTIR
         currentProfile["selfProfile"] = selfProfile
@@ -103,7 +110,7 @@ def profile(request, username):
         diary = QuickSort(currentProfile["diary"], -1, 'realDate').sorted
         
         
-        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews, "diary": diary}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews, "diary": diary, "following": following}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
     else:
 
@@ -481,7 +488,7 @@ def markAsSeen(request, mediaType, mediaID):
         currentMedia = MediaCollection.find_one({"_id": Media.generateMediaId(mediaType, mediaID)})
         user["diary"].append({
             "media_id": currentMedia["_id"],
-            "realDate": datetime.now().datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "realDate": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "strDate": date.today().strftime("%d/%m/%Y"),
             "name": currentMedia["name"],
             "api_id": currentMedia["api_id"],
@@ -604,3 +611,67 @@ def logout(request):
     response = redirect('home')
     response.delete_cookie('sessionToken')
     return response
+
+
+
+def follow(request, username):
+    print("FUNÇÃO FOLLOW !!!")
+    accessToken = request.COOKIES.get("sessionToken")
+    if not LOGIN_MANAGER.isLoggedToken(accessToken):
+        print("sem token logado")
+        return redirect('login')
+    userID = LOGIN_MANAGER.getUserByToken(accessToken)
+    user = UsersCollection.find_one({"_id": userID})
+    followTarget = UsersCollection.find_one({"username": username})
+    
+    if user["username"] == followTarget["username"]:
+        print("Tentativa de auto-seguimento")
+        return HttpResponseNotModified()
+    
+    if followTarget["username"] in user["following"]:
+        print("Usuário já segue o alvo")
+        return redirect('login')
+    
+    if user and followTarget:
+        print("{} começando a seguir {}...".format(user["username"], followTarget["username"]))
+        user["followingCount"] += 1
+        user["following"].append(followTarget["username"])
+        followTarget["followersCount"] += 1
+        followTarget["followers"].append(user["username"])
+        
+        # Concretizando alterações
+        UsersCollection.replace_one({"_id": user["_id"]}, user)
+        UsersCollection.replace_one({"_id": followTarget["_id"]}, followTarget)
+        
+        return HttpResponseNotModified()
+    
+def unfollow(request, username):
+    print("FUNÇÃO UNFOLLOW !!!")
+    accessToken = request.COOKIES.get("sessionToken")
+    if not LOGIN_MANAGER.isLoggedToken(accessToken):
+        print("sem token logado")
+        return redirect('login')
+    userID = LOGIN_MANAGER.getUserByToken(accessToken)
+    user = UsersCollection.find_one({"_id": userID})
+    followTarget = UsersCollection.find_one({"username": username})
+    
+    if user["username"] == followTarget["username"]:
+        print("Tentativa de auto-seguimento")
+        return HttpResponseNotModified()
+    
+    if not followTarget["username"] in user["following"]:
+        print("Usuário não segue o alvo")
+        return redirect('login')
+    
+    if user and followTarget:
+        print("{} deixando de seguir {}...".format(user["username"], followTarget["username"]))
+        user["followingCount"] -= 1
+        user["following"].remove(followTarget["username"])
+        followTarget["followersCount"] -= 1
+        followTarget["followers"].remove(user["username"])
+        
+        # Concretizando alterações
+        UsersCollection.replace_one({"_id": user["_id"]}, user)
+        UsersCollection.replace_one({"_id": followTarget["_id"]}, followTarget)
+        
+        return HttpResponseNotModified()

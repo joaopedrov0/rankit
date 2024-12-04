@@ -47,7 +47,9 @@ class User():
                  banner=0, 
                  bio='', 
                  followers=[], 
+                 followersCount=0,
                  following=[], 
+                 followingCount=0,
                  watched={
                     "movie": {},
                     "serie": {},
@@ -84,9 +86,9 @@ class User():
         self.email = email # Email
         self.password =  self.hashpw(password)# Senha...
         self.followers = followers # Quem segue ele (lista de ids)
-        self.followersCount = len(followers)
+        self.followersCount = followersCount if followersCount else len(followers)
         self.following = following # Quem ele segue (lista de ids)
-        self.followingCount = len(following)
+        self.followingCount = followingCount if followingCount else len(following)
         self.watched = watched # Mídias que ele já assistiu, em ordem de preferência
         self.watchedNumber = watchedNumber
         self.watchList = watchList # Mídias que pretende consumir // está assistindo {estado: pretende assistir | assistindo}

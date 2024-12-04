@@ -14,4 +14,6 @@ urlpatterns = [
     path('searchMedia/<str:category>/<str:query>', views.searchMedia, name='searchMedia'),
     path('editProfile', views.editProfile, name="editProfile"),
     path('logout', views.logout, name="logout"),
+    path('profile/<str:username>/follow/', views.follow, name="follow"),
+    path('profile/<str:username>/unfollow/', views.unfollow, name="unfollow")
 ]
