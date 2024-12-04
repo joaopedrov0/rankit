@@ -1,9 +1,32 @@
 from webapp.models import UsersCollection, LoginManager, User, Review, MediaCollection
 
 
+
+print(home_fs.listdir('/'))
 # review = Review("rainankaneka", "anime", 92382)
 # print(review)
 # print(review.toDict())
+
+
+
+
+
+
+# allUsers = list(UsersCollection.find())
+# for user in allUsers:
+#     user["favorites"] = {
+#             "movie": [],
+#             "serie": [],
+#             "anime": [],
+#             "game": [],
+#             "book": []
+#             }
+#     user["diary"] = []
+#     UsersCollection.replace_one({"username": user["username"]}, user)
+
+
+
+
 
 
 # cursor = UsersCollection.find({
@@ -17,8 +40,8 @@ from webapp.models import UsersCollection, LoginManager, User, Review, MediaColl
 # for doc in cursor:
 #     print(doc)
 
-watchedMedia = list(MediaCollection.find({"viewsList": {"$all": ["rainankaneka"]}}))
-print(watchedMedia)
+# watchedMedia = list(MediaCollection.find({"viewsList": {"$all": ["rainankaneka"]}}))
+# print(watchedMedia)
 # UsersCollection.insert_one(User("RainanKaneka", "rainankaneka", "", "bazinga", 4, 6, "A dream, i saw a dream, a dream that wouldn't end, over and over i repeated and corrected every mistake, but before i knew it, i lost count, i died, over one hundred million times.").toDict())
 
 # a = UsersCollection.replace_one({"username": "rainankaneka"}, {"reviews": {

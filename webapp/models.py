@@ -64,6 +64,14 @@ class User():
                 },
                  watchListSize=0,
                  reviewsNumber=0,
+                 diary=[],
+                 favorites={
+                    "movie": [],
+                    "serie": [],
+                    "anime": [],
+                    "game": [],
+                    "book": []
+                 },
                  config={}):
         self.name = name # Nome qualquer
         self.username = username # Nome de usuário (único)
@@ -82,6 +90,8 @@ class User():
         self.watchListSize = watchListSize
         # self.reviews = reviews # Lista com códigos das reviews do usuário
         self.reviewsNumber = reviewsNumber
+        self.diary = diary
+        self.favorites = favorites
         self.config = config # Configurações de personalização do usuário
         
     def toDict(self):
@@ -103,6 +113,8 @@ class User():
             "watchList": self.watchList,
             "watchListSize": self.watchListSize,
             "reviewsNumber": self.reviewsNumber,
+            "diary": self.diary,
+            "favorites": self.favorites,
             "config": self.config
         }
 
@@ -225,6 +237,18 @@ class LoginManager:
     
     def isLoggedToken(self, token):
         return token in list(self.tokenList.keys())
+    
+    def getUserByToken(self, token):
+        return self.tokenList[token]
+    
+    def updateCache(self, _id, username, name, icon):
+        self.cacheLogged[_id] = {
+            "username": username,
+            "name": name,
+            "icon": icon
+        }
+        
+    
 
 
 # def getSessionData():

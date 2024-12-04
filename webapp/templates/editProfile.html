@@ -41,15 +41,15 @@
             </div>
         </header>
     </div>
-    <div class="banner" style="background-image: url({% static 'img/banner/'%}{{banner}}.{{'png'}})">
+    <div class="banner" style="background-image: url({% static 'img/banner/'%}{{currentProfile.banner}}.{{'png'}})">
         <div class="user">
-            <img src="{% static 'img/icon/'%}{{icon}}.{{'png'}}" alt="user icon" class="icon">
+            <img src="{% static 'img/icon/'%}{{currentProfile.icon}}.{{'png'}}" alt="user icon" class="icon">
             <div class="identify">
-                <div class="name">{{ name }}</div>
-                <div class="username" style="cursor:not-allowed;">{{ username }}</div>
+                <div class="name">{{ currentProfile.name }}</div>
+                <div class="username" style="cursor:not-allowed;">{{ currentProfile.username }}</div>
                 <div class="followArea">
-                    <div class="followers">{{ followers|length }}</div>
-                    <div class="following">{{ following|length }}</div>
+                    <div class="followers">{{ currentProfile.followersCount }}</div>
+                    <div class="following">{{ currentProfile.followingCount }}</div>
                 </div>
                 <a class="followBtn" style="cursor:not-allowed;" disabled >Editando...</a>
             </div>
@@ -61,24 +61,35 @@
     <main>
         <div class="container">
             <form method="POST" target="/editProfile">
-                <div class="field">
-                    <label for="name">Nome</label>
-                    <input type="text" id="name" name="name" placeholder="Digite seu novo nome!" value="{{ name }}">
+                <button type="submit">Atualizar perfil</button>
+                <h2>Nome</h2>
+                    <input type="text" id="name" name="name" placeholder="Digite seu novo nome!" value="{{ currentProfile.name }}">
+                <h2>Biografia</h2>
+                    <input type="text" id="bio" name="bio" placeholder="Digite sua nova biografia!" value="{{ currentProfile.bio }}">
                 </div>
-                <div class="field">
-                    <label for="name">Biografia</label>
-                    <input type="text" id="bio" name="bio" placeholder="Digite sua nova biografia!" value="{{ bio }}">
+                    <input type="text" id="icon-input" name="icon" value="currentProfile.banner" hidden>
+                    <input type="text" id="banner-input" name="banner" value="{{currentProfile.banner}}" hidden>
+                <h2>Escolha seu ícone</h2>
+                <div class="icon-area">
+                    {% for icon in icons  %}
+
+                        <img src="/static/img/icon/{{icon}}.png" alt="icon option" class="icon-option" onclick="registerIcon({{icon}})" id="icon-{{icon}}"/>
+
+                    {% endfor %}
                 </div>
-                <div class="field">
-                    <input type="radio" name="icon" value="0" style="background-image: url('/static/img/icon/0.png');" checked onchange="refresh()">
-                    <input type="radio" name="icon" value="0" onchange="refresh()">
+                <h2>Escolha seu banner</h2>
+                <div class="banner-area">
+                    {% for banner in banners  %}
+                    
+                        <img src="/static/img/banner/{{banner}}.png" alt="banner option" class="banner-option" onclick="registerBanner({{banner}})" id="banner-{{banner}}"/>
+                    
+                    {% endfor %}
                 </div>
                 
-                <div class="field">
-                </div>
             </form>
         </div>
     </main>
     <script src="/static/javascript/floatingMenu.js"></script>
+    <script src="/static/javascript/editProfile.js"></script>
 </body>
 </html>

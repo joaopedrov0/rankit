@@ -1,9 +1,16 @@
 from django.shortcuts import render, redirect
 from .models import UsersCollection, User, LoginManager, Media, Review, MediaCollection, ReviewsCollection
-import os
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
 from .modules import TMDB, GoogleBooks, RawgGames, MediaModelSearch, MediaModelPage
+
+# Recuperando icons e banners
+import os
+from fs import open_fs
+fs_manager = open_fs(os.path.join(os.path.dirname(__file__), "..", "templates", "static", "img"))
+ICONS_LIST = fs_manager.listdir('/icon')
+BANNER_LIST = fs_manager.listdir('/banner')
+
 
 LOGIN_MANAGER = LoginManager()
 
@@ -491,8 +498,33 @@ def markAsSeen(request, mediaType, mediaID):
         response.headers["request-status"] = "Without Token"
         return redirect(login)
     
-
+@csrf_exempt
 def editProfile(request):
+    
+    accessToken = request.COOKIES.get('sessionToken')
+    if request.method == "POST":
+        if LOGIN_MANAGER.isLoggedToken(accessToken):
+            
+            name = request.POST.get('name')
+            bio = request.POST.get('bio')
+            icon = request.POST.get('icon')
+            banner = request.POST.get('banner')
+            
+            id = LOGIN_MANAGER.getUserByToken(accessToken)
+            currentUser = UsersCollection.find_one({"_id": id})
+            
+            currentUser["name"] = name
+            currentUser["bio"] = bio
+            currentUser["icon"] = icon
+            currentUser["banner"] = banner
+            
+            UsersCollection.replace_one({"_id": currentUser["_id"]}, currentUser)
+            
+            LOGIN_MANAGER.updateCache(currentUser["_id"], currentUser["username"], currentUser["name"], currentUser["icon"])
+            
+            response = redirect('profile', currentUser["username"])
+            return response
+    
     # accessToken = request.COOKIES.get('sessionToken')
     # if accessToken:
     #     userID = ''
@@ -508,7 +540,15 @@ def editProfile(request):
     # else:
     #     # logged false
     #     return render(request, 'home.html', {"logged":False})
-    accessToken = request.COOKIES.get('sessionToken')
+    
+    icons = []
+    banners = []
+    
+    for i in range(0, len(ICONS_LIST)):
+        icons.append(i)
+        
+    for j in range(0, len(BANNER_LIST)):
+        banners.append(j)
     
     if not accessToken or not accessToken in LOGIN_MANAGER.tokenList:
         return render(request, 'not-found.html')
@@ -516,7 +556,7 @@ def editProfile(request):
     currentProfile = UsersCollection.find_one({"_id": LOGIN_MANAGER.tokenList[accessToken]})
     
     if currentProfile:  # SE O PERFIL EXISTIR
-        return render(request, 'editProfile.html', currentProfile) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        return render(request, 'editProfile.html', {"currentProfile":currentProfile, "icons": icons, "banners":banners}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
     else:
 

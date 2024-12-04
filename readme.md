@@ -25,7 +25,10 @@ Rank.it é uma plataforma que visa permitir o registro e compartilhamento de opi
 - 🕐 Permitir edição de review
 - 🕐 Adicionar watchlist
 - 🕐 Página de créditos
-
+- 🕐 Arrumar a home
+- 🕐 Sistema de envio de e-mails
+- 🕐 Troca de senha
+- 🕐 Permitir de deletar conta
 
 
 

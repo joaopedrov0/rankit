@@ -1,4 +1,6 @@
-
+main{
+    display: flex;
+}
 
 .header-container{
     position: absolute;

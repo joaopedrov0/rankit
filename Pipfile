@@ -9,6 +9,7 @@ django = "*"
 google-api-python-client = "*"
 requests = "*"
 bcrypt = "*"
+fs = "*"
 
 [dev-packages]
 
