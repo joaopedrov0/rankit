@@ -2,6 +2,14 @@
 @import url('./header.css');
 
 
+.container{
+    max-width: 95vw;
+    margin-top: 200px;
+}
+.container > p {
+    margin-bottom: 25px;
+}
+
 header{
     backdrop-filter: none;
     position: absolute;
@@ -9,16 +17,22 @@ header{
     justify-content: space-between; */
 }
 
-
+.reviews{
+    margin-top: 50px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--default-grey-bg);
+}
 
 main{
     background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed;
     display: flex;
     flex-direction: column;
+    align-items: center;
     width: 100vw;
     min-height: 100vh;
-    padding: 300px 50px 50px 50px;
 }
 
 /* main > * {
@@ -26,7 +40,7 @@ main{
     padding: 50px;
 } */
 
-main .col12{
+/* main .col12{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,12 +63,11 @@ main .col12:first-child{
     flex-direction: column;
     font-weight: bold;
     font-size: 2rem;
-}
+} */
 
 .getStartedBtn{
-    padding: 15px 30px;
+    padding: 12px 30px;
     background-color: #004aad;
-    margin: 10px;
     border-radius: 30px;
     transition: all 100ms ease;
 }
@@ -63,7 +76,7 @@ main .col12:first-child{
     cursor: pointer;
     background-color: #1567c4;
 }
-
+/* 
 .text-box-home{
     width: 720px;
     font-size: 32px;
@@ -120,4 +133,4 @@ main .col12:first-child{
     main .col12 .col6 {
         width: 100%;
     }
-}
+} */

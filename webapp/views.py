@@ -20,17 +20,54 @@ def home(request):
     print(request.COOKIES)
     print(accessToken)
     print("LOGIN_MANAGER: {}".format(LOGIN_MANAGER.tokenList))
+    reviews = list(ReviewsCollection.find())
+    reviews = QuickSort(reviews, -1, "realDate").sorted
+    users = list(UsersCollection.find())
+    medias = list(MediaCollection.find())
+    
+    reviewTranslator = {
+            "0":"undefined",
+            "1":"Péssimo",
+            "2":"Muito ruim",
+            "3":"Ruim",
+            "4":"Mediano",
+            "5":"Bom",
+            "6":"Muito bom",
+            "7":"Perfeito"
+        }
+    
+    temp = []
+    for rev in reviews:
+        for u in users:
+            if u["username"] == rev["user_origin"]:
+                for m in medias:
+                    if m["_id"] == rev["mediaTarget"]:
+                        temp.append({
+                            "icon": u["icon"],
+                            "name": u["name"],
+                            "username": u["username"],
+                            "quality": rev["content"]["review-quality"],
+                            "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
+                            "text": rev["content"]["review-text"],
+                            "target_name": m["name"],
+                            "target_category": m["category"],
+                            "target_api_id": m["api_id"],
+                            "date": rev["strDate"],
+                            "realDate": rev["realDate"]
+                        })   
+    reviews = [*temp]
+    
     if accessToken:
         userID = ''
         try:
             userID = LOGIN_MANAGER.tokenList[accessToken]
         except:
-            return render(request, 'home.html', {"logged":False})
+            return render(request, 'home.html', {"logged":False, "reviews": reviews})
         
         user = UsersCollection.find_one({"_id": userID})
-        return render(request, 'home.html', {"logged":True, "user": user})
+        return render(request, 'home.html', {"logged":True, "user": user, "reviews": reviews})
     else:
-        return render(request, 'home.html', {"logged":False})
+        return render(request, 'home.html', {"logged":False, "reviews": reviews})
         #return redirect('cadastro')
 
 # Create your views here.

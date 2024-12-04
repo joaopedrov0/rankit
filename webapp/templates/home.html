@@ -10,6 +10,7 @@
         <!-- Importing Stylesheets -->
         <link rel="stylesheet" href="/static/style/base.css">
         <link rel="stylesheet" href="/static/style/home.css">
+        <link rel="stylesheet" href="/static/style/reviews.css">
         
     </head>
     <body>
@@ -41,7 +42,7 @@
             </header>
         </div>
         <main style="background-image:url('/static/img/pexels-ron-lach-9807277.jpg');">
-            <div class="col12">
+            <!-- <div class="col12">
                 <div class="text-box-home mobile-hidden">
                     <p>Mantenha o controle do que viu.</p>
                     <p>Salve o que ainda quer ver.</p>
@@ -69,8 +70,39 @@
                     <h2>Tudo em um só lugar!</h2>
                     <div class="getStartedBtn">Comece já!</div>
                 </div>
+            </div> -->
+            <div class="container">
+                <h1>Boas vindas ao Rank.it</h1>
+                <p>O Rank.it é um lugar onde você pode avaliar as obras que você viu e acompanhar o que seus amigos avaliaram também!</p>
+                <h2>Tudo em um só lugar!</h2>
+                <p>Através de um perfil do Rank.it você pode conhecer o que uma pessoa gosta de filmes, séries, animes, jogos e livros!</p>
+                <a class="getStartedBtn" href="/login">Comece já!</a>
+                {% if reviews %}
+                <div class="reviews">
+                    <h2>Reviews</h2>
+                    {% for review in reviews %}
+                        <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">{{review.target_name}}</a>
+                        <a class="review-box" href="/media/{{review.target_category}}/{{review.target_api_id}}">
+                            <div class="review-header">
+                                <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/> <div class="review-name">{{review.name}}</div> <div class="review-username">{{review.username}}</div>
+                            </div>
+                            <div class="review-body">
+                                {% if review.quality %}
+                                <div class="review-quality"><span class="quality-{{review.quality}}">{{review.qualityText}}</span></div>
+                                {% endif %}
+                                {% if review.text %}
+                                <div class="review-text">{{review.text}}</div>
+                                {% endif %}
+                                <div class="review-date">{{review.date}}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+
+    
+                    </div>
+                </div>
+                {% endif %}
             </div>
-            
         </main>
     <script src="/static/javascript/floatingMenu.js"></script>
     </body>
