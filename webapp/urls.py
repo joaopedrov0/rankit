@@ -15,5 +15,7 @@ urlpatterns = [
     path('editProfile', views.editProfile, name="editProfile"),
     path('logout', views.logout, name="logout"),
     path('profile/<str:username>/follow/', views.follow, name="follow"),
-    path('profile/<str:username>/unfollow/', views.unfollow, name="unfollow")
+    path('profile/<str:username>/unfollow/', views.unfollow, name="unfollow"),
+    path('removeAsSeen/<str:mediaType>/<str:mediaID>', views.removeAsSeen, name='removeAsUnSeen'), # ! pendente
+    # path('editReview/<str:mediaType>/<str:mediaID>', views.editReview, name='editReview'), # ! pendente
 ]

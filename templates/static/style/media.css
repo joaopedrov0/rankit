@@ -228,13 +228,17 @@ form button{
     border: 1px solid rgba(200, 200, 200, 0.2);
 }
 
-.modal form .btn.cancel{
+.modal form .btn.cancel, .modal form .btn.unwatch{
     background-color: var(--default-grey-bg);
     border: 1px solid rgba(200, 200, 200, 0.5)
 }
 
 .modal form .btn.cancel:hover{
     background-color: rgba(200, 200, 200, 0.3);
+}
+
+.modal form .btn.unwatch:hover{
+    background-color: rgba(255, 60, 90, 0.9);
 }
 
 form fieldset{

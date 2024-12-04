@@ -22,7 +22,7 @@
         {% endif %}
         <a href="/search" style="--i:4">Estou com sorte</a>
     </div>
-    {% if not seen %}
+    
     <div class="modal-blocker hidden">
         <div class="modal">
             <span class="material-symbols-outlined close-modal" onclick="toggleFormModal()">close</span>
@@ -31,7 +31,13 @@
             <form action="", method="POST">
                 <fieldset>
                     <select name="review-quality" id="review-quality">
-                        <option value="" selected disabled>O que achou da obra?</option>
+                        {% if reviews.self.quality %}
+                        <option value="{{reviews.self.quality}}" hidden selected>{{reviews.self.qualityText}}</option>
+                        {% endif %}
+                        <option value=""{% if not reviews.self.quality %} selected {%endif%} disabled>O que achou da obra?</option>
+                        {% if reviews.self.quality %}
+                        <option value="">Em branco</option>
+                        {% endif %}
                         <option value="1">Péssimo</option>
                         <option value="2">Muito ruim</option>
                         <option value="3">Ruim</option>
@@ -42,14 +48,17 @@
                     </select>
                 </fieldset>
                 <fieldset>
-                    <textarea name="review-text" id="review-text" placeholder="Descreva um pouco mais de como foi sua experiência!" rows="7"></textarea>
+                    <textarea name="review-text" id="review-text" placeholder="Descreva um pouco mais de como foi sua experiência!" rows="7">{{reviews.self.text}}</textarea>
                 </fieldset>
+                {% if seen %}
+                <div class="btn unwatch" onclick="removeView()">Remover visto</div>
+                {% endif %}
                 <div class="btn cancel" onclick="toggleFormModal()">Cancelar</div>
                 <button type="submit" class="btn watched">Marcar como visto</button>
             </form>
         </div>
     </div>
-    {% endif %}
+    
     <div class="header-container">
     
         <header>
@@ -103,7 +112,7 @@
                         {% endif %}
                      </div>
                      {% if seen %}
-                     <div class="btn watched">Visto <span class="material-symbols-outlined">done</span></div>
+                     <div class="btn watched" onclick="toggleFormModal()">Editar review <span class="material-symbols-outlined filled">edit</span></div>
                      {% else %}
                      <div class="btn watched" onclick="toggleFormModal()">Marcar como visto</div>
                      {% comment %} <div class="btn watchList">Adicionar na watchlist</div> {% endcomment %}
@@ -186,11 +195,7 @@
         const MEDIA_CATEGORY = "{{media.category}}"
         const MEDIA_ID = "{{media.id}}"
     </script>
-    {% if not seen %}
-    
     <script src="/static/javascript/markAsSeen.js"></script>
-    
-    {% endif %}
     <script src="/static/javascript/floatingMenu.js"></script>
 </body>
 </html>

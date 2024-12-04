@@ -431,11 +431,17 @@ def media(request, category, id):
                 })
         if len(reviewList) > 0:
             reviewList = QuickSort(reviewList, -1, 'realDate').sorted
-        return render(request, 'media.html', {"logged":True, "user": user, "seen": seen,"media": mediaObj, "reviews":{
-            "self": selfReview,
-            # "friends": friendsReview,
-            "reviewList": reviewList,
-        }})
+        return render(request, 'media.html', {
+            "logged":True, 
+            "user": user, 
+            "seen": seen,
+            "media": mediaObj, 
+            "reviews":{
+                "self": selfReview,
+                # "friends": friendsReview,
+                "reviewList": reviewList,
+                }                       
+            })
     else:
         
         reviewList = QuickSort(reviewList, -1, 'realDate').sorted
@@ -464,15 +470,9 @@ def markAsSeen(request, mediaType, mediaID):
     
     
     
-    if accessToken:
-        userID = ''
-        try:
-            userID = LOGIN_MANAGER.tokenList[accessToken]
-        except:
-            response.headers = {"request-status": "Invalid Token"}
-            return redirect(login)
+    if LOGIN_MANAGER.isLoggedToken(accessToken):
         
-        user = UsersCollection.find_one({"_id": userID})
+        user = UsersCollection.find_one({"_id": LOGIN_MANAGER.getUserByToken(accessToken)})
         
         universalMediaId = "{}_{}".format(mediaType, mediaID)
         
@@ -483,6 +483,20 @@ def markAsSeen(request, mediaType, mediaID):
             "review-quality": reviewQuality if reviewQuality else None,
             "review-text": reviewText if reviewText else None,
         }
+        
+        # Tentando recuperar review existente
+        existingReview = ReviewsCollection.find_one({"_id": Review.generateReviewId(user["username"], mediaType, mediaID)})
+        
+        # Se a review já existir
+        if existingReview:
+            if existingReview['content']["review-quality"] or existingReview['content']["review-text"]:
+                existingReview["content"] = contentReview
+                ReviewsCollection.replace_one({"_id": existingReview["_id"]}, existingReview)
+            else:
+                ReviewsCollection.delete_one({"_id": existingReview["_id"]})
+                user["watched"][mediaType][mediaID] = False
+                UsersCollection.replace_one({"_id": user["_id"]}, user)
+            return response
     
         # Adicionando ao diário
         currentMedia = MediaCollection.find_one({"_id": Media.generateMediaId(mediaType, mediaID)})
@@ -675,3 +689,36 @@ def unfollow(request, username):
         UsersCollection.replace_one({"_id": followTarget["_id"]}, followTarget)
         
         return HttpResponseNotModified()
+    
+@csrf_exempt
+def removeAsSeen(request, mediaType, mediaID):
+    if not request.method == "POST":
+        return HttpResponseNotModified()
+    accessToken = request.COOKIES.get("sessionToken")
+    if not LOGIN_MANAGER.isLoggedToken(accessToken):
+        print("sem token logado")
+        return redirect('login')
+    
+    user = UsersCollection.find_one({"_id": LOGIN_MANAGER.getUserByToken(accessToken)})
+    user["watched"][mediaType].pop(Media.generateMediaId(mediaType, mediaID))
+    user["watchedNumber"] -= 1
+    user["reviewsNumber"] -= 1
+    temp = []
+    for page in user["diary"]:
+        if Media.generateMediaId(mediaType, mediaID) == page["media_id"]:
+            continue
+        temp.append(page)
+    user["diary"] = [*temp]
+        
+        
+    ReviewsCollection.delete_one({"_id": Review.generateReviewId(user["username"], mediaType, mediaID)})
+    
+    
+    media = MediaCollection.find_one({"_id": Media.generateMediaId(mediaType, mediaID)})
+    media["viewsList"].remove(user["username"])
+    media["viewsNumber"] -= 1
+    
+    UsersCollection.replace_one({"_id": user["_id"]}, user)
+    MediaCollection.replace_one({"_id": media["_id"]}, media)
+    return HttpResponseNotModified()
+    

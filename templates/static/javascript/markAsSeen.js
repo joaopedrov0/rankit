@@ -9,12 +9,12 @@ formHTML.addEventListener('submit', (e) => {
     let select = document.querySelector('select')
     let textarea = document.querySelector('textarea')
 
-    select.value = ''
-    textarea.value = ''
+    // select.value = ''
+    // textarea.value = ''
     toggleFormModal()
-    watchedHTML.disabled = true
-    watchedHTML.onclick = null
-    watchedHTML.innerHTML = "Visto <span class='material-symbols-outlined'>done</span>"
+    // watchedHTML.disabled = true
+    // watchedHTML.onclick = null
+    watchedHTML.innerHTML = "Editar review <span class='material-symbols-outlined filled'>edit</span>"
 })
 
 document.querySelector('form').action = `${location.origin}/markAsSeen/${MEDIA_CATEGORY}/${MEDIA_ID}`
@@ -22,6 +22,12 @@ document.querySelector('form').action = `${location.origin}/markAsSeen/${MEDIA_C
 function toggleFormModal(){
     const model = document.querySelector('.modal-blocker')
     model.classList.toggle('hidden')
+}
+
+function removeView(){
+    toggleFormModal()
+    watchedHTML.innerHTML = "Marcar como visto"
+    fetch(`/removeAsSeen/${MEDIA_CATEGORY}/${MEDIA_ID}`, {method:"POST"})
 }
 
 // function markAsSeen(){
