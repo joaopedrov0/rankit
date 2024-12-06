@@ -112,4 +112,8 @@ span.quality-7{
         width: 100%;
         /* position: absolute; */
     }
+
+    .reviews{
+        min-height: fit-content;
+    }
 }

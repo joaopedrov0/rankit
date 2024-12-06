@@ -26,18 +26,18 @@
             <header>
                 <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
                 <div class="menu">
-                        <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
-                        {% if not logged %}
-                            <a href="/login" class="login">Login</a>
-                            <a href="/cadastro" class="cadastro">Cadastro</a>
-                        {% endif %}
-                        <a href="/search" class="search mobile-hidden">Buscar</a>
-                        <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
-                        <a href="/not-found" class="top">Top Rated</a>
-                        {% if logged %}
-                            <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
-                        {% endif %}
-                        <span class="menu-btn material-symbols-outlined" onclick="toggleMenu()">more_vert</span>
+                    <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
+                    {% if not logged %}
+                        <a href="/login" class="login">Login</a>
+                        <a href="/cadastro" class="cadastro">Cadastro</a>
+                    {% endif %}
+                    <a href="/search" class="search mobile-hidden">Buscar</a>
+                    <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
+                    <a href="/not-found" class="top">Top Rated</a>
+                    {% if logged %}
+                        <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                    {% endif %}
+                    <span class="menu-btn material-symbols-outlined" onclick="toggleMenu()">more_vert</span>
                 </div>
             </header>
         </div>
@@ -78,22 +78,27 @@
                 <p>Através de um perfil do Rank.it você pode conhecer o que uma pessoa gosta de filmes, séries, animes, jogos e livros!</p>
                 <a class="getStartedBtn" href="/login">Comece já!</a>
                 {% if reviews %}
-                <div class="reviews">
+                <div class="reviews feed">
                     <h2>Reviews</h2>
                     {% for review in reviews %}
                         <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">{{review.target_name}}</a>
                         <a class="review-box" href="/media/{{review.target_category}}/{{review.target_api_id}}">
-                            <div class="review-header">
-                                <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/> <div class="review-name">{{review.name}}</div> <div class="review-username">{{review.username}}</div>
+                            <div class="review-box-poster">
+                                <img src="{{review.poster_path}}" class="review-poster" />
                             </div>
-                            <div class="review-body">
-                                {% if review.quality %}
-                                <div class="review-quality"><span class="quality-{{review.quality}}">{{review.qualityText}}</span></div>
-                                {% endif %}
-                                {% if review.text %}
-                                <div class="review-text">{{review.text}}</div>
-                                {% endif %}
-                                <div class="review-date">{{review.date}}</div>
+                            <div class="review-box-text">
+                                <div class="review-header">
+                                    <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/> <div class="review-name">{{review.name}}<div class="review-username">{{review.username}}</div></div>
+                                </div>
+                                <div class="review-body">
+                                    {% if review.quality %}
+                                    <div class="review-quality"><span class="quality-{{review.quality}}">{{review.qualityText}}</span></div>
+                                    {% endif %}
+                                    {% if review.text %}
+                                    <div class="review-text">{{review.text}}</div>
+                                    {% endif %}
+                                    <div class="review-date">{{review.date}}</div>
+                                </div>
                             </div>
                         </a>
                     {% endfor %}

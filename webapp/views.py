@@ -53,7 +53,8 @@ def home(request):
                             "target_category": m["category"],
                             "target_api_id": m["api_id"],
                             "date": rev["strDate"],
-                            "realDate": rev["realDate"]
+                            "realDate": rev["realDate"],
+                            "poster_path": m["posterPath"]
                         })   
     reviews = [*temp]
     
@@ -141,13 +142,30 @@ def profile(request, username):
         currentProfile["selfProfile"] = selfProfile
         currentProfile["logged"] = accessToken in LOGIN_MANAGER.tokenList
         print(currentProfile)
-        
+        followInfo = {
+            "followers": [],
+            "following": []
+        }
+        followingList = list(UsersCollection.find({"following": {"$all": [currentProfile["username"]]}}))
+        for u in followingList:
+            followInfo["following"].append({
+                "name": u["name"],
+                "username": u["username"],
+                "icon": u["icon"]
+            })
+        followerList = list(UsersCollection.find({"followers": {"$all": [currentProfile["username"]]}}))
+        for u in followerList:
+            followInfo["followers"].append({
+                "name": u["name"],
+                "username": u["username"],
+                "icon": u["icon"]
+            })
         
         # Gerando diário
         diary = QuickSort(currentProfile["diary"], -1, 'realDate').sorted
         
         
-        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews, "diary": diary, "following": following}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews, "diary": diary, "following": following, "followInfo": followInfo}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
 
     else:
 
@@ -438,19 +456,20 @@ def media(request, category, id):
             for rev in otherReviews:
                 currentUser = None
                 for u in usersThatReview:
-                    if u["username"] == user["username"]:
-                        currentUser = None
-                        selfReview = {
-                            "icon": u["icon"],
-                            "name": u["name"],
-                            "username": u["username"],
-                            "quality": rev["content"]["review-quality"],
-                            "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                            "text": rev["content"]["review-text"],
-                            "date": rev["strDate"],
-                        }
-                        continue
+                    
                     if rev["user_origin"] == u["username"]:
+                        if u["username"] == user["username"]:
+                            currentUser = None
+                            selfReview = {
+                                "icon": u["icon"],
+                                "name": u["name"],
+                                "username": u["username"],
+                                "quality": rev["content"]["review-quality"],
+                                "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
+                                "text": rev["content"]["review-text"],
+                                "date": rev["strDate"],
+                            }
+                            continue
                         currentUser = u
                         break
                     continue
