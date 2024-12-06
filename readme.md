@@ -8,21 +8,20 @@ Rank.it é uma plataforma que visa permitir o registro e compartilhamento de opi
 - ✅ Garantir que todas as senhas serão salvas em hash
 - ✅ Fazer login
 - ✅ Página dedicada para cada mídia
-- 🕐 Personalização de perfil
+- ✅ Personalização de perfil
 - ✅ Menu flutuante
-- 🕐 Editar perfil
+- ✅ Editar perfil
 - ✅ Log-out
 - 🕐 Estou com sorte
 - ✅ Implementar método para checar se um usuários está logado
 - 🕐 Implementar busca de usuários
-- 🕐 Adicionar obras vistas no perfil do usuário
-- 🕐 Exibir obras vistas com opção pra apagar na página do usuário caso seja o dono do perfil
-- 🕐 Feed na home
+- ✅ Adicionar obras vistas no perfil do usuário
+- ✅ Feed na home
 - ✅ Filtrar os botões pra quando a obra já tiver sido vista
 - ✅ Implementar no back a parte de marcar como visto
-- 🕐 Mostrar na página da obra as avaliações não-vazias
+- ✅ Mostrar na página da obra as avaliações não-vazias
 - ✅ Mostrar no perfil do usuário as avaliações dele
-- 🕐 Permitir edição de review
+- ✅ Permitir edição de review
 - 🕐 Adicionar watchlist
 - 🕐 Página de créditos
 - 🕐 Arrumar a home
