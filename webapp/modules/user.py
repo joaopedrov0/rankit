@@ -1,4 +1,4 @@
-from .dbElementsInterface import DBElemensInterface
+from .dbElementsInterface import DBElementsInterface
 from .database import Database
 from typing import Type
 import bcrypt
