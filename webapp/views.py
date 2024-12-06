@@ -162,7 +162,7 @@ def profile(request, username):
             })
         
         # Gerando diário
-        diary = QuickSort(currentProfile["diary"], -1, 'realDate').sorted
+        diary = QuickSort(currentProfile["diary"], -1, 'realDate').sorted if currentProfile["diary"] else None
         
         
         return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews, "diary": diary, "following": following, "followInfo": followInfo}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
