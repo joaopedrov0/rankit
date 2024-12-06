@@ -5,16 +5,16 @@ name = "pypi"
 
 [packages]
 pymongo = "*"
-django = "*"
 google-api-python-client = "*"
 requests = "*"
 bcrypt = "*"
 fs = "*"
+django = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12.6,3.13"
+python_version = "3.12.7"
 
 [scripts]
 app = "python manage.py runserver"
