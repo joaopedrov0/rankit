@@ -1,3 +1,6 @@
+from datetime import datetime, date
+import bcrypt
+
 class User():
     
     def __init__(self, 
