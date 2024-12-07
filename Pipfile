@@ -9,8 +9,8 @@ google-api-python-client = "*"
 requests = "*"
 bcrypt = "*"
 fs = "*"
-django = "*"
 python-dotenv = "*"
+django = "*"
 
 [dev-packages]
 
@@ -19,3 +19,4 @@ python_version = "3.12.7"
 
 [scripts]
 app = "python manage.py runserver"
+vapp = "pipenv shell && pipenv run app"
