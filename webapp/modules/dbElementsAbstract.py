@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class DBElementsInterface(ABC):
+class DBElementsAbstract(ABC):
     
     @abstractmethod
     def toDict(self):

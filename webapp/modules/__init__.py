@@ -1,4 +1,4 @@
-from .dbElementsInterface import DBElementsInterface
+from .dbElementsAbstract import DBElementsAbstract
 from .user import User
 from .media import Media
 from .review import Review
@@ -6,3 +6,4 @@ from .tmdb import TMDB
 from .mediaModelPage import MediaModelPage
 from .mediaModelSearch import MediaModelSearch
 from .QuickSort import QuickSort
+from .databaseInterface import DatabaseInterface

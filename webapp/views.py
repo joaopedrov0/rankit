@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect
 from .models import Database
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
-from .modules import TMDB, MediaModelSearch, MediaModelPage, QuickSort, User, Media, Review
+from .modules import User, Media, Review, DatabaseInterface
 from datetime import datetime, date
 from .modules.loginManager import LoginManager
+
+DatabaseInterface.register(Database)
 
 # Recuperando icons e banners
 import os
@@ -450,4 +452,3 @@ def removeAsSeen(request, mediaType, mediaID):
     Database.refreshMedia(media)
     
     return HttpResponseNotModified()
-    

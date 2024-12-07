@@ -1,6 +1,7 @@
 from datetime import date, datetime
+from .dbElementsAbstract import DBElementsAbstract
 
-class Media():
+class Media(DBElementsAbstract):
     
     @staticmethod
     def generateMediaId(category, api_id):

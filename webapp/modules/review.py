@@ -1,7 +1,8 @@
 from .media import Media
 from datetime import datetime, date
+from .dbElementsAbstract import DBElementsAbstract
 
-class Review:
+class Review(DBElementsAbstract):
     
     @staticmethod
     def generateReviewId(origin, category, mediaId):

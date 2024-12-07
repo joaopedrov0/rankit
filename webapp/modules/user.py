@@ -1,7 +1,9 @@
 from datetime import datetime, date
 import bcrypt
 
-class User():
+from .dbElementsAbstract import DBElementsAbstract
+
+class User(DBElementsAbstract):
     
     def __init__(self, 
                  name, 
