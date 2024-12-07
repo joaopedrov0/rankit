@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import bcrypt
 import secrets
 from datetime import date, datetime
+from .modules import TMDB, MediaModelPage, MediaModelSearch, QuickSort
 
 # import webapp.modules as modules # Nossas classes estão aqui
 # modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
@@ -11,7 +12,10 @@ from datetime import date, datetime
 - Criei uma pasta modules e copiei todas as classes abaixo nela, além de classes que eu havia criado no outro repositório.
 - Modificação feita por Nathan (19/11/24 - 10:00)'''
 
-MONGODB_URI = 'mongodb+srv://rankit:rankitpass@master.jshtk.mongodb.net/?retryWrites=true&w=majority&appName=master' # URI pra conectar as parada
+import os
+from dotenv import load_dotenv
+load_dotenv()
+MONGODB_URI = os.getenv("URI") # URI pra conectar as parada
 
 # Mongo Client
 client = MongoClient(MONGODB_URI) # Cria o client q consegue fazer o crud
@@ -36,239 +40,486 @@ SessionsCollection = db.sessions
 
 # Create your models here.
 
-class User():
-    
-    def __init__(self, 
-                 name, 
-                 username, 
-                 email, 
-                 password, 
-                 icon=0, 
-                 banner=0, 
-                 bio='', 
-                 followers=[], 
-                 followersCount=0,
-                 following=[], 
-                 followingCount=0,
-                 watched={
-                    "movie": {},
-                    "serie": {},
-                    "anime": {},
-                    "game": {},
-                    "book": {}
-                },
-                 watchedNumber=0,
-                 watchList={
-                    "movie": [],
-                    "serie": [],
-                    "anime": [],
-                    "game": [],
-                    "book": []
-                },
-                 watchListSize=0,
-                 reviewsNumber=0,
-                 diary=[],
-                 favorites={
-                    "movie": [],
-                    "serie": [],
-                    "anime": [],
-                    "game": [],
-                    "book": []
-                 },
-                 realDate=None,
-                 strDate=None,
-                 config={}):
-        self.name = name # Nome qualquer
-        self.username = username # Nome de usuário (único)
-        self.icon = icon # Código do ícone
-        self.banner = banner # Código do banner
-        self.bio = bio # Bio (até 200 char)
-        self.email = email # Email
-        self.password =  self.hashpw(password)# Senha...
-        self.followers = followers # Quem segue ele (lista de ids)
-        self.followersCount = followersCount if followersCount else len(followers)
-        self.following = following # Quem ele segue (lista de ids)
-        self.followingCount = followingCount if followingCount else len(following)
-        self.watched = watched # Mídias que ele já assistiu, em ordem de preferência
-        self.watchedNumber = watchedNumber
-        self.watchList = watchList # Mídias que pretende consumir // está assistindo {estado: pretende assistir | assistindo}
-        self.watchListSize = watchListSize
-        # self.reviews = reviews # Lista com códigos das reviews do usuário
-        self.reviewsNumber = reviewsNumber
-        self.diary = diary
-        self.favorites = favorites
-        self.config = config # Configurações de personalização do usuário
-        self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
         
-    def toDict(self):
-        """Converte o usuário pra um dicionário (pra poder colocar no db 😉)"""
-        return {
-            "name": self.name,
-            "username": self.username,
-            "icon": self.icon,
-            "banner": self.banner,
-            "bio": self.bio,
-            "email": self.email,
-            "password": self.password,
-            "followers": self.followers,
-            "followersCount": self.followersCount,
-            "following": self.following,
-            "followingCount": self.followingCount,
-            "watched": self.watched,
-            "watchedNumber": self.watchedNumber,
-            "watchList": self.watchList,
-            "watchListSize": self.watchListSize,
-            "reviewsNumber": self.reviewsNumber,
-            "diary": self.diary,
-            "favorites": self.favorites,
-            "config": self.config,
-            "strDate": self.strDate,
-            "realDate": self.realDate
+class Database:
+    
+    reviewTranslator = {
+            "0":"undefined",
+            "1":"Péssimo",
+            "2":"Muito ruim",
+            "3":"Ruim",
+            "4":"Mediano",
+            "5":"Bom",
+            "6":"Muito bom",
+            "7":"Perfeito"
+        }
+    
+    @staticmethod
+    def registerUser(user_obj):
+        try:
+            UsersCollection.insert_one(user_obj.toDict())
+        
+        except:
+            return Database.insertionError()
+
+    @staticmethod
+    def registerMedia(media_obj):
+        try:
+            MediaCollection.insert_one(media_obj.toDict())
+        
+        except:
+            return Database.insertionError()
+
+    @staticmethod
+    def registerReview(review_obj):
+        try:
+            ReviewsCollection.insert_one(review_obj.toDict())
+        
+        except:
+            return Database.insertionError()
+    
+    @staticmethod
+    def insertionError():
+        print('Erro ao inserir objeto!\n')
+        return False
+
+    @staticmethod
+    def getUserByID(id): # Returns User dictionary
+        try:
             
-        }
-
-    def hashpw(self, password):
-        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    
-class Media():
-    
-    @staticmethod
-    def generateMediaId(category, api_id):
-        return "{}_{}".format(category, api_id)
-    
-    def __init__(self, api_id, category, name, description, score, posterPath, bannerPath, originCountry, releaseDate, viewsList=[], realDate=None, strDate=None):
-        self._id = Media.generateMediaId(category, api_id)
-        self.api_id = api_id
-        self.category = category
-        self.name = name
-        self.description = description
-        self.score = score
-        self.posterPath = posterPath
-        self.bannerPath = bannerPath
-        self.originCountry = originCountry # País de origem
-        self.releaseDate = releaseDate # Data de lançamento
-        self.viewsList = viewsList # Lista de usuários que viram
-        self.viewsNumber = len(viewsList)
-        self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
-        # self.reviews = reviews # {"owner_id": review_object ou review_id}
+            res = UsersCollection.find_one({'_id': id})
+            return res
         
-    def toDict(self):
-        """Converte a obra pra um dicionário (pra poder colocar no db 😉)"""
-
-        return {
-            "_id": self._id,
-            "api_id": self.api_id,
-            "category": self.category,
-            "name": self.name,
-            "description": self.description,
-            "score": self.score,
-            "posterPath": self.posterPath,
-            "bannerPath": self.bannerPath,
-            "originCountry": self.originCountry,
-            "releaseDate": self.releaseDate,
-            "viewsList": self.viewsList,
-            "viewsNumber": self.viewsNumber,
-            "realDate": self.realDate,
-            "strDate": self.strDate
-        }
-        
-class Review:
-    
-    @staticmethod
-    def generateReviewId(origin, category, mediaId):
-        return "{}_{}_{}".format(origin, category, mediaId)
-    
-    def __init__(self, user_origin, category, mediaId, content={}, realDate=None, strDate=None):
-        self._id = Review.generateReviewId(user_origin, category, mediaId)
-        self.user_origin = user_origin
-        self.mediaTarget = Media.generateMediaId(category, mediaId)
-        self.content = content
-        self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
-        
-        
-    def toDict(self):
-        return {
-            "_id": self._id,
-            "user_origin": self.user_origin,
-            "mediaTarget": self.mediaTarget,
-            "content": self.content,
-            "realDate": self.realDate,
-            "strDate": self.strDate
-        }
-    
-
-    
-# newUser = User("RainanKaneka", "rainankaneka", "4", "0", "sim", "email.rainan@gmail.com", "12345")
-
-# print(newUser)
-# print(newUser.name)
-
-# UsersCollection.insert_one(newUser.toDict())
-    
-class LoginManager:
-    """
-    Essa classe deve gerenciar os logins e a autenticação de sessões da aplicação
-    """
-    def __init__(self):
-        self.tokenList = {} # "token":"_id"
-        self.cacheLogged = {} # "_id" {"username": username, "name": name, "icon": icon}
-        # self.tokenList = self.getSessionData
-
-    def login(self, username, password):
-        # Check if user exists
-        user = UsersCollection.find_one({"username": username})
-        if user:
-            # Check the password
-            if self.authenticate(user, password):
-                # Generate a session token
-                token = self.getToken()
-                self.tokenList[token] = user["_id"]
-                # SessionsCollection.insertOne({"token":token,"id":user["_id"]})
-                return token
-            else:
-                print("ACCESS DENIED")
-                return False
-        else:
-            print("Usuário inexistente")
+        except:
+            print('Erro ao buscar usuário!')
             return False
 
+    @staticmethod
+    def getUserByUsername(username): # Returns User dictionary
+        try:
+            
+            res = UsersCollection.find_one({'username': username})
+            return res if res else None
+        
+        except:
+            print('Erro ao buscar usuário!')
+            return None
 
-    def authenticate(self, user, password):
-        print(password)
-        passMatches = bcrypt.checkpw(password.encode('utf-8'), user["password"])
-        if passMatches:
-            return True
-        else:
+    @staticmethod
+    def getAllUsers():
+        try:
+            res = list(UsersCollection.find())
+            return res
+        
+        except:
+            print('Erro ao buscar reviews!')
             return False
 
-    def validateToken(self, token, origin):
-        #return bcrypt.checkpw(origin, token) Talvez isso resolva a linha abaixo
-        return bcrypt.checkpw(origin, token)
-    
-    def getToken(self):
-        return secrets.token_urlsafe(32)
-
-    def isLogged(self, id):
-        return id in list(self.tokenList.values())
-    
-    def isLoggedToken(self, token):
-        return token in list(self.tokenList.keys())
-    
-    def getUserByToken(self, token):
-        return self.tokenList[token]
-    
-    def updateCache(self, _id, username, name, icon):
-        self.cacheLogged[_id] = {
-            "username": username,
-            "name": name,
-            "icon": icon
-        }
+    @staticmethod
+    def getMediaByID(id): # Returns Media dictionary
+        try:
+            
+            res = MediaCollection.find_one({'_id': id})
+            return res
         
+        except:
+            print('Erro ao buscar obra!')
+            return False
+
+    @staticmethod
+    def getReviewByID(id):
+        try:
+            
+            res = ReviewsCollection.find_one({'_id': id})
+            return res
+        
+        except:
+            print('Erro ao buscar Review!')
+            return False
+
+    @staticmethod
+    def getAllReviews(): # return All Reviews
+        try:
+            res = list(ReviewsCollection.find())
+            res = QuickSort(res, -1, "realDate").sorted
+            return res
+        
+        except:
+            print('Erro ao buscar reviews!')
+            return False
+        
+    @staticmethod
+    def getReviewsByAuthor(username): # return Media dictionary with review
+        try:
+            res = list(ReviewsCollection.find({"user_origin": username}))
+            return res
+        
+        except:
+            print('Erro ao buscar reviews!')
+            return False
+
+    @staticmethod
+    def getReviewsByMedia(media_id): # return Media dictionary with review
+        try:
+            res = list(ReviewsCollection.find({"mediaTarget": media_id}))
+            return res
+        
+        except:
+            print('Erro ao buscar reviews!')
+            return False
+        
+    @staticmethod
+    def getReviewersByMedia(category, media_id):
+        return list(UsersCollection.find({"watched.{}.{}".format(category, media_id): True}))
+     
+    @staticmethod
+    def getReviewsToRenderHome(): # Return reviews in format "list of dict"
+        temp = []
+        reviews = Database.getAllReviews()
+        users = Database.getAllUsers()
+        medias = Database.getAllMedia()
+        for review in reviews:
+            for user in users:
+                if user["username"] == review["user_origin"]:
+                    for media in medias:
+                        if media["_id"] == review["mediaTarget"]:
+                            temp.append({
+                                "icon": user["icon"],
+                                "name": user["name"],
+                                "username": user["username"],
+                                "quality": review["content"]["review-quality"],
+                                "qualityText": Database.reviewTranslator[review["content"]["review-quality"]] if review["content"]["review-quality"] else None,
+                                "text": review["content"]["review-text"],
+                                "target_name": media["name"],
+                                "target_category": media["category"],
+                                "target_api_id": media["api_id"],
+                                "date": review["strDate"],
+                                "realDate": review["realDate"],
+                                "poster_path": media["posterPath"]
+                            })
+        return temp
     
-
-
-# def getSessionData():
-#     sessionData = SessionsCollection.find()
+    @staticmethod
+    def getReviewsToRenderProfile(profile): # Return reviews in format "list of dict"
+        username = profile["username"]
+        watched = Database.getWatchedMedia(username)
+        if not watched:
+            return None
+        reviews = Database.getReviewsByAuthor(username)
+        if reviews:
+            res = []
+            # Buscar review
+            for review in reviews:
+                media_id = review["mediaTarget"]
+                currentMedia = None
+                # Buscar objeto de mídia
+                for media in watched:
+                    if media["_id"] == media_id:
+                        currentMedia = media
+                        break
+                res.append({
+                    "icon": profile["icon"],
+                    "name": profile["name"],
+                    "username": profile["username"],
+                    "quality": review["content"]["review-quality"],
+                    "qualityText": Database.reviewTranslator[review["content"]["review-quality"]] if review["content"]["review-quality"] else None,
+                    "text": review["content"]["review-text"],
+                    "target_name": currentMedia["name"],
+                    "target_category": currentMedia["category"],
+                    "target_api_id": currentMedia["api_id"],
+                    "date": review["strDate"],
+                    "realDate": review["realDate"]
+                })
+            res = QuickSort(res, -1, 'realDate').sorted
+            return res
+                
+        else:
+            return None
+    
+    @staticmethod
+    def getReviewsToRenderMedia(category, media_id, username=None): # Return reviews in format "list of dict"
+        res = {
+            "selfReview": None,
+            "otherReview": []
+        }
+        print(username)
+        reviews = Database.getReviewsByMedia(media_id)
+        if reviews:
+            reviewers = Database.getReviewersByMedia(category, media_id)
+            
+            for review in reviews:
+                # Para cada review
+                currentAuthor = None
+                for author in reviewers:
+                    # Para cada usuário
+                    if review["user_origin"] == author["username"]:
+                        # Se usuário for o autor, currentAuthor recebe usuário
+                        currentAuthor = author
+                        if username and currentAuthor["username"] == username:
+                            # Se o autor for o usuário do cliente
+                            res["selfReview"] = {
+                                "icon": currentAuthor["icon"],
+                                "name": currentAuthor["name"],
+                                "username": currentAuthor["username"],
+                                "quality": review["content"]["review-quality"],
+                                "qualityText": Database.reviewTranslator[review["content"]["review-quality"]] if review["content"]["review-quality"] else None,
+                                "text": review["content"]["review-text"],
+                                "date": review["strDate"],
+                            }
+                            # Define currentAuthor como None para que ele não seja adicionado ao otherReview
+                            currentAuthor = None
+                        # Rompe o laço ao achar o dono da review
+                        break
+                    # Continua o laço se não tiver encontrado o dono
+                    continue
+                if not currentAuthor:
+                    continue
+                res["otherReview"].append({
+                    "icon": currentAuthor["icon"],
+                    "name": currentAuthor["name"],
+                    "username": currentAuthor["username"],
+                    "quality": review["content"]["review-quality"],
+                    "qualityText": Database.reviewTranslator[review["content"]["review-quality"]] if review["content"]["review-quality"] else None,
+                    "text": review["content"]["review-text"],
+                    "date": review["strDate"],
+                    "realDate": review["realDate"]
+                })
+        
+            res["otherReview"] = QuickSort(res["otherReview"], -1, 'realDate').sorted
+            print(res)
+            return res
+            
+        else:
+            return None
+        
+    @staticmethod
+    def getAllMedia():
+        try:
+            res = list(MediaCollection.find())
+            return res
+        
+        except:
+            print('Erro ao buscar reviews!')
+            return False
+     
+    @staticmethod   
+    def getWatchedMedia(username):
+        res = list(MediaCollection.find({"viewsList": {"$all": [username]}}))
+        return res if res else None
+    
+    @staticmethod
+    def getFollowersOf(username):
+        res = list(UsersCollection.find({"following": {"$all": [username]}}))
+        return res
+    
+    @staticmethod
+    def getWhoUserIsFollowing(username):
+        res = list(UsersCollection.find({"followers": {"$all": [username]}}))
+        return res
+    
+    @staticmethod
+    def getFollowInfo(username):
+        followInfo = {
+            "followers": [],
+            "following": []
+        }
+        followingList = Database.getWhoUserIsFollowing(username)
+        for user in followingList:
+            followInfo["following"].append({
+                "name": user["name"],
+                "username": user["username"],
+                "icon": user["icon"]
+            })
+        followerList = Database.getFollowersOf(username)
+        for user in followerList:
+            followInfo["followers"].append({
+                "name": user["name"],
+                "username": user["username"],
+                "icon": user["icon"]
+            })
+        return followInfo
+    
+    @staticmethod
+    def getProfileDiary(profile):
+        res = QuickSort(profile["diary"], -1, 'realDate').sorted if profile["diary"] else None
+        return res
+    
+    @staticmethod
+    def searchMediaByQuery(category, query):
+        queryResult = []
+        if category == "movie":
+            temp = TMDB.search("movie", query)
+            for result in temp:
+                queryResult.append(
+                    MediaModelSearch.build(
+                        "movie",
+                        result["id"],
+                        result["title"],
+                        result["overview"],
+                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
+                        result["vote_average"],
+                        str(result["release_date"])[0:4:1]
+                    )
+                )
+        elif category == "serie":
+            temp = TMDB.search("tv", query)
+            for result in temp:
+                print(result["origin_country"])
+                if result["origin_country"] == [] or result["origin_country"][0] == "JP": continue
+                queryResult.append(
+                    MediaModelSearch.build(
+                        "serie",
+                        result["id"],
+                        result["name"],
+                        result["overview"],
+                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
+                        result["vote_average"],
+                        str(result["first_air_date"])[0:4:1]
+                    )
+                )
+        elif category == "anime":
+            temp = TMDB.search("tv", query)
+            for result in temp:
+                if result["origin_country"] == [] or result["origin_country"][0] != "JP": continue
+                queryResult.append(
+                    MediaModelSearch.build(
+                        "anime",
+                        result["id"],
+                        result["name"],
+                        result["overview"],
+                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
+                        result["vote_average"],
+                        str(result["first_air_date"])[0:4:1]
+                    )
+                )
+        elif category == "game":
+            pass
+        elif category == "book":
+            pass
+        elif category == "user":
+            pass
+        else:
+            print("Erro na categoria da requisição")
+            return
+        return queryResult
+    
+    @staticmethod
+    def searchSingleMedia(category, id):
+        if category == "movie":
+            mediaObj = TMDB.getByID("movie", id)
+            temp_size = str(mediaObj["runtime"]) + 'm' if mediaObj["runtime"] < 60 else (str(mediaObj["runtime"]//60) + 'h' + str(mediaObj["runtime"]%60) + 'm')
+            print(mediaObj)
+            mediaObj = MediaModelPage.build(
+                        "movie",
+                        mediaObj["id"],
+                        mediaObj["title"],
+                        mediaObj["overview"],
+                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
+                        mediaObj["vote_average"],
+                        str(mediaObj["release_date"])[0:4:1],
+                        "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
+                        mediaObj["genres"],
+                        {
+                            "time": temp_size
+                        }
+                    )
+        elif category == "serie":
+            mediaObj = TMDB.getByID("tv", id)
+            temp_episode = 0
+            for season in mediaObj["seasons"]:
+                temp_episode += season["episode_count"]
+            mediaObj = MediaModelPage.build(
+                        "serie",
+                        mediaObj["id"],
+                        mediaObj["name"],
+                        mediaObj["overview"],
+                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
+                        mediaObj["vote_average"],
+                        str(mediaObj["first_air_date"])[0:4:1],
+                        "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
+                        mediaObj["genres"],
+                        {
+                            "seasons": len(mediaObj["seasons"]),
+                            "episode_count": temp_episode
+                        },
+                    )
+        elif category == "anime":
+            mediaObj = TMDB.getByID("tv", id)
+            temp_episode = 0
+            for season in mediaObj["seasons"]:
+                temp_episode += season["episode_count"]
+            mediaObj = MediaModelPage.build(
+                        "anime",
+                        mediaObj["id"],
+                        mediaObj["name"],
+                        mediaObj["overview"],
+                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
+                        mediaObj["vote_average"],
+                        str(mediaObj["first_air_date"])[0:4:1],
+                        "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
+                        mediaObj["genres"],
+                        {
+                            "seasons": len(mediaObj["seasons"]),
+                            "episode_count": temp_episode
+                        }
+                        ,
+                    )
+        elif category == "game":
+            pass
+        elif category == "book":
+            pass
+        else:
+            print("Erro na categoria da requisição")
+            return
+        return mediaObj
+    
+    @staticmethod
+    def editReview(reviewObj):
+        try:
+            id = reviewObj["_id"]
+            ReviewsCollection.replace_one({"_id": id}, reviewObj)
+        except:
+            print("Erro na edição re review")
+            return None
+    
+    @staticmethod
+    def deleteReview(review):
+        id = review["_id"]
+        try:
+            ReviewsCollection.delete_one({"_id": id})
+        except:
+            print("Erro na deleção de review")
+            return None
+        
+    @staticmethod
+    def deleteReviewByID(id):
+        try:
+            ReviewsCollection.delete_one({"_id": id})
+        except:
+            print("Erro na deleção de review")
+            return None
+    
+    @staticmethod
+    def refreshUser(user):
+        """
+        Recebe dicionário de usuário e atualiza o equivalente no banco
+        """
+        id = user["_id"]
+        try:
+            UsersCollection.replace_one({"_id": id}, user)
+        except:
+            print("Erro na atualização de perfil")
+            return None
+    
+    @staticmethod
+    def refreshMedia(media):
+        id = media["_id"]
+        try:
+            MediaCollection.replace_one({"_id": id}, media)
+        except:
+            print("Erro na atualização de mídia")
+            return None
+    
+    
+    
+    

@@ -49,7 +49,7 @@
     </div>
     <div class="floating-menu floating-menu-closed">
         <span style="--i:1" onclick="toggleMenu()"><span class="material-symbols-outlined filled">close</span></span>
-        {% if currentProfile.logged %}
+        {% if logged %}
         <a href="/editProfile" style="--i:2">Editar perfil</a>
         <a href="/logout" style="--i:3">Log Out</a>
         {% endif %}
@@ -60,15 +60,15 @@
             <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
             <div class="menu">
                 <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
-                {% if not currentProfile.logged %}
+                {% if not logged %}
                     <a href="/login" class="login">Login</a>
                     <a href="/cadastro" class="cadastro">Cadastro</a>
                 {% endif %}
                 <a href="/search" class="search mobile-hidden">Buscar</a>
                 <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
                 <a href="/not-found" class="top">Top Rated</a>
-                {% if currentProfile.logged %}
-                    <a class="profile-btn" href="/profile/{{currentProfile.user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{currentProfile.user.icon}}.png"/></a>
+                {% if logged %}
+                    <a class="profile-btn" href="/profile/{{clientProfile.username}}" class="top"><span class="mobile-hidden">{{clientProfile.name}}</span><img class="profile-icon" src="/static/img/icon/{{clientProfile.icon}}.png"/></a>
                 {% endif %}
                 <span class="menu-btn material-symbols-outlined" onclick="toggleMenu()">more_vert</span>
                 
@@ -88,12 +88,12 @@
                     antes usava followers|length
                     {% endcomment %}
                 </div>
-                {% if currentProfile.selfProfile %}
+                {% if selfProfile %}
                 <a href="/editProfile" class="editBtn">Editar <span class="material-symbols-outlined filled">edit</span></a>
                 {% elif following %}
-                <a class="followBtn" onclick="unfollow()">Unfollow</a>
+                <a class="followBtn" onclick="unfollow()" href="unfollow">Unfollow</a>
                 {% else %}
-                <a class="followBtn" onclick="follow()">Follow</a>
+                <a class="followBtn" onclick="follow()" href="follow">Follow</a>
                 {% endif %}
             </div>
         </div>

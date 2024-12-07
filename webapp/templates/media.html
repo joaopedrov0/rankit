@@ -31,11 +31,11 @@
             <form action="", method="POST">
                 <fieldset>
                     <select name="review-quality" id="review-quality">
-                        {% if reviews.self.quality %}
-                        <option value="{{reviews.self.quality}}" hidden selected>{{reviews.self.qualityText}}</option>
+                        {% if reviews.selfReview.quality %}
+                        <option value="{{reviews.selfReview.quality}}" hidden selected>{{reviews.selfReview.qualityText}}</option>
                         {% endif %}
-                        <option value=""{% if not reviews.self.quality %} selected {%endif%} disabled>O que achou da obra?</option>
-                        {% if reviews.self.quality %}
+                        <option value=""{% if not reviews.selfReview.quality %} selected {%endif%} disabled>O que achou da obra?</option>
+                        {% if reviews.selfReview.quality %}
                         <option value="">Em branco</option>
                         {% endif %}
                         <option value="1">Péssimo</option>
@@ -48,7 +48,7 @@
                     </select>
                 </fieldset>
                 <fieldset>
-                    <textarea name="review-text" id="review-text" placeholder="Descreva um pouco mais de como foi sua experiência!" rows="7">{{reviews.self.text}}</textarea>
+                    <textarea name="review-text" id="review-text" placeholder="Descreva um pouco mais de como foi sua experiência!" rows="7">{{reviews.selfReview.text}}</textarea>
                 </fieldset>
                 {% if seen %}
                 <div class="btn unwatch" onclick="removeView()">Remover visto</div>
@@ -122,27 +122,27 @@
             </div>
            
             <div class="reviews-area">
-                {% if reviews.self %}
+                {% if reviews.selfReview %}
                     <h2>Sua avaliação</h2>
                     <div class="review-box">
-                        <a class="review-header" href="/profile/{{reviews.self.username}}">
-                            <img class="profile-icon" src="/static/img/icon/{{reviews.self.icon}}.png"/> <div class="review-name">{{reviews.self.name}}</div> <div class="review-username">{{reviews.self.username}}</div>
+                        <a class="review-header" href="/profile/{{reviews.selfReview.username}}">
+                            <img class="profile-icon" src="/static/img/icon/{{reviews.selfReview.icon}}.png"/> <div class="review-name">{{reviews.selfReview.name}}</div> <div class="review-username">{{reviews.selfReview.username}}</div>
                         </a>
                         <div class="review-body">
-                            {% if reviews.self.qualityText %}
-                            <div class="review-quality"><span class="quality-{{reviews.self.quality}}">{{reviews.self.qualityText}}</span></div>
+                            {% if reviews.selfReview.qualityText %}
+                            <div class="review-quality"><span class="quality-{{reviews.selfReview.quality}}">{{reviews.selfReview.qualityText}}</span></div>
                             {% endif %}
-                            {% if reviews.self.text %}
-                            <div class="review-text">{{reviews.self.text}}</div>
+                            {% if reviews.selfReview.text %}
+                            <div class="review-text">{{reviews.selfReview.text}}</div>
                             {% endif %}
                         </div>
                     </div>
                 {% endif %}
 
-                {% if reviews.reviewList %}
+                {% if reviews.otherReview %}
                 <h2>Todas as avaliações</h2>
 
-                    {% for review in reviews.reviewList %}
+                    {% for review in reviews.otherReview %}
                         <div class="review-box">
                             <a class="review-header" href="/profile/{{review.username}}">
                                 <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/> <div class="review-name">{{review.name}}</div> <div class="review-username">{{review.username}}</div>
@@ -157,10 +157,10 @@
                                 <div class="review-date">{{review.date}}</div>
                             </div>
                         </div>
+                    {% empty %}
+                        Nenhuma avaliação encontrada.
                     {% endfor %}
 
-                {% else %}
-                    Nenhuma avaliação encontrada.
                 {% endif %}
 
             </div>

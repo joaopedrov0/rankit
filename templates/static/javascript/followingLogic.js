@@ -5,7 +5,7 @@ function follow(){
     followBtn.innerText = "Unfollow"
     followBtn.onclick = () => {unfollow()}
 
-    fetch('follow')
+    // fetch('follow/', {method: 'POST'})
 
     followersCounter.innerText = parseInt(followersCounter.innerText) + 1
 }
@@ -14,7 +14,7 @@ function unfollow(){
     followBtn.innerText = "Follow"
     followBtn.onclick = () => {follow()}
 
-    fetch('unfollow')
+    // fetch('unfollow/', {method: 'POST'})
 
     followersCounter.innerText = parseInt(followersCounter.innerText) - 1
 }

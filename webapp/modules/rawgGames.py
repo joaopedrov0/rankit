@@ -1,11 +1,16 @@
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class RawgGames:
-    API_KEY = 'fbeac9a3d25445c6bb53a55a2eb227d0'  # Chave da API pq fodase aparentemente
+    API_KEY = os.getenv('RAWGGAMES_KEY')  # Chave da API pq fodase aparentemente
     BASE_URL = 'https://api.rawg.io/api/games'
 
     @classmethod
-    def search_games(cls, query):
+    def search(cls, query):
         try:
             params = {
                 'key': cls.API_KEY,
@@ -17,7 +22,7 @@ class RawgGames:
             response = requests.get(cls.BASE_URL, params=params)
             response.raise_for_status()  # Levanta erro se a requisição falhar
             data = response.json()
-
+            print(data)
             games = []
             for item in data.get('results', []):
                 translated_info = {
@@ -45,6 +50,7 @@ class RawgGames:
 # search_term = input("Digite o termo de busca: ")
 
 # results = rawg_games.search_games(search_term)
+# print(results)
 
 # print("\nResultados da busca:")
 # for i, game in enumerate(results, start=1):

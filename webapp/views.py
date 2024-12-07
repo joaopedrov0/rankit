@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import UsersCollection, User, LoginManager, Media, Review, MediaCollection, ReviewsCollection
+from .models import Database
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
-from .modules import TMDB, GoogleBooks, RawgGames, MediaModelSearch, MediaModelPage, QuickSort
+from .modules import TMDB, MediaModelSearch, MediaModelPage, QuickSort, User, Media, Review
 from datetime import datetime, date
+from .modules.loginManager import LoginManager
 
 # Recuperando icons e banners
 import os
@@ -16,500 +17,199 @@ BANNER_LIST = fs_manager.listdir('/banner')
 LOGIN_MANAGER = LoginManager()
 
 def home(request):
-    accessToken = request.COOKIES.get('sessionToken')
-    print(request.COOKIES)
-    print(accessToken)
-    print("LOGIN_MANAGER: {}".format(LOGIN_MANAGER.tokenList))
-    reviews = list(ReviewsCollection.find())
-    reviews = QuickSort(reviews, -1, "realDate").sorted
-    users = list(UsersCollection.find())
-    medias = list(MediaCollection.find())
     
-    reviewTranslator = {
-            "0":"undefined",
-            "1":"Péssimo",
-            "2":"Muito ruim",
-            "3":"Ruim",
-            "4":"Mediano",
-            "5":"Bom",
-            "6":"Muito bom",
-            "7":"Perfeito"
-        }
+    reviews = Database.getReviewsToRenderHome()
     
-    temp = []
-    for rev in reviews:
-        for u in users:
-            if u["username"] == rev["user_origin"]:
-                for m in medias:
-                    if m["_id"] == rev["mediaTarget"]:
-                        temp.append({
-                            "icon": u["icon"],
-                            "name": u["name"],
-                            "username": u["username"],
-                            "quality": rev["content"]["review-quality"],
-                            "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                            "text": rev["content"]["review-text"],
-                            "target_name": m["name"],
-                            "target_category": m["category"],
-                            "target_api_id": m["api_id"],
-                            "date": rev["strDate"],
-                            "realDate": rev["realDate"],
-                            "poster_path": m["posterPath"]
-                        })   
-    reviews = [*temp]
-    
-    if accessToken:
-        userID = ''
-        try:
-            userID = LOGIN_MANAGER.tokenList[accessToken]
-        except:
-            return render(request, 'home.html', {"logged":False, "reviews": reviews})
-        
-        user = UsersCollection.find_one({"_id": userID})
+    if LOGIN_MANAGER.isLoggedRequest(request): # Se estiver logado
+        userID = LOGIN_MANAGER.getUserByRequest(request)
+        user = Database.getUserByID(userID)
         return render(request, 'home.html', {"logged":True, "user": user, "reviews": reviews})
-    else:
+    else: # Se não estiver logado
         return render(request, 'home.html', {"logged":False, "reviews": reviews})
-        #return redirect('cadastro')
-
-# Create your views here.
 
 def profile(request, username):
-    accessToken = request.COOKIES.get('sessionToken')
-    print("LOGIN_MANAGER: {}".format(LOGIN_MANAGER.tokenList))
-    currentProfile = UsersCollection.find_one({"username": username})
-    print(accessToken)
     
-    reviews = list(ReviewsCollection.find({"user_origin": currentProfile["username"]}))
-    reviews = reviews if len(reviews) > 0 else None
+    currentProfile = Database.getUserByUsername(username) # Recupera o perfil atual
     
-    watchedMedia = list(MediaCollection.find({"viewsList": {"$all": [currentProfile["username"]]}}))
+    logged = False # Verificar se cliente está logado
+    selfProfile = False # Verificar se o cliente está no próprio perfil
+    following = False # Verificar se o cliente segue o perfil alvo
+    clientProfile = None # Perfil do cliente
     
-    if reviews:
-        reviewList = []
+    if LOGIN_MANAGER.isLoggedRequest(request): # Se o cliente estiver logado
+        logged = True
         
-        reviewTranslator = {
-            "0":"undefined",
-            "1":"Péssimo",
-            "2":"Muito ruim",
-            "3":"Ruim",
-            "4":"Mediano",
-            "5":"Bom",
-            "6":"Muito bom",
-            "7":"Perfeito"
-        }
+        clientID = LOGIN_MANAGER.getUserByRequest(request)
         
-        for rev in reviews:
-            media_id = rev["mediaTarget"]
-            currentMedia = None
-            for med in watchedMedia:
-                if med["_id"] == media_id:
-                    currentMedia = med
-                    break
-            reviewList.append({
-                "icon": currentProfile["icon"],
-                "name": currentProfile["name"],
-                "username": currentProfile["username"],
-                "quality": rev["content"]["review-quality"],
-                "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                "text": rev["content"]["review-text"],
-                "target_name": currentMedia["name"],
-                "target_category": currentMedia["category"],
-                "target_api_id": currentMedia["api_id"],
-                "date": rev["strDate"],
-                "realDate": rev["realDate"]
-            })
-        reviews = [*reviewList]
-        reviews = QuickSort(reviews, -1, 'realDate').sorted
-    
-    
-    
-    selfProfile = False
-    following = False
-    if accessToken in LOGIN_MANAGER.tokenList: # SE ESTIVER LOGADO
-        clientID = LOGIN_MANAGER.tokenList[accessToken]
-        print(LOGIN_MANAGER.isLogged(clientID)) # Consegue identificar se o perfil que está sendo acessado é o mesmo do usuário logado
         selfProfile = True if currentProfile["_id"] == clientID else False
-        print("\n\n{}\n{}\n\n".format(currentProfile["_id"], clientID))
-        currentProfile["user"] = LOGIN_MANAGER.cacheLogged[clientID]
+        
+        clientProfile = LOGIN_MANAGER.recoverCached(clientID)
         
         if selfProfile:
             following = False
         else:
-            if LOGIN_MANAGER.cacheLogged[clientID]["username"] in currentProfile["followers"]:
+            if clientProfile["username"] in currentProfile["followers"]:
                 following = True
 
-    if currentProfile:  # SE O PERFIL EXISTIR
-        currentProfile["selfProfile"] = selfProfile
-        currentProfile["logged"] = accessToken in LOGIN_MANAGER.tokenList
-        print(currentProfile)
-        followInfo = {
-            "followers": [],
-            "following": []
-        }
-        followingList = list(UsersCollection.find({"following": {"$all": [currentProfile["username"]]}}))
-        for u in followingList:
-            followInfo["following"].append({
-                "name": u["name"],
-                "username": u["username"],
-                "icon": u["icon"]
-            })
-        followerList = list(UsersCollection.find({"followers": {"$all": [currentProfile["username"]]}}))
-        for u in followerList:
-            followInfo["followers"].append({
-                "name": u["name"],
-                "username": u["username"],
-                "icon": u["icon"]
-            })
+    if currentProfile:
+        # Se o perfil existir, gera as informações de seguidores, diário e reviews
+        
+        # Gerando informações de seguidores
+        followInfo = Database.getFollowInfo(username)
         
         # Gerando diário
-        diary = QuickSort(currentProfile["diary"], -1, 'realDate').sorted if currentProfile["diary"] else None
+        diary = Database.getProfileDiary(currentProfile)
         
+        # Gerando reviews para renderizar
+        reviews = Database.getReviewsToRenderProfile(currentProfile)
         
-        return render(request, 'profile.html', {"currentProfile": currentProfile, "reviews": reviews, "diary": diary, "following": following, "followInfo": followInfo}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        return render(request, 'profile.html', {
+            "currentProfile": currentProfile, 
+            "logged": logged, 
+            "selfProfile": selfProfile, 
+            "reviews": reviews, 
+            "diary": diary, 
+            "following": following, 
+            "followInfo": followInfo,
+            "clientProfile": clientProfile
+            })
 
     else:
-
+        # Se o perfil não existir, direciona pra página "not-found".
         return render(request, 'not-found.html')
 
 @csrf_exempt
 def cadastro(request):
-    print() # Retorna None se n tem nenhum
-    print(request)
-    if request.method == 'GET':
+    
+    # Se for requisição GET ele retorna a página, se for POST ele reconhece como uma resposta de formulário
+        
+    if request.method == 'GET': 
         
         return render(request, 'cadastro.html')
     
     elif request.method == 'POST':
-        if UsersCollection.find_one({"username": "{}".format(request.POST.get('username'))}) == None:
-            # cria
-            newUser = User(
-                request.POST.get('name'),
-                request.POST.get('username'),
-                request.POST.get('email'),
-                request.POST.get('password')
-            )
-            UsersCollection.insert_one(newUser.toDict())
-        else :
-            # nao cria
-            return render(request, 'cadastro.html', {"error": True})
-        print(request.POST.get('name'))
+        username = request.POST.get('username')
+        
+        if Database.getUserByUsername(username) == None:
+            # Se não existir um usuário com esse username
+            
+            name = request.POST.get('name').strip()
+            username = request.POST.get('username').strip()
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            
+            if name and username and email and password:
+                # Se todos os campos estiverem preenchidos
+                
+                newUser = User(
+                    name,
+                    username,
+                    email,
+                    password
+                )
+                
+                Database.registerUser(newUser)
+                
+            else:
+                # Se faltar campos para preencher
+                
+                return render(request, 'cadastro.html', {"missing": True})
+                
+        else:
+            # Se o username já estiver sendo usado
+            
+            return render(request, 'cadastro.html', {"repeated": True})
+        
+        # Se tudo der certo
         return redirect("login")
-        # UsersCollection.insert_one()
     
 @csrf_exempt
 def login(request):
-    print(request)
+    
+    # Se for requisição GET ele retorna a página, se for POST ele reconhece como uma resposta de formulário
+    
     if request.method == 'GET':
         
-        return render(request, 'login.html', {'error':None})
+        return render(request, 'login.html')
     
     elif request.method == 'POST':
         
         username = request.POST.get('username')
         password = request.POST.get('password')
 
+        if not username and password:
+            return render(request, 'login.html', {"error": True})
+
         token = LOGIN_MANAGER.login(username, password)
 
         if token:
-            user = UsersCollection.find_one({"_id": LOGIN_MANAGER.tokenList[token]})
+            user = Database.getUserByID(LOGIN_MANAGER.getUserByToken(token))
 
-            LOGIN_MANAGER.cacheLogged[user["_id"]] = {
-                "username": user["username"],
-                "name": user["name"],
-                "icon": user["icon"]
-            }
+            LOGIN_MANAGER.cache(user["_id"], user["username"], user["name"], user["icon"])
 
             response = redirect('home')
-
             response.set_cookie('sessionToken', token)
-            print(LOGIN_MANAGER.tokenList)
+            
             return response
         else:
-            print(LOGIN_MANAGER.tokenList)
             return render(request, 'login.html', {'error':True})
     
         
 
 def search(request):
-    accessToken = request.COOKIES.get('sessionToken')
-    if accessToken:
-        userID = ''
-        try:
-            userID = LOGIN_MANAGER.tokenList[accessToken]
-        except:
-            return render(request, 'search.html', {"logged":False})
-        
-        user = UsersCollection.find_one({"_id": userID})
+    user = LOGIN_MANAGER.recoverCached(LOGIN_MANAGER.getUserByRequest(request))
+    if user:
         return render(request, 'search.html', {"logged":True, "user": user})
     else:
         return render(request, 'search.html', {"logged":False})
 
 def searchMedia(request, category, query):
-    queryResult = []
-    if category == "movie":
-        temp = TMDB.search("movie", query)
-        for result in temp:
-            queryResult.append(
-                MediaModelSearch.build(
-                    "movie",
-                    result["id"],
-                    result["title"],
-                    result["overview"],
-                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
-                    result["vote_average"],
-                    str(result["release_date"])[0:4:1]
-                )
-            )
-    elif category == "serie":
-        temp = TMDB.search("tv", query)
-        for result in temp:
-            print(result["origin_country"])
-            if result["origin_country"] == [] or result["origin_country"][0] == "JP": continue
-            queryResult.append(
-                MediaModelSearch.build(
-                    "serie",
-                    result["id"],
-                    result["name"],
-                    result["overview"],
-                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
-                    result["vote_average"],
-                    str(result["first_air_date"])[0:4:1]
-                )
-            )
-    elif category == "anime":
-        temp = TMDB.search("tv", query)
-        for result in temp:
-            if result["origin_country"] == [] or result["origin_country"][0] != "JP": continue
-            queryResult.append(
-                MediaModelSearch.build(
-                    "anime",
-                    result["id"],
-                    result["name"],
-                    result["overview"],
-                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
-                    result["vote_average"],
-                    str(result["first_air_date"])[0:4:1]
-                )
-            )
-    elif category == "game":
-        pass
-    elif category == "book":
-        pass
-    elif category == "user":
-        pass
-    else:
-        print("Erro na categoria da requisição")
-        return
-    res = JsonResponse({"result":queryResult})
+    
+    res = JsonResponse({"result": Database.searchMediaByQuery(category, query)})
     return res
 
 def media(request, category, id):
     
-    
+    user = LOGIN_MANAGER.recoverCachedByRequest(request)
     
     # Recuperando a mídia
-    if category == "movie":
-        mediaObj = TMDB.getByID("movie", id)
-        temp_size = str(mediaObj["runtime"]) + 'm' if mediaObj["runtime"] < 60 else (str(mediaObj["runtime"]//60) + 'h' + str(mediaObj["runtime"]%60) + 'm')
-        print(mediaObj)
-        mediaObj = MediaModelPage.build(
-                    "movie",
-                    mediaObj["id"],
-                    mediaObj["title"],
-                    mediaObj["overview"],
-                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
-                    mediaObj["vote_average"],
-                    str(mediaObj["release_date"])[0:4:1],
-                    "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
-                    mediaObj["genres"],
-                    {
-                        "time": temp_size
-                    }
-                )
-    elif category == "serie":
-        mediaObj = TMDB.getByID("tv", id)
-        temp_episode = 0
-        for season in mediaObj["seasons"]:
-            temp_episode += season["episode_count"]
-        mediaObj = MediaModelPage.build(
-                    "serie",
-                    mediaObj["id"],
-                    mediaObj["name"],
-                    mediaObj["overview"],
-                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
-                    mediaObj["vote_average"],
-                    str(mediaObj["first_air_date"])[0:4:1],
-                    "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
-                    mediaObj["genres"],
-                    {
-                        "seasons": len(mediaObj["seasons"]),
-                        "episode_count": temp_episode
-                    },
-                )
-    elif category == "anime":
-        mediaObj = TMDB.getByID("tv", id)
-        temp_episode = 0
-        for season in mediaObj["seasons"]:
-            temp_episode += season["episode_count"]
-        mediaObj = MediaModelPage.build(
-                    "anime",
-                    mediaObj["id"],
-                    mediaObj["name"],
-                    mediaObj["overview"],
-                    "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
-                    mediaObj["vote_average"],
-                    str(mediaObj["first_air_date"])[0:4:1],
-                    "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
-                    mediaObj["genres"],
-                    {
-                        "seasons": len(mediaObj["seasons"]),
-                        "episode_count": temp_episode
-                    }
-                    ,
-                )
-    elif category == "game":
-        pass
-    elif category == "book":
-        pass
-    else:
-        print("Erro na categoria da requisição")
-        return
+    mediaObj = Database.searchSingleMedia(category, id)
     
-    universalMediaId = "{}_{}".format(category, id)
+    universalMediaId = Media.generateMediaId(category, id)
     
     # Cria uma instância no banco se já não houver
-    if MediaCollection.find_one({"_id": "{}".format(universalMediaId)}) == None:
+    if Database.getMediaByID(universalMediaId) == None:
             ## Cria uma instância no banco caso não exista
-            MediaCollection.insert_one(Media(id, category, mediaObj["title"], mediaObj["description"], mediaObj["score"], mediaObj["poster_path"], mediaObj["banner_path"], None, mediaObj["release_year"]).toDict())
+            Database.registerMedia(Media(id, category, mediaObj["title"], mediaObj["description"], mediaObj["score"], mediaObj["poster_path"], mediaObj["banner_path"], None, mediaObj["release_year"]))
 
     # Gerando lista de reviews
-    reviewList = []
-    reviewTranslator = {
-        "0":"undefined",
-        "1":"Péssimo",
-        "2":"Muito ruim",
-        "3":"Ruim",
-        "4":"Mediano",
-        "5":"Bom",
-        "6":"Muito bom",
-        "7":"Perfeito"
-    }
-    otherReviews = list(ReviewsCollection.find({"mediaTarget": universalMediaId}))
-    if len(otherReviews) == 0:
-        otherReviews = None
-    else:
-        
-        usersThatReview = list(UsersCollection.find({"watched.{}.{}".format(category, universalMediaId): True}))
-        print("USUÁRIO DESLOGADO:")
-        print(not request.COOKIES.get('sessionToken') or not LOGIN_MANAGER.isLoggedToken(request.COOKIES.get('sessionToken')))
-        if not request.COOKIES.get('sessionToken') or not LOGIN_MANAGER.isLoggedToken(request.COOKIES.get('sessionToken')):
-            reviewList = []
-                
-            for rev in otherReviews:
-                currentUser = None
-                for u in usersThatReview:
-                    if rev["user_origin"] == u["username"]:
-                        currentUser = u
-                        break
-                    continue
-                if not currentUser:
-                    continue
-                reviewList.append({
-                    "icon": currentUser["icon"],
-                    "name": currentUser["name"],
-                    "username": currentUser["username"],
-                    "quality": rev["content"]["review-quality"],
-                    "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                    "text": rev["content"]["review-text"],
-                    "date": rev["strDate"],
-                    "realDate": rev["realDate"]
-                })
-                
-            if len(reviewList) > 0:
-                reviewList = QuickSort(reviewList, -1, 'realDate').sorted
-
+    reviews = Database.getReviewsToRenderMedia(category, universalMediaId, user["username"] if user else None)
 
     # Verificando se está logado
-    accessToken = request.COOKIES.get('sessionToken')
-    if accessToken:
-        userID = ''
-        try:
-            userID = LOGIN_MANAGER.tokenList[accessToken]
-        except:
-            return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False, "reviews":{
-            "reviewList": reviewList if reviewList else None
-        }})
+    
+    if user:
         
-        user = UsersCollection.find_one({"_id": userID})
+        # Sobrescreve user com o usuário completo pra saber se ele consumiu a obra
+        user = Database.getUserByUsername(user["username"])
         
         universalMediaId = "{}_{}".format(category, id)
         
         seen = True if universalMediaId in user["watched"][category] else False
         
-        
-        selfReview = None
-            
-        
-        
-        
-        if otherReviews:
-            for rev in otherReviews:
-                currentUser = None
-                for u in usersThatReview:
-                    
-                    if rev["user_origin"] == u["username"]:
-                        if u["username"] == user["username"]:
-                            currentUser = None
-                            selfReview = {
-                                "icon": u["icon"],
-                                "name": u["name"],
-                                "username": u["username"],
-                                "quality": rev["content"]["review-quality"],
-                                "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                                "text": rev["content"]["review-text"],
-                                "date": rev["strDate"],
-                            }
-                            continue
-                        currentUser = u
-                        break
-                    continue
-                if not currentUser:
-                    continue
-                reviewList.append({
-                    "icon": currentUser["icon"],
-                    "name": currentUser["name"],
-                    "username": currentUser["username"],
-                    "quality": rev["content"]["review-quality"],
-                    "qualityText": reviewTranslator[rev["content"]["review-quality"]] if rev["content"]["review-quality"] else None,
-                    "text": rev["content"]["review-text"],
-                    "date": rev["strDate"],
-                    "realDate": rev["realDate"]
-                })
-        if len(reviewList) > 0:
-            reviewList = QuickSort(reviewList, -1, 'realDate').sorted
         return render(request, 'media.html', {
             "logged":True, 
             "user": user, 
             "seen": seen,
             "media": mediaObj, 
-            "reviews":{
-                "self": selfReview,
-                # "friends": friendsReview,
-                "reviewList": reviewList,
-                }                       
+            "reviews":reviews                     
             })
     else:
-        
-        reviewList = QuickSort(reviewList, -1, 'realDate').sorted
-        return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False, "reviews":{
-            "reviewList": reviewList
-        }})
+        return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False, "reviews":reviews})
 
 def notfound(request):
+    # Você realmente quer que eu explique o que isso faz?
     return render(request, 'not-found.html')
 
-
-# ! EM DESENVOLVIMENTO
 @csrf_exempt
 def markAsSeen(request, mediaType, mediaID):
     """
@@ -518,19 +218,19 @@ def markAsSeen(request, mediaType, mediaID):
     - Adiciona a avaliação no diário dele
     - Adiciona a avaliação do usuário na listas de avaliações da obra
     """
-    accessToken = request.COOKIES.get('sessionToken')
+    
     response = HttpResponseNotModified()
     if not request.method == "POST":
         response.headers = {"request-status":"Not POST method"}
         return response
     
-    
-    
-    if LOGIN_MANAGER.isLoggedToken(accessToken):
+    if LOGIN_MANAGER.isLoggedRequest(request):
         
-        user = UsersCollection.find_one({"_id": LOGIN_MANAGER.getUserByToken(accessToken)})
+        clientID = LOGIN_MANAGER.getUserByRequest(request)
         
-        universalMediaId = "{}_{}".format(mediaType, mediaID)
+        user = Database.getUserByID(clientID) 
+        
+        universalMediaId = Media.generateMediaId(mediaType, mediaID)
         
         reviewQuality = request.POST.get('review-quality')
         reviewText = request.POST.get('review-text')
@@ -541,21 +241,22 @@ def markAsSeen(request, mediaType, mediaID):
         }
         
         # Tentando recuperar review existente
-        existingReview = ReviewsCollection.find_one({"_id": Review.generateReviewId(user["username"], mediaType, mediaID)})
+        existingReview = Database.getReviewByID(Review.generateReviewId(user["username"], mediaType, mediaID))
         
         # Se a review já existir
         if existingReview:
             if existingReview['content']["review-quality"] or existingReview['content']["review-text"]:
                 existingReview["content"] = contentReview
-                ReviewsCollection.replace_one({"_id": existingReview["_id"]}, existingReview)
+                Database.editReview(existingReview)
             else:
-                ReviewsCollection.delete_one({"_id": existingReview["_id"]})
+                Database.deleteReview(existingReview)
                 user["watched"][mediaType][mediaID] = False
-                UsersCollection.replace_one({"_id": user["_id"]}, user)
+                Database.refreshUser(user)
             return response
     
         # Adicionando ao diário
-        currentMedia = MediaCollection.find_one({"_id": Media.generateMediaId(mediaType, mediaID)})
+        currentMedia = Database.getMediaByID(Media.generateMediaId(mediaType, mediaID))
+        
         user["diary"].append({
             "media_id": currentMedia["_id"],
             "realDate": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -568,181 +269,147 @@ def markAsSeen(request, mediaType, mediaID):
     
         # Adicionando nas reviews do usuário
         user["watched"][mediaType][universalMediaId] = True if contentReview["review-quality"] or contentReview["review-text"] else False
-        print("mediaType: {}".format(mediaType))
-        print("mediaID: {}".format(mediaID))
-        print("universalMediaId: {}".format(universalMediaId))
-        response.headers = {"request-status": "Accepted"}
         
-        # Adicionando na tabela de reviews
-        
-        print(contentReview)
-        
+        # Adicionando na tabela de reviews do banco de dados
         if contentReview["review-quality"] or contentReview["review-text"]:
             user["reviewsNumber"] += 1
-            reviewID = Review.generateReviewId(user["username"], mediaType, mediaID)
             review = Review(user["username"], mediaType, mediaID, contentReview)
-            if ReviewsCollection.find_one({"_id": reviewID}) == None:
-                # cria review
-                print(review)
-                print(review.toDict())
-                ReviewsCollection.insert_one(review.toDict())
-            else:
-                # atualiza review
-                ReviewsCollection.replace_one({"_id": reviewID}, review.toDict())
+            Database.registerReview(review)
         
         # Atualizando perfil do usuário
-        UsersCollection.replace_one({"_id": user["_id"]}, user)
+        Database.refreshUser(user)
         
         # Adicionando nas reviews da mídia
         
-        media = MediaCollection.find_one({"_id": universalMediaId})
-        media["viewsList"].append(user["username"])
-        media["viewsNumber"] = len(media["viewsList"])
-        MediaCollection.replace_one({"_id": universalMediaId}, media)
+        currentMedia["viewsList"].append(user["username"])
+        currentMedia["viewsNumber"] = len(currentMedia["viewsList"])
         
-        
+        Database.refreshMedia(currentMedia)
         
         return response
     else:
-        response.headers["request-status"] = "Without Token"
+        # Se tentar dar review sem login
         return redirect(login)
     
 @csrf_exempt
 def editProfile(request):
-    
-    accessToken = request.COOKIES.get('sessionToken')
-    if request.method == "POST":
-        if LOGIN_MANAGER.isLoggedToken(accessToken):
-            
+    if LOGIN_MANAGER.isLoggedRequest(request):
+        if request.method == "POST":
+
             name = request.POST.get('name')
             bio = request.POST.get('bio')
             icon = request.POST.get('icon')
             banner = request.POST.get('banner')
             
-            id = LOGIN_MANAGER.getUserByToken(accessToken)
-            currentUser = UsersCollection.find_one({"_id": id})
+            id = LOGIN_MANAGER.getUserByRequest(request)
+            currentUser = Database.getUserByID(id)
             
             currentUser["name"] = name
             currentUser["bio"] = bio
             currentUser["icon"] = icon
             currentUser["banner"] = banner
             
-            UsersCollection.replace_one({"_id": currentUser["_id"]}, currentUser)
+            Database.refreshUser(currentUser)
             
             LOGIN_MANAGER.updateCache(currentUser["_id"], currentUser["username"], currentUser["name"], currentUser["icon"])
             
             response = redirect('profile', currentUser["username"])
+            
             return response
     
-    # accessToken = request.COOKIES.get('sessionToken')
-    # if accessToken:
-    #     userID = ''
-    #     try:
-    #         userID = LOGIN_MANAGER.tokenList[accessToken]
-    #     except:
-    #         # logged false
-    #         return render(request, 'home.html', {"logged":False})
+        icons = []
+        banners = []
         
-    #     user = UsersCollection.find_one({"_id": userID})
-    #     # logged true
-    #     return render(request, 'home.html', {"logged":True, "user": user})
-    # else:
-    #     # logged false
-    #     return render(request, 'home.html', {"logged":False})
-    
-    icons = []
-    banners = []
-    
-    for i in range(0, len(ICONS_LIST)):
-        icons.append(i)
+        for i in range(0, len(ICONS_LIST)):
+            icons.append(i)
+            
+        for j in range(0, len(BANNER_LIST)):
+            banners.append(j)
         
-    for j in range(0, len(BANNER_LIST)):
-        banners.append(j)
-    
-    if not accessToken or not accessToken in LOGIN_MANAGER.tokenList:
-        return render(request, 'not-found.html')
-    
-    currentProfile = UsersCollection.find_one({"_id": LOGIN_MANAGER.tokenList[accessToken]})
-    
-    if currentProfile:  # SE O PERFIL EXISTIR
-        return render(request, 'editProfile.html', {"currentProfile":currentProfile, "icons": icons, "banners":banners}) # podia ter um terceiro argumento com um dicionario com as variaveis pra passas por meio de {{uma chave}}
+        currentProfile = Database.getUserByID(LOGIN_MANAGER.getUserByRequest(request))
+        
+        if currentProfile:
+            # Se o perfil existir
+            
+            return render(request, 'editProfile.html', {"currentProfile":currentProfile, "icons": icons, "banners":banners})
 
+        else:
+            # Se o perfil não existir
+
+            return render(request, 'not-found.html')
     else:
+        # Se não for uma request com login
+        
+        return render(request, "not-found.html")
 
-        return render(request, 'not-found.html')
-    
-    
-    
-    
-    
-    
-    
 def logout(request):
+    id = LOGIN_MANAGER.getUserByRequest(request)
+    LOGIN_MANAGER.deleteLoginByCache(id)
     response = redirect('home')
     response.delete_cookie('sessionToken')
     return response
 
-
-
+@csrf_exempt
 def follow(request, username):
-    print("FUNÇÃO FOLLOW !!!")
     accessToken = request.COOKIES.get("sessionToken")
     if not LOGIN_MANAGER.isLoggedToken(accessToken):
         print("sem token logado")
         return redirect('login')
-    userID = LOGIN_MANAGER.getUserByToken(accessToken)
-    user = UsersCollection.find_one({"_id": userID})
-    followTarget = UsersCollection.find_one({"username": username})
-    
-    if user["username"] == followTarget["username"]:
-        print("Tentativa de auto-seguimento")
-        return HttpResponseNotModified()
-    
-    if followTarget["username"] in user["following"]:
-        print("Usuário já segue o alvo")
+    if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
     
+    userID = LOGIN_MANAGER.getUserByRequest(request)
+    
+    if LOGIN_MANAGER.recoverCached(userID)["username"] == username:
+        # Tentou seguir ele mesmo kkkkkkkkkkkk
+        return HttpResponseNotModified()
+    
+    user = Database.getUserByID(userID)
+    followTarget = Database.getUserByUsername(username)
+    
+    if followTarget["username"] in user["following"]:
+        # Usuário já segue o alvo
+        return redirect('error', "Ops, parece que você tentou seguir alguém mais de uma vez...") # ! FAZER ROTA DE ERRO (PASSANDO A MENSAGEM COMO PARÂMETRO DE CONTEXTO)
+    
     if user and followTarget:
-        print("{} começando a seguir {}...".format(user["username"], followTarget["username"]))
         user["followingCount"] += 1
         user["following"].append(followTarget["username"])
         followTarget["followersCount"] += 1
         followTarget["followers"].append(user["username"])
         
         # Concretizando alterações
-        UsersCollection.replace_one({"_id": user["_id"]}, user)
-        UsersCollection.replace_one({"_id": followTarget["_id"]}, followTarget)
+        Database.refreshUser(user)
+        Database.refreshUser(followTarget)
         
         return HttpResponseNotModified()
-    
+
+@csrf_exempt
 def unfollow(request, username):
-    print("FUNÇÃO UNFOLLOW !!!")
-    accessToken = request.COOKIES.get("sessionToken")
-    if not LOGIN_MANAGER.isLoggedToken(accessToken):
-        print("sem token logado")
+    if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
-    userID = LOGIN_MANAGER.getUserByToken(accessToken)
-    user = UsersCollection.find_one({"_id": userID})
-    followTarget = UsersCollection.find_one({"username": username})
     
-    if user["username"] == followTarget["username"]:
-        print("Tentativa de auto-seguimento")
+    userID = LOGIN_MANAGER.getUserByRequest(request)
+    
+    if LOGIN_MANAGER.recoverCached(userID)["username"] == username:
+        # Tentou dar unfollow nele mesmo 💔
         return HttpResponseNotModified()
     
+    user = Database.getUserByID(userID)
+    followTarget = Database.getUserByUsername(username)    
+    
     if not followTarget["username"] in user["following"]:
-        print("Usuário não segue o alvo")
+        # Usuário não segue o alvo
         return redirect('login')
     
     if user and followTarget:
-        print("{} deixando de seguir {}...".format(user["username"], followTarget["username"]))
         user["followingCount"] -= 1
         user["following"].remove(followTarget["username"])
         followTarget["followersCount"] -= 1
         followTarget["followers"].remove(user["username"])
         
         # Concretizando alterações
-        UsersCollection.replace_one({"_id": user["_id"]}, user)
-        UsersCollection.replace_one({"_id": followTarget["_id"]}, followTarget)
+        Database.refreshUser(user)
+        Database.refreshUser(followTarget)
         
         return HttpResponseNotModified()
     
@@ -750,12 +417,12 @@ def unfollow(request, username):
 def removeAsSeen(request, mediaType, mediaID):
     if not request.method == "POST":
         return HttpResponseNotModified()
-    accessToken = request.COOKIES.get("sessionToken")
-    if not LOGIN_MANAGER.isLoggedToken(accessToken):
-        print("sem token logado")
+    
+    if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
     
-    user = UsersCollection.find_one({"_id": LOGIN_MANAGER.getUserByToken(accessToken)})
+    userID = LOGIN_MANAGER.getUserByRequest(request)
+    user = Database.getUserByID(userID)
     user["watched"][mediaType].pop(Media.generateMediaId(mediaType, mediaID))
     user["watchedNumber"] -= 1
     user["reviewsNumber"] -= 1
@@ -766,15 +433,15 @@ def removeAsSeen(request, mediaType, mediaID):
         temp.append(page)
     user["diary"] = [*temp]
         
-        
-    ReviewsCollection.delete_one({"_id": Review.generateReviewId(user["username"], mediaType, mediaID)})
+    Database.deleteReviewByID(Review.generateReviewId(user["username"], mediaType, mediaID))
     
-    
-    media = MediaCollection.find_one({"_id": Media.generateMediaId(mediaType, mediaID)})
+    media = Database.getMediaByID(Media.generateMediaId(mediaType, mediaID))
     media["viewsList"].remove(user["username"])
     media["viewsNumber"] -= 1
+
+    # Concretizando alterações
+    Database.refreshUser(user)
+    Database.refreshMedia(media)
     
-    UsersCollection.replace_one({"_id": user["_id"]}, user)
-    MediaCollection.replace_one({"_id": media["_id"]}, media)
     return HttpResponseNotModified()
     
