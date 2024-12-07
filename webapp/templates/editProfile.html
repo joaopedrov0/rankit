@@ -34,7 +34,7 @@
                 <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
                 <a href="/not-found" class="top">Top Rated</a>
                 {% if logged %}
-                    <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"></img></a>
+                    <a class="profile-btn" href="/profile/{{currentProfile.username}}" class="top"><span class="mobile-hidden">{{currentProfile.name}}</span><img class="profile-icon" src="/static/img/icon/{{currentProfile.icon}}.png"/></a>
                 {% endif %}
                 <span class="menu-btn material-symbols-outlined" onclick="toggleMenu()">more_vert</span>
                 
