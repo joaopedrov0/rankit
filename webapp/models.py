@@ -56,22 +56,39 @@ class Database:
     
     @staticmethod
     def registerUser(user_obj):
+        """
+        Função: Registrar usuário no banco de dados
+        Recebe: Objeto da classe User
+        Retorna: None
+        """
         try:
             UsersCollection.insert_one(user_obj.toDict())
+            return None
         
         except:
             return Database.insertionError()
 
     @staticmethod
     def registerMedia(media_obj):
+        """
+        Função: Registrar mídia no banco de dados
+        Recebe: Objeto da classe Media
+        Retorna: None
+        """
         try:
             MediaCollection.insert_one(media_obj.toDict())
+            return None
         
         except:
             return Database.insertionError()
 
     @staticmethod
     def registerReview(review_obj):
+        """
+        Função: Registrar review no banco de dados
+        Recebe: Objeto da classe Review
+        Retorna: None
+        """
         try:
             ReviewsCollection.insert_one(review_obj.toDict())
         
@@ -80,11 +97,20 @@ class Database:
     
     @staticmethod
     def insertionError():
+        """
+        Função: Retornar erro de inserção no terminal
+        Retorna: False
+        """
         print('Erro ao inserir objeto!\n')
         return False
 
     @staticmethod
     def getUserByID(id): # Returns User dictionary
+        """
+        Função: Recuperar um usuário do banco usando o ID
+        Recebe: ID do usuário no banco
+        Retorna: Dicionário de usuário (Equivalente à User.toDict())
+        """
         try:
             
             res = UsersCollection.find_one({'_id': id})
@@ -96,6 +122,11 @@ class Database:
 
     @staticmethod
     def getUserByUsername(username): # Returns User dictionary
+        """
+        Função: Recuperar um usuário do banco usando o username
+        Recebe: username do usuário no banco
+        Retorna: Dicionário de usuário (Equivalente à User.toDict())
+        """
         try:
             
             res = UsersCollection.find_one({'username': username})
@@ -107,6 +138,10 @@ class Database:
 
     @staticmethod
     def getAllUsers():
+        """
+        Função: Recupera todos os usuários do banco
+        Retorna: Lista de dicionários de usuário (Equivalente à uma lista de User.toDict())
+        """
         try:
             res = list(UsersCollection.find())
             return res
@@ -117,6 +152,11 @@ class Database:
 
     @staticmethod
     def getMediaByID(id): # Returns Media dictionary
+        """
+        Função: Recuperar uma mídia do banco usando o ID
+        Recebe: ID da mídia no banco (no formato <category>_<api_id>)
+        Retorna: Dicionário de mídia (Equivalente à Media.toDict())
+        """
         try:
             
             res = MediaCollection.find_one({'_id': id})
@@ -128,6 +168,11 @@ class Database:
 
     @staticmethod
     def getReviewByID(id):
+        """
+        Função: Recuperar uma review do banco usando o ID
+        Recebe: ID da review no banco (no formato <origin_user>_<category>_<api_id>)
+        Retorna: Dicionário de review (Equivalente à Review.toDict())
+        """
         try:
             
             res = ReviewsCollection.find_one({'_id': id})
@@ -139,6 +184,10 @@ class Database:
 
     @staticmethod
     def getAllReviews(): # return All Reviews
+        """
+        Função: Recupera todas as reviews do banco
+        Retorna: Lista de dicionários de review (Equivalente à uma lista de Review.toDict())
+        """
         try:
             res = list(ReviewsCollection.find())
             res = QuickSort(res, -1, "realDate").sorted
@@ -150,6 +199,11 @@ class Database:
         
     @staticmethod
     def getReviewsByAuthor(username): # return Media dictionary with review
+        """
+        Função: Recuperar todas as reviews feitas por um determinado usuário
+        Recebe: username do usuário alvo
+        Retorna: Lista de dicionátios de review (Equivalente à uma lista de Review.toDict())
+        """
         try:
             res = list(ReviewsCollection.find({"user_origin": username}))
             return res
@@ -160,6 +214,11 @@ class Database:
 
     @staticmethod
     def getReviewsByMedia(media_id): # return Media dictionary with review
+        """
+        Função: Recuperar todas as reviews de uma determinada obra
+        Recebe: ID da mídia no banco (no formato <category>_<api_id>)
+        Retorna: Lista de dicionários de review (Equivalente à uma lista de Review.toDict())
+        """
         try:
             res = list(ReviewsCollection.find({"mediaTarget": media_id}))
             return res
@@ -170,10 +229,20 @@ class Database:
         
     @staticmethod
     def getReviewersByMedia(category, media_id):
-        return list(UsersCollection.find({"watched.{}.{}".format(category, media_id): True}))
+        """
+        Função: Recuperar todos os usuários que avaliaram uma obra
+        Recebe: Categoria da obra no BANCO e ID da obra na API.
+        Retorna: Lista de dicionários de usuário (Equivalente à uma lista de User.toDict())
+        """
+        # ? Quando um usuário marca uma obra como vista, é acrescentada a chave equivalente ao ID da obra (<category>_<api_id>). Essa chave aponta para "False" se a obra foi apenas vista e "True" se a obra foi vista e avaliada.
+        return list(UsersCollection.find({"watched.{}.{}".format(category, media_id): True})) 
      
     @staticmethod
     def getReviewsToRenderHome(): # Return reviews in format "list of dict"
+        """
+        Função: Gerar uma lista de reviews com as informações necessárias para renderizar a Home page.
+        Retorna: Lista de dicionários de review em um formato único que une informações de usuário, mídia e review.
+        """
         temp = []
         reviews = Database.getAllReviews()
         users = Database.getAllUsers()
@@ -201,6 +270,11 @@ class Database:
     
     @staticmethod
     def getReviewsToRenderProfile(profile): # Return reviews in format "list of dict"
+        """
+        Função: Gerar uma lista de reviews com as informações necessárias para renderizar o perfil de um usuário.
+        Recebe: Dicionário de usuário (Equivalente à User.toDict())
+        Retorna: Lista de dicionários de review em um formato único que une informações do dono do perfil, mídia e review.
+        """
         username = profile["username"]
         watched = Database.getWatchedMedia(username)
         if not watched:
@@ -238,11 +312,15 @@ class Database:
     
     @staticmethod
     def getReviewsToRenderMedia(category, media_id, username=None): # Return reviews in format "list of dict"
+        """
+        Função: Gerar uma lista de reviews com as informações necessárias para renderizar a página de uma mídia.
+        Recebe: Categoria no BANCO, ID da API e opcionalmente recebe o username do cliente se estiver logado para saber diferenciar as reviews dele das ademais
+        Retorna: Lista de dicionários de review em um formato único que une informações da review, mídia e autor da review.
+        """
         res = {
             "selfReview": None,
             "otherReview": []
         }
-        print(username)
         reviews = Database.getReviewsByMedia(media_id)
         if reviews:
             reviewers = Database.getReviewersByMedia(category, media_id)
@@ -293,6 +371,10 @@ class Database:
         
     @staticmethod
     def getAllMedia():
+        """
+        Função: Recuperar todas as mídias do banco.
+        Retorna: Lista de dicionários de mídia (Equivalente á uma lista de Media.toDict()).
+        """
         try:
             res = list(MediaCollection.find())
             return res
@@ -303,21 +385,41 @@ class Database:
      
     @staticmethod   
     def getWatchedMedia(username):
+        """
+        Função: Recuperar todas as mídias vistas por um usuário.
+        Recebe: username do usuário alvo
+        Retorna: Lista de dicionários de mídia (Equivalente á uma lista de Media.toDict()).
+        """
         res = list(MediaCollection.find({"viewsList": {"$all": [username]}}))
         return res if res else None
     
     @staticmethod
     def getFollowersOf(username):
+        """
+        Função: Recuperar todos os seguidores de um usuário.
+        Recebe: username do usuário alvo
+        Retorna: Lista de dicionários de usuário (Equivalente á uma lista de User.toDict()).
+        """
         res = list(UsersCollection.find({"following": {"$all": [username]}}))
         return res
     
     @staticmethod
     def getWhoUserIsFollowing(username):
+        """
+        Função: Recuperar todos os usuários que um usuário alvo segue.
+        Recebe: username do usuário alvo
+        Retorna: Lista de dicionários de usuário (Equivalente á uma lista de User.toDict()).
+        """
         res = list(UsersCollection.find({"followers": {"$all": [username]}}))
         return res
     
     @staticmethod
     def getFollowInfo(username):
+        """
+        Função: Recuperar as informações de followers e following de um usuário alvo.
+        Recebe: username do usuário alvo
+        Retorna: Dicionário com uma lista de followers e uma de following.
+        """
         followInfo = {
             "followers": [],
             "following": []
@@ -340,11 +442,21 @@ class Database:
     
     @staticmethod
     def getProfileDiary(profile):
+        """
+        Função: Recuperar o diário de um usuário na ordem cronológica correta.
+        Recebe: dicionário de usuário (Equivalente á User.toDict())
+        Retorna: Lista de dicionários equivalentes á páginas do diário.
+        """
         res = QuickSort(profile["diary"], -1, 'realDate').sorted if profile["diary"] else None
         return res
     
     @staticmethod
     def searchMediaByQuery(category, query):
+        """
+        Função: Realizar uma busca por uma obra em sua respectiva API.
+        Recebe: Categoria (que vai revelar a API que deve ser usada) e a query da busca.
+        Retorna: Lista de dicionários onde cada dicionário corresponde á uma obra, com suas informações necessárias para renderizar a página de busca.
+        """
         queryResult = []
         if category == "movie":
             temp = TMDB.search("movie", query)
@@ -404,6 +516,11 @@ class Database:
     
     @staticmethod
     def searchSingleMedia(category, id):
+        """
+        Função: Recuperar informações de uma mídia específica.
+        Recebe: categoria da obra e ID dela na API
+        Retorna: Dicionário com as informações da obra (Equivalente á MediaModelPage.build(), que faz justamente esse trabalho de estruturar as informações).
+        """
         if category == "movie":
             mediaObj = TMDB.getByID("movie", id)
             temp_size = str(mediaObj["runtime"]) + 'm' if mediaObj["runtime"] < 60 else (str(mediaObj["runtime"]//60) + 'h' + str(mediaObj["runtime"]%60) + 'm')
@@ -474,24 +591,41 @@ class Database:
     
     @staticmethod
     def editReview(reviewObj):
+        """
+        Função: Editar uma review no banco.
+        Recebe: dicionário de review (Equivalente á Review.toDict())
+        Retorna: None.
+        """
         try:
             id = reviewObj["_id"]
             ReviewsCollection.replace_one({"_id": id}, reviewObj)
+            return None
         except:
             print("Erro na edição re review")
             return None
     
     @staticmethod
     def deleteReview(review):
+        """
+        Função: Deletar review do banco de dados.
+        Recebe: dicionário da review (Equivalente á Review.toDict())
+        Retorna: None.
+        """
         id = review["_id"]
         try:
             ReviewsCollection.delete_one({"_id": id})
+            return None
         except:
             print("Erro na deleção de review")
             return None
         
     @staticmethod
     def deleteReviewByID(id):
+        """
+        Função: Deletar review do banco usando o ID dela.
+        Recebe: ID da review no banco (no formato <user_origin>_<category>_<api_id>)
+        Retorna: None.
+        """
         try:
             ReviewsCollection.delete_one({"_id": id})
         except:
@@ -501,20 +635,29 @@ class Database:
     @staticmethod
     def refreshUser(user):
         """
-        Recebe dicionário de usuário e atualiza o equivalente no banco
+        Função: Atualizar usuário no banco.
+        Recebe: dicionário de usuário (Equivalente á User.toDict())
+        Retorna: None.
         """
         id = user["_id"]
         try:
             UsersCollection.replace_one({"_id": id}, user)
+            return None
         except:
             print("Erro na atualização de perfil")
             return None
     
     @staticmethod
     def refreshMedia(media):
+        """
+        Função: Atualizar mídia no banco.
+        Recebe: dicionário de mídia (Equivalente á Media.toDict())
+        Retorna: None.
+        """
         id = media["_id"]
         try:
             MediaCollection.replace_one({"_id": id}, media)
+            return None
         except:
             print("Erro na atualização de mídia")
             return None
