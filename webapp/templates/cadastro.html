@@ -22,29 +22,32 @@
                 <h1>Cadastro</h1>
                 <div class="field">
                     <label for="name">Nome</label>
-                    <input type="text" id="name" name="name" placeholder="Digite seu nome">
+                    <input type="text" id="name" name="name" placeholder="Digite seu nome" required />
                 </div>
                 <div class="field">
                     <label for="username">Usuário</label>
-                    <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário (único)">
+                    <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário (único)" required />
                 </div>
                 <div class="field">
                     <label for="email">Email</label>
-                    <input type="text" id="email" name="email" placeholder="Digite seu email">
+                    <input type="email" id="email" name="email" placeholder="Digite seu email" required />
                 </div>
                 <div class="field">
                     <label for="password">Senha</label>
-                    <input type="text" id="password" name="password" placeholder="Digite uma senha">
+                    <input type="password" id="password" name="password" placeholder="Digite uma senha" required />
                 </div>
                 <div class="field">
                     <label for="password-confirm">Confirmar senha</label>
-                    <input type="text" id="password-confirm" name="confirm-password" placeholder="Confirme sua senha"/>
+                    <input type="password" id="password-confirm" name="confirm-password" placeholder="Confirme sua senha" required/>
                 </div>
                 {% if repeated %}
                     <span class="wrong">Já existe um usuário com este nome de usuário.</span>
                 {% endif %}
                 {% if missing %}
                     <span class="wrong">Preencha todos os campos do formulário.</span>
+                {% endif %}
+                {% if unmatchpassword %}
+                    <span class="wrong">O conteúdo do campo "Senha" e do campo "Confirmar senha" são diferentes.</span>
                 {% endif %}
                 
                 <button type="submit">Cadastrar</button>

@@ -97,6 +97,10 @@ def cadastro(request):
             username = request.POST.get('username').strip()
             email = request.POST.get('email')
             password = request.POST.get('password')
+            password_confirm = request.POST.get('confirm-password')
+            
+            if password != password_confirm:
+                return render(request, 'cadastro.html', {"unmatchpassword": True})
             
             if name and username and email and password:
                 # Se todos os campos estiverem preenchidos
