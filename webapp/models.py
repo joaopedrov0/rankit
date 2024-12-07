@@ -284,9 +284,8 @@ class Database:
                     "date": review["strDate"],
                     "realDate": review["realDate"]
                 })
-        
-            res["otherReview"] = QuickSort(res["otherReview"], -1, 'realDate').sorted
-            print(res)
+            if res["otherReview"]:
+                res["otherReview"] = QuickSort(res["otherReview"], -1, 'realDate').sorted
             return res
             
         else:
