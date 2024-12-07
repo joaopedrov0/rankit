@@ -321,6 +321,8 @@ def editProfile(request):
             
             return response
     
+        logged = LOGIN_MANAGER.isLoggedRequest(request)
+    
         icons = []
         banners = []
         
@@ -335,7 +337,7 @@ def editProfile(request):
         if currentProfile:
             # Se o perfil existir
             
-            return render(request, 'editProfile.html', {"currentProfile":currentProfile, "icons": icons, "banners":banners})
+            return render(request, 'editProfile.html', {"currentProfile":currentProfile, "icons": icons, "banners":banners, "logged": logged})
 
         else:
             # Se o perfil não existir
