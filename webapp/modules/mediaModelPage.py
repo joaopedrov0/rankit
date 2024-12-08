@@ -1,6 +1,9 @@
 class MediaModelPage:
-    @staticmethod
-    def build(category, id, title, description, poster_path, score, release_year, banner_path, genre, size):
+    
+    def __init__(self, mediaObj):
+        self.mediaObj = mediaObj
+    
+    def build(self, category, id, title, description, poster_path, score, release_year, banner_path, genre, size):
         return {
             "category": category,
             "id": id,

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8f1dd8caf34dc9e282414018cac58ad3281428480d5c3b57ec1a4a9a7276cfef"
+            "sha256": "c2439799d644e5128871f9019bcc94b4b5e72735682e789bba36158e6ab5a60b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -270,6 +270,15 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==3.10"
+        },
+        "igdb-api-v4": {
+            "hashes": [
+                "sha256:25de6ba3f7641d0bf0f88d034e6d38e1327375535aa7c01c1d9572069ed01ea5",
+                "sha256:7b878d3e6cf01da5d73761432a52b699467b75ae858c7d6c6f7cfce241818e0e"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3'",
+            "version": "==0.3.3"
         },
         "proto-plus": {
             "hashes": [

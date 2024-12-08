@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import bcrypt
 import secrets
 from datetime import date, datetime
-from .modules import TMDB, MediaModelPage, MediaModelSearch, QuickSort
+from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieModelPage, MovieModelPage, AnimeModelSearch, SerieModelSearch, MovieModelSearch, IGDB, GameModelSearch, GameModelPage
 
 # import webapp.modules as modules # Nossas classes estão aqui
 # modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
@@ -462,49 +462,28 @@ class Database:
             temp = TMDB.search("movie", query)
             for result in temp:
                 queryResult.append(
-                    MediaModelSearch.build(
-                        "movie",
-                        result["id"],
-                        result["title"],
-                        result["overview"],
-                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
-                        result["vote_average"],
-                        str(result["release_date"])[0:4:1]
-                    )
+                    MovieModelSearch(result).build()
                 )
         elif category == "serie":
             temp = TMDB.search("tv", query)
             for result in temp:
-                print(result["origin_country"])
                 if result["origin_country"] == [] or result["origin_country"][0] == "JP": continue
                 queryResult.append(
-                    MediaModelSearch.build(
-                        "serie",
-                        result["id"],
-                        result["name"],
-                        result["overview"],
-                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
-                        result["vote_average"],
-                        str(result["first_air_date"])[0:4:1]
-                    )
+                    SerieModelSearch(result).build()
                 )
         elif category == "anime":
             temp = TMDB.search("tv", query)
             for result in temp:
                 if result["origin_country"] == [] or result["origin_country"][0] != "JP": continue
                 queryResult.append(
-                    MediaModelSearch.build(
-                        "anime",
-                        result["id"],
-                        result["name"],
-                        result["overview"],
-                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(result["poster_path"]) if result["poster_path"] else None,
-                        result["vote_average"],
-                        str(result["first_air_date"])[0:4:1]
-                    )
+                    AnimeModelSearch(result).build()
                 )
         elif category == "game":
-            pass
+            temp = IGDB.search(query)
+            for result in temp:
+                queryResult.append(
+                    GameModelSearch(result).build()
+                )
         elif category == "book":
             pass
         elif category == "user":
@@ -523,71 +502,22 @@ class Database:
         """
         if category == "movie":
             mediaObj = TMDB.getByID("movie", id)
-            temp_size = str(mediaObj["runtime"]) + 'm' if mediaObj["runtime"] < 60 else (str(mediaObj["runtime"]//60) + 'h' + str(mediaObj["runtime"]%60) + 'm')
-            print(mediaObj)
-            mediaObj = MediaModelPage.build(
-                        "movie",
-                        mediaObj["id"],
-                        mediaObj["title"],
-                        mediaObj["overview"],
-                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
-                        mediaObj["vote_average"],
-                        str(mediaObj["release_date"])[0:4:1],
-                        "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
-                        mediaObj["genres"],
-                        {
-                            "time": temp_size
-                        }
-                    )
+            mediaObj = MovieModelPage(mediaObj)
         elif category == "serie":
             mediaObj = TMDB.getByID("tv", id)
-            temp_episode = 0
-            for season in mediaObj["seasons"]:
-                temp_episode += season["episode_count"]
-            mediaObj = MediaModelPage.build(
-                        "serie",
-                        mediaObj["id"],
-                        mediaObj["name"],
-                        mediaObj["overview"],
-                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
-                        mediaObj["vote_average"],
-                        str(mediaObj["first_air_date"])[0:4:1],
-                        "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
-                        mediaObj["genres"],
-                        {
-                            "seasons": len(mediaObj["seasons"]),
-                            "episode_count": temp_episode
-                        },
-                    )
+            mediaObj = SerieModelPage(mediaObj)
         elif category == "anime":
             mediaObj = TMDB.getByID("tv", id)
-            temp_episode = 0
-            for season in mediaObj["seasons"]:
-                temp_episode += season["episode_count"]
-            mediaObj = MediaModelPage.build(
-                        "anime",
-                        mediaObj["id"],
-                        mediaObj["name"],
-                        mediaObj["overview"],
-                        "https://image.tmdb.org/t/p/w300_and_h450_bestv2{}".format(mediaObj["poster_path"]) if mediaObj["poster_path"] else None,
-                        mediaObj["vote_average"],
-                        str(mediaObj["first_air_date"])[0:4:1],
-                        "https://image.tmdb.org/t/p/w1920_and_h1080_bestv2{}".format(mediaObj["backdrop_path"]) if mediaObj["backdrop_path"] else None,
-                        mediaObj["genres"],
-                        {
-                            "seasons": len(mediaObj["seasons"]),
-                            "episode_count": temp_episode
-                        }
-                        ,
-                    )
+            mediaObj = AnimeModelPage(mediaObj)
         elif category == "game":
-            pass
+            mediaObj = IGDB.getByID(id)
+            mediaObj = GameModelPage(mediaObj)
         elif category == "book":
             pass
         else:
             print("Erro na categoria da requisição")
             return
-        return mediaObj
+        return mediaObj.build()
     
     @staticmethod
     def editReview(reviewObj):

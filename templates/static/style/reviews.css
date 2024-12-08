@@ -89,13 +89,14 @@ span.quality-4{
     background-color: black;
 }
 span.quality-5{
-    background-color: rgb(13, 128, 13);
+    background-color: rgb(6, 95, 197);
 }
 span.quality-6{
-    background-color: rgb(32, 128, 13);
+    background-color: rgb(26, 128, 6);
 }
 span.quality-7{
-    background-color: rgb(168, 157, 0);
+    background: rgb(193,169,50);
+background: linear-gradient(19deg, rgba(193,169,50,1) 9%, rgba(235,231,122,1) 47%, rgba(214,203,38,1) 70%);
 }
 @media screen and (max-width: 960px){
     .container{

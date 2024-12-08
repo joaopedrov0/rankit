@@ -89,7 +89,7 @@
             <div class="info">
                 <img src="{{media.poster_path}}" alt="" class="poster">
                 <div class="mediaData">
-                     <div class="mediaTitle">{{media.title}} <span class="time">({{media.release_year}})</span></div>
+                     <div class="mediaTitle">{{media.title}} {% if media.release_year %}<span class="time">({{media.release_year}})</span>{% endif %}</div>
                      <div class="score"><span class="stars">{{media.score}}⭐</span> | <span class="views">6.9k</span> views</div>
                      <div class="tags">
                         {% for genre in media.genre %}

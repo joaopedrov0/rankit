@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class DatabaseInterface(ABC):
+class DatabaseCRUDInterface(ABC):
     
     @abstractmethod
     def registerUser(user_obj):
@@ -116,32 +116,6 @@ class DatabaseInterface(ABC):
         """
         # ? Quando um usuário marca uma obra como vista, é acrescentada a chave equivalente ao ID da obra (<category>_<api_id>). Essa chave aponta para "False" se a obra foi apenas vista e "True" se a obra foi vista e avaliada.
         pass
-     
-    @abstractmethod
-    def getReviewsToRenderHome():
-        """
-        Função: Gerar uma lista de reviews com as informações necessárias para renderizar a Home page.
-        Retorna: Lista de dicionários de review em um formato único que une informações de usuário, mídia e review.
-        """
-        pass
-    
-    @abstractmethod
-    def getReviewsToRenderProfile(profile):
-        """
-        Função: Gerar uma lista de reviews com as informações necessárias para renderizar o perfil de um usuário.
-        Recebe: Dicionário de usuário (Equivalente à User.toDict())
-        Retorna: Lista de dicionários de review em um formato único que une informações do dono do perfil, mídia e review.
-        """
-        pass
-    
-    @abstractmethod
-    def getReviewsToRenderMedia(category, media_id, username=None):
-        """
-        Função: Gerar uma lista de reviews com as informações necessárias para renderizar a página de uma mídia.
-        Recebe: Categoria no BANCO, ID da API e opcionalmente recebe o username do cliente se estiver logado para saber diferenciar as reviews dele das ademais
-        Retorna: Lista de dicionários de review em um formato único que une informações da review, mídia e autor da review.
-        """
-        pass
         
     @abstractmethod
     def getAllMedia():
@@ -197,24 +171,6 @@ class DatabaseInterface(ABC):
         pass
     
     @abstractmethod
-    def searchMediaByQuery(category, query):
-        """
-        Função: Realizar uma busca por uma obra em sua respectiva API.
-        Recebe: Categoria (que vai revelar a API que deve ser usada) e a query da busca.
-        Retorna: Lista de dicionários onde cada dicionário corresponde á uma obra, com suas informações necessárias para renderizar a página de busca.
-        """
-        pass
-    
-    @abstractmethod
-    def searchSingleMedia(category, id):
-        """
-        Função: Recuperar informações de uma mídia específica.
-        Recebe: categoria da obra e ID dela na API
-        Retorna: Dicionário com as informações da obra (Equivalente á MediaModelPage.build(), que faz justamente esse trabalho de estruturar as informações).
-        """
-        pass
-    
-    @abstractmethod
     def editReview(reviewObj):
         """
         Função: Editar uma review no banco.
@@ -256,5 +212,50 @@ class DatabaseInterface(ABC):
         Função: Atualizar mídia no banco.
         Recebe: dicionário de mídia (Equivalente á Media.toDict())
         Retorna: None.
+        """
+        pass
+    
+class DatabaseRenderInterface(ABC):
+    @abstractmethod
+    def getReviewsToRenderHome():
+        """
+        Função: Gerar uma lista de reviews com as informações necessárias para renderizar a Home page.
+        Retorna: Lista de dicionários de review em um formato único que une informações de usuário, mídia e review.
+        """
+        pass
+    
+    @abstractmethod
+    def getReviewsToRenderProfile(profile):
+        """
+        Função: Gerar uma lista de reviews com as informações necessárias para renderizar o perfil de um usuário.
+        Recebe: Dicionário de usuário (Equivalente à User.toDict())
+        Retorna: Lista de dicionários de review em um formato único que une informações do dono do perfil, mídia e review.
+        """
+        pass
+    
+    @abstractmethod
+    def getReviewsToRenderMedia(category, media_id, username=None):
+        """
+        Função: Gerar uma lista de reviews com as informações necessárias para renderizar a página de uma mídia.
+        Recebe: Categoria no BANCO, ID da API e opcionalmente recebe o username do cliente se estiver logado para saber diferenciar as reviews dele das ademais
+        Retorna: Lista de dicionários de review em um formato único que une informações da review, mídia e autor da review.
+        """
+        pass
+    
+    @abstractmethod
+    def searchMediaByQuery(category, query):
+        """
+        Função: Realizar uma busca por uma obra em sua respectiva API.
+        Recebe: Categoria (que vai revelar a API que deve ser usada) e a query da busca.
+        Retorna: Lista de dicionários onde cada dicionário corresponde á uma obra, com suas informações necessárias para renderizar a página de busca.
+        """
+        pass
+    
+    @abstractmethod
+    def searchSingleMedia(category, id):
+        """
+        Função: Recuperar informações de uma mídia específica.
+        Recebe: categoria da obra e ID dela na API
+        Retorna: Dicionário com as informações da obra (Equivalente á MediaModelPage.build(), que faz justamente esse trabalho de estruturar as informações).
         """
         pass

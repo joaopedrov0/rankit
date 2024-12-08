@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from .models import Database
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
-from .modules import User, Media, Review, DatabaseInterface
+from .modules import User, Media, Review, DatabaseCRUDInterface, DatabaseRenderInterface
 from datetime import datetime, date
 from .modules.loginManager import LoginManager
 
-DatabaseInterface.register(Database)
+DatabaseCRUDInterface.register(Database)
+DatabaseRenderInterface.register(Database)
 
 # Recuperando icons e banners
 import os

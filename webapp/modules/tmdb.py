@@ -1,9 +1,14 @@
 import requests
 import json
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+TMDB_KEY = os.getenv("TMDB_KEY") # URI pra conectar as parada
+
 class TMDB:
     BASE_URL = 'https://api.themoviedb.org/3/'
-    API_KEY = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlZTEyYmNkYzc1ODMwOWFlZjU2YWI3YTFmYmQ3YzIyOCIsIm5iZiI6MTczMjUzMzQyMC44MTQ5NzksInN1YiI6IjY3MTNjMjM1ZDViNzkyNmU5NDZmYzQ5NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.5qqvtYIG35_50dSBA9dH3FRM9c1Qgep6xTWZ9TcyVyI'
+    API_KEY = TMDB_KEY
     DEFAULT_LANGUAGE="pt-BR"
 
     @classmethod

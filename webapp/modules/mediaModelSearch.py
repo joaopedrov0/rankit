@@ -1,6 +1,9 @@
 class MediaModelSearch:
-    @staticmethod
-    def build(category, id, title, description, poster_path, score, release_year):
+    
+    def __init__(self, mediaObj):
+        self.mediaObj = mediaObj
+    
+    def build(self, category, id, title, description, poster_path, score, release_year):
         return {
             "category": category,
             "id": id,
