@@ -54,7 +54,7 @@ main{
 }
 
 .resultItem img.searchMediaImage{
-    height: 200px;
+    width: 142px;
 }
 
 .searchMediaText{
@@ -184,6 +184,6 @@ input[name="category"]:disabled+label{
     }
 
     .resultItem img.searchMediaImage{
-        height: 150px;
+        width: 120px;
     }
 }

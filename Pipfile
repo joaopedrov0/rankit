@@ -10,8 +10,8 @@ requests = "*"
 bcrypt = "*"
 fs = "*"
 python-dotenv = "*"
-django = "*"
 igdb-api-v4 = "*"
+django = "*"
 
 [dev-packages]
 

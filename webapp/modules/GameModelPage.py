@@ -24,7 +24,7 @@ class GameModelPage(MediaModelPage):
             "title": mediaObj.get("name"),
             "description": mediaObj.get("summary"),
             "poster_path": "https://images.igdb.com/igdb/image/upload/t_cover_big/{}.jpg".format(mediaObj["cover"]["image_id"]) if mediaObj.get("cover") else None,
-            "score": "{:.2f}".format(mediaObj.get("rating")),
+            "score": "{:.2f}".format(mediaObj.get("rating")) if mediaObj.get("rating") else None,
             "release_year": str(datetime.fromtimestamp(mediaObj["first_release_date"]).year) if mediaObj.get("first_release_date") else None,
             "banner_path": "https://images.igdb.com/igdb/image/upload/t_1080p/{}.jpg".format(mediaObj["artworks"][0]["image_id"]) if mediaObj.get("artworks") else None,
             "genre": tags,
