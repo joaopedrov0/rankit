@@ -43,10 +43,10 @@
                     <textarea name="review-text" id="review-text" placeholder="Descreva um pouco mais de como foi sua experiência!" rows="7">{{reviews.selfReview.text}}</textarea>
                 </fieldset>
                 {% if seen %}
-                <div class="btn unwatch" onclick="removeView()">Remover visto</div>
+                <div class="btn unwatch" onclick="removeView()">Remover review</div>
                 {% endif %}
                 <div class="btn cancel" onclick="toggleFormModal()">Cancelar</div>
-                <button type="submit" class="btn watched">Marcar como visto</button>
+                <button type="submit" class="btn watched">Adicionar review</button>
             </form>
         </div>
     </div>
@@ -114,7 +114,7 @@
                      {% if seen %}
                      <div class="btn watched" onclick="toggleFormModal()">Editar review <span class="material-symbols-outlined filled">edit</span></div>
                      {% else %}
-                     <div class="btn watched" onclick="toggleFormModal()">Marcar como visto</div>
+                     <div class="btn watched" onclick="toggleFormModal()">Adicionar review</div>
                      {% comment %} <div class="btn watchList">Adicionar na watchlist</div> {% endcomment %}
                      {% endif %}
                  </div>
