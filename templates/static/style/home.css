@@ -173,6 +173,7 @@ main .col12:first-child{
     }
     .reviews .review-box .review-box-poster img{
         height: auto;
+        min-width: 90px;
         width: 100%;
     }
     .review-box .review-header .review-name{
