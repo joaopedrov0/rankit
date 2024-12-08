@@ -1,0 +1,75 @@
+body{
+    background-image: url('/static/img/main-bg.jpg');
+    background-attachment: fixed;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+h1{
+    margin-top: 50px;
+}
+
+body > p{
+    text-align: center;
+    margin: 5px 20px;
+}
+
+main{
+    width: clamp(270px, 960px, 95vw);
+    min-height: 100vh;
+    background-color: var(--default-grey-bg);
+    padding: 30px;
+    border-radius: 15px;
+    margin: 25px 0;
+}
+
+main h2{
+    margin: 15px 0;
+    border-bottom: 1px solid rgba(200, 200, 200, 0.3);
+}
+
+main h3{
+    margin: 25px 0 10px 0;
+}
+
+main .image-credits img{
+    width: 300px;
+    max-width: 90vw;
+}
+
+.image-credits{
+    display: flex;
+    flex-direction: column;
+}
+
+main a{
+    color: var(--default-text-color-blue);
+}
+
+main p{
+    margin: 0 0 10px 0;
+}
+
+main a:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+a.credits-external-links{
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+a.credits-github{
+    color: rgb(1, 4, 9);
+    background-color: rgb(240, 246, 252);
+}
+
+a.credits-linkedin{
+    color: rgb(255, 255, 255);
+    background-color: rgb(10, 102, 194);
+}

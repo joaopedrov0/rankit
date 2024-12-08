@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Créditos - rank.it</title>
+
+        <!-- Importing Stylesheets -->
+        <link rel="stylesheet" href="/static/style/base.css">
+        <link rel="stylesheet" href="/static/style/credits.css">
+    </head>
+    <body>
+        <div class="header-container">
+            <header>
+                <a class="logo" href="/"><img src="/static/img/logo.png"/></a>
+                <div class="menu">
+                        <a class="mobile-only" href="/"><span class="material-symbols-outlined filled">home</span></a>
+                        {% if not logged %}
+                            <a href="/login" class="login">Login</a>
+                            <a href="/cadastro" class="cadastro">Cadastro</a>
+                        {% endif %}
+                        <a href="/search" class="search mobile-hidden">Buscar</a>
+                        <a href="/search" class="search mobile-only material-symbols-outlined">search</a>
+                        <a href="/not-found" class="top">Top Rated</a>
+                        {% if logged %}
+                            <a class="profile-btn" href="/profile/{{user.username}}" class="top"><span class="mobile-hidden">{{user.name}}</span><img class="profile-icon" src="/static/img/icon/{{user.icon}}.png"/></a>
+                        {% endif %}
+                        <span class="menu-btn material-symbols-outlined" onclick="toggleMenu()">more_vert</span>
+                        
+                </div>
+                <div class="floating-menu floating-menu-closed">
+                    <span style="--i:1" onclick="toggleMenu()"><span class="material-symbols-outlined filled">close</span></span>
+                    <a href="/search" style="--i:2">Estou com sorte</a>
+                    {% if logged %}
+                    <a href="/editProfile" style="--i:3">Editar perfil</a>
+                    <a href="/logout" style="--i:4">Log Out</a>
+                    {% endif %}
+                </div>
+            </header>
+        </div>
+            <h1>Créditos do projeto</h1>
+            <p>A todos os envolvidos no desenvolvimento direto ou indireto do Rank.it, nosso muito obrigado por fazer parte dessa jornada.</p>
+        <main>
+            <h2>Desenvolvedores</h2>
+
+            <h3>João Pedro Veríssimo</h3>
+            <p>Desenvolvedor Web Full Stack.</p>
+            <a class="credits-external-links credits-github" href="https://github.com/joaopedrov0">GitHub</a>
+            <a class="credits-external-links credits-linkedin" href="https://www.linkedin.com/in/jo%C3%A3o-pedro-895aa9227/">LinkedIn</a>
+
+            <h3>Nathan Guimarães</h3>
+            <p>...</p>
+            <a class="credits-external-links credits-github" href="https://github.com/nathanhgo">GitHub</a>
+            <a class="credits-external-links credits-linkedin" href="https://www.linkedin.com/in/nathanguimaraes/">LinkedIn</a>
+
+            <h3>Fabio Vivarelli</h3>
+            <p>...</p>
+            <a class="credits-external-links credits-github" href="https://github.com/PichuFV">GitHub</a>
+            <a class="credits-external-links credits-linkedin" href="https://www.linkedin.com/in/fabio-vivarelli-218270196/">LinkedIn</a>
+
+            <h3>João Vitor Gimenes</h3>
+            <p>...</p>
+            <a class="credits-external-links credits-github" href="https://github.com/iamthewalrusz">GitHub</a>
+            <a class="credits-external-links credits-linkedin" href="https://www.linkedin.com/in/jo%C3%A3o-vitor-gimenes-dos-santos-42380a302/">LinkedIn</a>
+
+            <h2>APIs</h2>
+            <h3>TMDB</h3>
+            <p>TMDB (The Movie Database), apesar do nome, é uma API que fornece informações sobre Filmes, Séries e Animes, além de muitas outras coisas que não foram necessárias no projeto.</p>
+            <a href="https://www.themoviedb.org/">Link para o site oficial</a>
+            <h3>IGDB</h3>
+            <p>IGDB (Internet Game Database) é uma API que fornece, de modo livre, dados de jogos de diferentes plataformas.</p>
+            <a href="https://www.igdb.com/">Link para o site oficial</a>
+
+            <h2>Tecnologias</h2>
+            <h3>Django</h3>
+            <p>Django foi o framework web escolhido para programar o servidor utilizando a linguagem Python como principal.</p>
+            <a href="https://www.djangoproject.com/">Link para o site oficial</a>
+            <h3>MongoDB</h3>
+            <p>MongoDB foi a solução de banco de dados que escolhemos para esse projeto.</p>
+            <a href="https://www.mongodb.com/pt-br">Link para o site oficial</a>
+
+            <h2>Imagens</h2>
+            <a href="https://www.pexels.com/photo/friends-sitting-on-the-couch-and-watching-film-9807277/" class="image-credits">
+                <img src="/static/img/main-bg.jpg" />
+                <p>Photo by Ron Lach from Pexels</p>
+            </a>
+
+        </main>
+        <footer>
+            <div class="footer-container">
+                <h3 class="public-repository">Repositório de apresentação</h3>
+                <a href="https://github.com/joaopedrov0/rankit-presentation">Clique aqui para ver o repositório de apresentação no GitHub!</a>
+            </div>
+            <div class="developed-by">Developed by <a href="https://github.com/joaopedrov0">joaopedrov0</a> ©2024</div>
+        </footer>
+        <script src="/static/javascript/floatingMenu.js"></script>
+    </body>
+</html>

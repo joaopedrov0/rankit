@@ -453,3 +453,14 @@ def removeAsSeen(request, mediaType, mediaID):
     Database.refreshMedia(media)
     
     return HttpResponseNotModified()
+
+def credits(request):
+    logged = False
+    clientProfile = None
+    if LOGIN_MANAGER.isLoggedRequest(request): # Se o cliente estiver logado
+        logged = True
+        
+        clientID = LOGIN_MANAGER.getUserByRequest(request)
+        
+        clientProfile = LOGIN_MANAGER.recoverCached(clientID)
+    return render(request, 'credits.html', {"logged": logged, "user": clientProfile})

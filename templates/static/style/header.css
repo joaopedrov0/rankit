@@ -7,6 +7,7 @@ header{
     width: clamp(300px, 100vw, 960px);
     /* width: 100vw; */
     height: 60px;
+    position: relative;
 }
 
 .header-container{
@@ -75,6 +76,7 @@ header{
     flex-direction: row;
     align-items: center;
     border-bottom: 2px solid rgba(200, 200, 200, 0.9);
+    /* position: relative; */
     /* margin: 0 15px; */
 }
 
