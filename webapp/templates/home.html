@@ -73,14 +73,20 @@
                 </div>
             </div> -->
             <div class="container">
-                <h1>Boas vindas ao Rank.it</h1>
-                <p>O Rank.it é um lugar onde você pode avaliar as obras que você viu e acompanhar o que seus amigos avaliaram também!</p>
-                <h2>Tudo em um só lugar!</h2>
-                <p>Através de um perfil do Rank.it você pode conhecer o que uma pessoa gosta de filmes, séries, animes, jogos e livros!</p>
-                <a class="getStartedBtn" href="/login">Comece já!</a>
+                {% if logged %}
+                    <h1>Bem vindo de volta {{user.name}}!</h1>
+                    <p>Dê uma olhada no que aconteceu enquanto você esteve fora!</p>
+                {% else %}
+                    <h1>Boas vindas ao Rank.it</h1>
+                    <p>O Rank.it é um lugar onde você pode avaliar as obras que você viu e acompanhar o que seus amigos avaliaram também!</p>
+                    <h2>Tudo em um só lugar!</h2>
+                    <p>Através de um perfil do Rank.it você pode conhecer o que uma pessoa gosta de filmes, séries, animes, jogos e livros!</p>
+                    <a class="getStartedBtn" href="/cadastro">Comece já!</a>
+                    <a class="already" href="/login">Já tem uma conta? Clique aqui para entrar!</a>
+                {% endif %}
                 {% if reviews %}
                 <div class="reviews feed">
-                    <h2>Reviews</h2>
+                    <h2>Atividades recentes</h2>
                     {% for review in reviews %}
                         <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">{{review.target_name}}</a>
                         <a class="review-box" href="/media/{{review.target_category}}/{{review.target_api_id}}">

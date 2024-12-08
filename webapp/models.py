@@ -2,7 +2,8 @@ from pymongo import MongoClient
 import bcrypt
 import secrets
 from datetime import date, datetime
-from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieModelPage, MovieModelPage, AnimeModelSearch, SerieModelSearch, MovieModelSearch, IGDB, GameModelSearch, GameModelPage
+from typing import Type
+from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieModelPage, MovieModelPage, AnimeModelSearch, SerieModelSearch, MovieModelSearch, IGDB, GameModelSearch, GameModelPage, DBElementsAbstract
 
 # import webapp.modules as modules # Nossas classes estão aqui
 # modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
@@ -55,7 +56,7 @@ class Database:
         }
     
     @staticmethod
-    def registerUser(user_obj):
+    def registerUser(user_obj:Type[DBElementsAbstract]):
         """
         Função: Registrar usuário no banco de dados
         Recebe: Objeto da classe User
@@ -69,7 +70,7 @@ class Database:
             return Database.insertionError()
 
     @staticmethod
-    def registerMedia(media_obj):
+    def registerMedia(media_obj:Type[DBElementsAbstract]):
         """
         Função: Registrar mídia no banco de dados
         Recebe: Objeto da classe Media
@@ -83,7 +84,7 @@ class Database:
             return Database.insertionError()
 
     @staticmethod
-    def registerReview(review_obj):
+    def registerReview(review_obj:Type[DBElementsAbstract]):
         """
         Função: Registrar review no banco de dados
         Recebe: Objeto da classe Review

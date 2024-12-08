@@ -162,7 +162,7 @@
 }
 
 .stats{
-    height: 500px;
+    min-height: 500px;
     /* background-color: green; */
 }
 
