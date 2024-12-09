@@ -43,35 +43,6 @@
             </header>
         </div>
         <main style="background-image:url('/static/img/pexels-ron-lach-9807277.jpg');">
-            <!-- <div class="col12">
-                <div class="text-box-home mobile-hidden">
-                    <p>Mantenha o controle do que viu.</p>
-                    <p>Salve o que ainda quer ver.</p>
-                </div>
-            </div>
-            <div class="col12">
-                <div class="col6 categoriesMenu">
-                    <div class="categoriesTitle">
-                        <div class="categoriesTitle-item">Filmes</div>
-                        <div class="categoriesTitle-item">Séries</div>
-                        <div class="categoriesTitle-item">Animes</div>
-                        <div class="categoriesTitle-item">Livros</div>
-                        <div class="categoriesTitle-item">Jogos</div>
-                    </div>
-                    <div class="categoriesBanner">
-                        <img src="/static/img/batman.jpg" alt="" class="categoriesBanner-item">
-                        <img src="/static/img/breaking.jpg" alt="" class="categoriesBanner-item">
-                        <img src="/static/img/deathnote.jpg" alt="" class="categoriesBanner-item">
-                        <img src="/static/img/harry.jpg" alt="" class="categoriesBanner-item">
-                        <img src="/static/img/rivia.jpg" alt="" class="categoriesBanner-item">
-                    </div>
-                </div>
-                <div class="col6 getStarted">
-                    Avalie e compartilhe com amigos.
-                    <h2>Tudo em um só lugar!</h2>
-                    <div class="getStartedBtn">Comece já!</div>
-                </div>
-            </div> -->
             <div class="container">
                 {% if logged %}
                     <h1>Bem vindo de volta {{user.name}}!</h1>
@@ -88,16 +59,23 @@
                 <div class="reviews feed">
                     <h2>Atividades recentes</h2>
                     {% for review in reviews %}
-                        <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">{{review.target_name}}</a>
-                        <a class="review-box" href="/media/{{review.target_category}}/{{review.target_api_id}}">
-                            <div class="review-box-poster">
+                        <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">
+                            {{review.target_name}}
+                        </a>
+                        <div class="review-box">
+                            <a class="review-box-poster" href="/media/{{review.target_category}}/{{review.target_api_id}}">
                                 <img src="{{review.poster_path}}" class="review-poster" />
-                            </div>
+                            </a>
                             <div class="review-box-text">
-                                <div class="review-header">
-                                    <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/> <div class="review-name">{{review.name}}<div class="review-username">{{review.username}}</div></div>
-                                </div>
-                                <div class="review-body">
+                                <a href="/profile/{{review.username}}" class="review-header">
+                                    <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/>
+                                    <div class="review-name">{{review.name}}
+                                        <div class="review-username">
+                                            {{review.username}}
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="review-body" href="/media/{{review.target_category}}/{{review.target_api_id}}">
                                     {% if review.quality %}
                                     <div class="review-quality"><span class="quality-{{review.quality}}">{{review.qualityText}}</span></div>
                                     {% endif %}
@@ -105,9 +83,9 @@
                                     <div class="review-text">{{review.text}}</div>
                                     {% endif %}
                                     <div class="review-date">{{review.date}}</div>
-                                </div>
+                                </a>
                             </div>
-                        </a>
+                        </div>
                     {% endfor %}
 
     
