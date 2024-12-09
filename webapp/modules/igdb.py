@@ -2,9 +2,16 @@
 import requests
 import json
 
-CLIENT_ID = 'zdrrwjhnfoul1c9ka7elgua55paq2h'
-APPLICATION_ACCESS_TOKEN = 'svec0ee8vn445zl2rpktkitpu5jlms'
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+CLIENT_ID = os.getenv("IGDB_CLIENT_ID")
+APPLICATION_ACCESS_TOKEN = os.getenv("IGDB_APPLICATION_ACCESS_TOKEN")
 APPLICATION_AUTHORIZATION= 'Bearer {}'.format(APPLICATION_ACCESS_TOKEN)
+
+if not CLIENT_ID or not APPLICATION_ACCESS_TOKEN:
+    print("Alert: Missing authentication token for IGDB API")
 
 class IGDB:
     
