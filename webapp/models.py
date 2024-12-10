@@ -505,6 +505,9 @@ class Database:
         Recebe: categoria da obra e ID dela na API
         Retorna: Dicionário com as informações da obra (Equivalente á MediaModelPage.build(), que faz justamente esse trabalho de estruturar as informações).
         """
+        if not id:
+            print("Erro no identificador da requisição")
+            return
         if category == "movie":
             mediaObj = TMDB.getByID("movie", id)
             mediaObj = MovieModelPage(mediaObj)

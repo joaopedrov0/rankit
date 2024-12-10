@@ -59,7 +59,7 @@ function renderResult(res, category){
                 <div class="searchMediaText">
                     <div class="mediaHeader">
                         <div class="mediaTitle">${media.title} <span class="time">${fixDate(media)}</span></div>
-                        <div class="score"><span class="stars">⭐⭐⭐⭐⭐</span> | <span class="views">6.9k</span> views</div>
+                        <div class="score"><span class="stars">${media.score}⭐</span></div>
                     </div>
                     
                     <div class="mediaDescription">${fixDescription(media)}</div>

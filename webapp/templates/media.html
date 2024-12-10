@@ -80,7 +80,11 @@
             </div>
         </header>
     </div>
+    {% if media.banner_path %}
     <div class="banner" style="background-image:url({{media.banner_path}});">
+    {% else %}
+    <div class="banner" style="background-image:url(/static/img/banner/0.png);">
+    {% endif %}
         
     </div>
     <main>
@@ -90,7 +94,7 @@
                 <img src="{{media.poster_path}}" alt="" class="poster">
                 <div class="mediaData">
                      <div class="mediaTitle">{{media.title}} {% if media.release_year %}<span class="time">({{media.release_year}})</span>{% endif %}</div>
-                     <div class="score"><span class="stars">{{media.score}}⭐</span> | <span class="views">6.9k</span> views</div>
+                     <div class="score"><span class="stars">{{media.score}}⭐</span></div>
                      <div class="tags">
                         {% for genre in media.genre %}
                             <span>{{genre.name}}</span>
