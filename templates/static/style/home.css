@@ -27,7 +27,7 @@
 }
 
 .reviews .review-box .review-box-poster img{
-    height: 200px;
+    width: 150px;
     margin-right: 10px;
     border-radius: 10px;
 

@@ -3,7 +3,7 @@ import bcrypt
 import secrets
 from datetime import date, datetime
 from typing import Type
-from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieModelPage, MovieModelPage, AnimeModelSearch, SerieModelSearch, MovieModelSearch, IGDB, GameModelSearch, GameModelPage, DBElementsAbstract
+from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieModelPage, MovieModelPage, AnimeModelSearch, SerieModelSearch, MovieModelSearch, IGDB, GameModelSearch, GameModelPage, DBElementsAbstract, GoogleBooks, BookModelPage, BookModelSearch
 
 # import webapp.modules as modules # Nossas classes estão aqui
 # modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
@@ -486,7 +486,11 @@ class Database:
                     GameModelSearch(result).build()
                 )
         elif category == "book":
-            pass
+            temp = GoogleBooks.search(query)
+            for result in temp:
+                queryResult.append(
+                    BookModelSearch(result).build()
+                )
         elif category == "user":
             pass
         else:
@@ -501,6 +505,9 @@ class Database:
         Recebe: categoria da obra e ID dela na API
         Retorna: Dicionário com as informações da obra (Equivalente á MediaModelPage.build(), que faz justamente esse trabalho de estruturar as informações).
         """
+        if not id:
+            print("Erro no identificador da requisição")
+            return
         if category == "movie":
             mediaObj = TMDB.getByID("movie", id)
             mediaObj = MovieModelPage(mediaObj)
@@ -514,7 +521,8 @@ class Database:
             mediaObj = IGDB.getByID(id)
             mediaObj = GameModelPage(mediaObj)
         elif category == "book":
-            pass
+            mediaObj = GoogleBooks.getByID(id)
+            mediaObj = BookModelPage(mediaObj)
         else:
             print("Erro na categoria da requisição")
             return

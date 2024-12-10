@@ -68,12 +68,7 @@
                             </a>
                             <div class="review-box-text">
                                 <a href="/profile/{{review.username}}" class="review-header">
-                                    <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/>
-                                    <div class="review-name">{{review.name}}
-                                        <div class="review-username">
-                                            {{review.username}}
-                                        </div>
-                                    </div>
+                                    <img class="profile-icon" src="/static/img/icon/{{review.icon}}.png"/><div class="review-name">{{review.name}}<div class="review-username">{{review.username}}</div></div>
                                 </a>
                                 <a class="review-body" href="/media/{{review.target_category}}/{{review.target_api_id}}">
                                     {% if review.quality %}
