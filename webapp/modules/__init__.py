@@ -11,8 +11,11 @@ from .AnimeModelPage import AnimeModelPage
 from .SerieModelPage import SerieModelPage
 from .MovieModelPage import MovieModelPage
 from .GameModelPage import GameModelPage
+from .BookModelPage import BookModelPage
 from .AnimeModelSearch import AnimeModelSearch
 from .SerieModelSearch import SerieModelSearch
 from .MovieModelSearch import MovieModelSearch
 from .GameModelSearch import GameModelSearch
+from .BookModelSearch import BookModelSearch
 from .igdb import IGDB
+from .googleBooks import GoogleBooks

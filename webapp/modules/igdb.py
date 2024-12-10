@@ -27,10 +27,12 @@ class IGDB:
         content = response.content
         return json.loads(content.decode("utf-8"))
     
+    @staticmethod
     def search(query):
-        res = IGDB.api_request('games', 'search "{}";where category=0;fields name,cover.image_id,summary,rating,id,first_release_date;'.format(query))
+        res = IGDB.api_request('games', 'search "{}";where category=(0,1,2,4,8,9,10);fields name,cover.image_id,summary,rating,id,first_release_date; limit 15;'.format(query))
         return res
     
+    @staticmethod
     def getByID(id):
         res = IGDB.api_request('games', 'where id={};fields name,cover.image_id,artworks.image_id,summary,genres.name,themes.name,rating,id;'.format(id))
         return res[0]
