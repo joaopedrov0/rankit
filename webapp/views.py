@@ -360,10 +360,6 @@ def logout(request):
 
 @csrf_exempt
 def follow(request, username):
-    accessToken = request.COOKIES.get("sessionToken")
-    if not LOGIN_MANAGER.isLoggedToken(accessToken):
-        print("sem token logado")
-        return redirect('login')
     if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
     
@@ -464,3 +460,41 @@ def credits(request):
         
         clientProfile = LOGIN_MANAGER.recoverCached(clientID)
     return render(request, 'credits.html', {"logged": logged, "user": clientProfile})
+
+@csrf_exempt
+def watchlist(request: object, category: str, id: str):
+    if not LOGIN_MANAGER.isLoggedRequest(request):
+        return redirect('login')
+    response =  HttpResponseNotModified()
+    clientID = LOGIN_MANAGER.getUserByRequest(request)
+    user = Database.getUserByID(clientID)
+    universalMediaId = Media.generateMediaId(category, id)
+    if universalMediaId in user["watched"][category]:
+        return response
+    if universalMediaId in user["watchList"][category]:
+        ... # já ta na watchlist
+        user["watchList"][category].pop(universalMediaId) # tira da watchlist se tiver
+    else:
+        ... # nao ta ainda
+        user["watchList"][category][universalMediaId] = False # coloca na watchlist se nao tiver
+    return response
+        
+@csrf_exempt
+def watching(request: object, category: str, id:str):
+    if not LOGIN_MANAGER.isLoggedRequest(request):
+        return redirect('login')
+    response = HttpResponseNotModified()
+    clientID = LOGIN_MANAGER.getUserByRequest(request)
+    user = Database.getUserByID(clientID)
+    universalMediaId = Media.generateMediaId(category, id)
+    if universalMediaId in user["watched"][category]:
+        return response
+    if not universalMediaId in user["watchList"][category]:
+        return response
+    if user["watchList"][category][universalMediaId] == False:
+        user["watchList"][category][universalMediaId] == True
+    else:
+        user["watchList"][category][universalMediaId] == False
+        
+    return response
+    pass # essa rota é pra marcar/desmarcar o que o usuário está vendo/consumindo atualmente

@@ -1,13 +1,13 @@
-from webapp.models import UsersCollection, LoginManager, User, Review, MediaCollection, ReviewsCollection
+from webapp.models import UsersCollection, MediaCollection, ReviewsCollection
 
-from webapp.modules import QuickSort, RawgGames
+from webapp.modules import QuickSort
 
 from datetime import date, datetime
 
 
 
 
-print(RawgGames.search("Outer wilds"))
+# print(RawgGames.search("Outer wilds"))
 
 
 
@@ -73,11 +73,16 @@ print(RawgGames.search("Outer wilds"))
     
 #     UsersCollection.replace_one({"_id": user["_id"]}, user)
     
-# allUsers = list(MediaCollection.find())
-# for user in allUsers:
-#     user["realDate"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#     user["strDate"] = date.today().strftime("%d/%m/%Y")
-#     MediaCollection.replace_one({"_id": user["_id"]}, user)
+allUsers = list(UsersCollection.find())
+for user in allUsers:
+    user["watchList"] = {
+        "movie": {},
+        "serie": {},
+        "anime":{},
+        "game":{},
+        "book":{}
+    }
+    UsersCollection.replace_one({"_id": user["_id"]}, user)
 
 
 

@@ -26,11 +26,11 @@ class User(DBElementsAbstract):
                 },
                  watchedNumber=0,
                  watchList={
-                    "movie": [],
-                    "serie": [],
-                    "anime": [],
-                    "game": [],
-                    "book": []
+                    "movie": {}, # {"media": mediaObj, "watching:" True|False}
+                    "serie": {},
+                    "anime": {},
+                    "game": {},
+                    "book": {}
                 },
                  watchListSize=0,
                  reviewsNumber=0,

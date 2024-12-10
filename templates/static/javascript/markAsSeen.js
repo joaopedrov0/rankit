@@ -1,5 +1,6 @@
 const formHTML = document.querySelector("form")
 const watchedHTML = document.querySelector(".interact .watched.btn")
+const watchlistHTML = document.querySelector(".interact .watchList.btn")
 
 formHTML.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -21,4 +22,16 @@ function removeView(){
     toggleFormModal()
     watchedHTML.innerHTML = "Marcar como visto"
     fetch(`/removeAsSeen/${MEDIA_CATEGORY}/${MEDIA_ID}`, {method:"POST"})
+}
+
+function addWatchlist(){
+    watchlistHTML.innerHTML = "Remover da watchlist"
+    watchlistHTML.onclick = ()=>{removeWatchlist()}
+    fetch(`/watchlist/${MEDIA_CATEGORY}/${MEDIA_ID}`, {method:"POST"})
+}
+
+function removeWatchlist(){
+    watchlistHTML.innerHTML = "Adicionar a watchlist"
+    watchlistHTML.onclick = ()=>{addWatchlist()}
+    fetch(`/watchlist/${MEDIA_CATEGORY}/${MEDIA_ID}`, {method:"POST"})
 }
