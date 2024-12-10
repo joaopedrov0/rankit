@@ -34,7 +34,7 @@ Rank.it é uma plataforma que visa permitir o registro e compartilhamento de opi
 - Adicionar rank pessoal
 - Opção de review privada
 - Adicionar pesquisa por usuários
-- Data de início e fim (séries, jogos, livros)
+- Data de início e fim (filmes, séries, jogos, livros)
 - Adicionar horas de jogo do usuário
 - Contador de mídias
 - Adicionar seção Novidades
