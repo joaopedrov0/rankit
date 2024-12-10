@@ -31,6 +31,7 @@ Rank.it é uma plataforma que visa permitir o registro e compartilhamento de opi
 
 # Ideias
 - Adicionar favoritos no perfil
+- Adicionar mais opções de foto de perfi e banner
 - Adicionar rank pessoal
 - Opção de review privada
 - Adicionar pesquisa por usuários
