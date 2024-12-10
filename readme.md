@@ -29,7 +29,18 @@ Rank.it é uma plataforma que visa permitir o registro e compartilhamento de opi
 - 🕐 Troca de senha
 - 🕐 Permitir de deletar conta
 
-
+# Ideias
+- Adicionar favoritos no perfil
+- Adicionar rank pessoal
+- Opção de review privada
+- Adicionar pesquisa por usuários
+- Data de início e fim (séries, jogos, livros)
+- Adicionar horas de jogo do usuário
+- Contador de mídias
+- Adicionar seção Novidades
+- Adicionar sistema de notificação (novo seguidor, um filme da sua watchlist lançou, 10 pessoas curtiram sua review)
+- Adicionar opção de criar listas normais e ranqueadas (ex: top filmes do Nolan / Melhores filmes de terror de 2019)
+- Expandir reviews (nota para direção, roteiro, efeitos vizuais, trilha, etc)
 
 # Para devs
 
