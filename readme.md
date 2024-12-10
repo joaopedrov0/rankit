@@ -39,7 +39,12 @@ Rank.it é uma plataforma que visa permitir o registro e compartilhamento de opi
 - Review geral e por temporada (em séries/animes)
 - Adicionar horas de jogo do usuário
 - Contador de mídias
+- Adicionar API de música (MusicBrainz API / Last.fm API)
+- Melhor API de livros
 - Adicionar seção Novidades
+- Adicionar recomendados para você na home
+- Corrigir problemas de língua portuguesa
+- Adicionar versão ingles do site
 - Adicionar sistema de notificação (novo seguidor, um filme da sua watchlist lançou, 10 pessoas curtiram sua review)
 - Adicionar opção de criar listas normais e ranqueadas (ex: top filmes do Nolan / Melhores filmes de terror de 2019)
 - Expandir reviews (nota para direção, roteiro, efeitos vizuais, trilha, etc)
