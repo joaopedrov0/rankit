@@ -16,10 +16,10 @@ from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieMod
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MONGODB_URI = os.getenv("URI") # URI pra conectar as parada
+MONGODB_URI:str = os.getenv("URI") # URI pra conectar as parada
 
 # Mongo Client
-client = MongoClient(MONGODB_URI) # Cria o client q consegue fazer o crud
+client: Type[MongoClient] = MongoClient(MONGODB_URI) # Cria o client q consegue fazer o crud
 
 # Mongo Database
 
@@ -44,7 +44,7 @@ SessionsCollection = db.sessions
         
 class Database:
     
-    reviewTranslator = {
+    reviewTranslator:dict = {
             "0":"undefined",
             "1":"Péssimo",
             "2":"Muito ruim",
@@ -106,7 +106,7 @@ class Database:
         return False
 
     @staticmethod
-    def getUserByID(id): # Returns User dictionary
+    def getUserByID(id:any): # Returns User dictionary
         """
         Função: Recuperar um usuário do banco usando o ID
         Recebe: ID do usuário no banco
@@ -114,7 +114,7 @@ class Database:
         """
         try:
             
-            res = UsersCollection.find_one({'_id': id})
+            res:dict = UsersCollection.find_one({'_id': id})
             return res
         
         except:
@@ -122,7 +122,7 @@ class Database:
             return False
 
     @staticmethod
-    def getUserByUsername(username): # Returns User dictionary
+    def getUserByUsername(username:str): # Returns User dictionary
         """
         Função: Recuperar um usuário do banco usando o username
         Recebe: username do usuário no banco
@@ -130,7 +130,7 @@ class Database:
         """
         try:
             
-            res = UsersCollection.find_one({'username': username})
+            res:dict = UsersCollection.find_one({'username': username})
             return res if res else None
         
         except:
@@ -144,7 +144,7 @@ class Database:
         Retorna: Lista de dicionários de usuário (Equivalente à uma lista de User.toDict())
         """
         try:
-            res = list(UsersCollection.find())
+            res:list = list(UsersCollection.find())
             return res
         
         except:
@@ -152,7 +152,7 @@ class Database:
             return False
 
     @staticmethod
-    def getMediaByID(id): # Returns Media dictionary
+    def getMediaByID(id:str): # Returns Media dictionary
         """
         Função: Recuperar uma mídia do banco usando o ID
         Recebe: ID da mídia no banco (no formato <category>_<api_id>)
@@ -160,7 +160,7 @@ class Database:
         """
         try:
             
-            res = MediaCollection.find_one({'_id': id})
+            res:dict = MediaCollection.find_one({'_id': id})
             return res
         
         except:
@@ -168,7 +168,7 @@ class Database:
             return False
 
     @staticmethod
-    def getReviewByID(id):
+    def getReviewByID(id:str):
         """
         Função: Recuperar uma review do banco usando o ID
         Recebe: ID da review no banco (no formato <origin_user>_<category>_<api_id>)
@@ -176,7 +176,7 @@ class Database:
         """
         try:
             
-            res = ReviewsCollection.find_one({'_id': id})
+            res:dict = ReviewsCollection.find_one({'_id': id})
             return res
         
         except:
@@ -190,7 +190,7 @@ class Database:
         Retorna: Lista de dicionários de review (Equivalente à uma lista de Review.toDict())
         """
         try:
-            res = list(ReviewsCollection.find())
+            res:list = list(ReviewsCollection.find())
             res = QuickSort(res, -1, "realDate").sorted
             return res
         
@@ -199,14 +199,14 @@ class Database:
             return False
         
     @staticmethod
-    def getReviewsByAuthor(username): # return Media dictionary with review
+    def getReviewsByAuthor(username:str): # return Media dictionary with review
         """
         Função: Recuperar todas as reviews feitas por um determinado usuário
         Recebe: username do usuário alvo
         Retorna: Lista de dicionátios de review (Equivalente à uma lista de Review.toDict())
         """
         try:
-            res = list(ReviewsCollection.find({"user_origin": username}))
+            res:list = list(ReviewsCollection.find({"user_origin": username}))
             return res
         
         except:
@@ -214,14 +214,14 @@ class Database:
             return False
 
     @staticmethod
-    def getReviewsByMedia(media_id): # return Media dictionary with review
+    def getReviewsByMedia(media_id:str): # return Media dictionary with review
         """
         Função: Recuperar todas as reviews de uma determinada obra
         Recebe: ID da mídia no banco (no formato <category>_<api_id>)
         Retorna: Lista de dicionários de review (Equivalente à uma lista de Review.toDict())
         """
         try:
-            res = list(ReviewsCollection.find({"mediaTarget": media_id}))
+            res:list = list(ReviewsCollection.find({"mediaTarget": media_id}))
             return res
         
         except:
@@ -229,7 +229,7 @@ class Database:
             return False
         
     @staticmethod
-    def getReviewersByMedia(category, media_id):
+    def getReviewersByMedia(category:str, media_id:str):
         """
         Função: Recuperar todos os usuários que avaliaram uma obra
         Recebe: Categoria da obra no BANCO e ID da obra na API.
@@ -244,10 +244,10 @@ class Database:
         Função: Gerar uma lista de reviews com as informações necessárias para renderizar a Home page.
         Retorna: Lista de dicionários de review em um formato único que une informações de usuário, mídia e review.
         """
-        temp = []
-        reviews = Database.getAllReviews()
-        users = Database.getAllUsers()
-        medias = Database.getAllMedia()
+        temp:list = []
+        reviews:list = Database.getAllReviews()
+        users:list = Database.getAllUsers()
+        medias:list = Database.getAllMedia()
         for review in reviews:
             for user in users:
                 if user["username"] == review["user_origin"]:
@@ -270,23 +270,23 @@ class Database:
         return temp
     
     @staticmethod
-    def getReviewsToRenderProfile(profile): # Return reviews in format "list of dict"
+    def getReviewsToRenderProfile(profile:dict): # Return reviews in format "list of dict"
         """
         Função: Gerar uma lista de reviews com as informações necessárias para renderizar o perfil de um usuário.
         Recebe: Dicionário de usuário (Equivalente à User.toDict())
         Retorna: Lista de dicionários de review em um formato único que une informações do dono do perfil, mídia e review.
         """
-        username = profile["username"]
-        watched = Database.getWatchedMedia(username)
+        username:str = profile["username"]
+        watched:list = Database.getWatchedMedia(username)
         if not watched:
             return None
-        reviews = Database.getReviewsByAuthor(username)
+        reviews:list = Database.getReviewsByAuthor(username)
         if reviews:
-            res = []
+            res:list = []
             # Buscar review
             for review in reviews:
-                media_id = review["mediaTarget"]
-                currentMedia = None
+                media_id:str = review["mediaTarget"]
+                currentMedia:dict = None
                 # Buscar objeto de mídia
                 for media in watched:
                     if media["_id"] == media_id:
@@ -312,23 +312,23 @@ class Database:
             return None
     
     @staticmethod
-    def getReviewsToRenderMedia(category, media_id, username=None): # Return reviews in format "list of dict"
+    def getReviewsToRenderMedia(category:str, media_id:str, username:str=None): # Return reviews in format "list of dict"
         """
         Função: Gerar uma lista de reviews com as informações necessárias para renderizar a página de uma mídia.
         Recebe: Categoria no BANCO, ID da API e opcionalmente recebe o username do cliente se estiver logado para saber diferenciar as reviews dele das ademais
         Retorna: Lista de dicionários de review em um formato único que une informações da review, mídia e autor da review.
         """
-        res = {
+        res:dict = {
             "selfReview": None,
             "otherReview": []
         }
-        reviews = Database.getReviewsByMedia(media_id)
+        reviews:list = Database.getReviewsByMedia(media_id)
         if reviews:
-            reviewers = Database.getReviewersByMedia(category, media_id)
+            reviewers:list = Database.getReviewersByMedia(category, media_id)
             
             for review in reviews:
                 # Para cada review
-                currentAuthor = None
+                currentAuthor:dict = None
                 for author in reviewers:
                     # Para cada usuário
                     if review["user_origin"] == author["username"]:
@@ -377,7 +377,7 @@ class Database:
         Retorna: Lista de dicionários de mídia (Equivalente á uma lista de Media.toDict()).
         """
         try:
-            res = list(MediaCollection.find())
+            res:list = list(MediaCollection.find())
             return res
         
         except:
@@ -385,54 +385,54 @@ class Database:
             return False
      
     @staticmethod   
-    def getWatchedMedia(username):
+    def getWatchedMedia(username:str):
         """
         Função: Recuperar todas as mídias vistas por um usuário.
         Recebe: username do usuário alvo
         Retorna: Lista de dicionários de mídia (Equivalente á uma lista de Media.toDict()).
         """
-        res = list(MediaCollection.find({"viewsList": {"$all": [username]}}))
+        res:list = list(MediaCollection.find({"viewsList": {"$all": [username]}}))
         return res if res else None
     
     @staticmethod
-    def getFollowersOf(username):
+    def getFollowersOf(username:str):
         """
         Função: Recuperar todos os seguidores de um usuário.
         Recebe: username do usuário alvo
         Retorna: Lista de dicionários de usuário (Equivalente á uma lista de User.toDict()).
         """
-        res = list(UsersCollection.find({"following": {"$all": [username]}}))
+        res:list = list(UsersCollection.find({"following": {"$all": [username]}}))
         return res
     
     @staticmethod
-    def getWhoUserIsFollowing(username):
+    def getWhoUserIsFollowing(username:str):
         """
         Função: Recuperar todos os usuários que um usuário alvo segue.
         Recebe: username do usuário alvo
         Retorna: Lista de dicionários de usuário (Equivalente á uma lista de User.toDict()).
         """
-        res = list(UsersCollection.find({"followers": {"$all": [username]}}))
+        res:list = list(UsersCollection.find({"followers": {"$all": [username]}}))
         return res
     
     @staticmethod
-    def getFollowInfo(username):
+    def getFollowInfo(username:str):
         """
         Função: Recuperar as informações de followers e following de um usuário alvo.
         Recebe: username do usuário alvo
         Retorna: Dicionário com uma lista de followers e uma de following.
         """
-        followInfo = {
+        followInfo:dict = {
             "followers": [],
             "following": []
         }
-        followingList = Database.getWhoUserIsFollowing(username)
+        followingList:list = Database.getWhoUserIsFollowing(username)
         for user in followingList:
             followInfo["following"].append({
                 "name": user["name"],
                 "username": user["username"],
                 "icon": user["icon"]
             })
-        followerList = Database.getFollowersOf(username)
+        followerList:list = Database.getFollowersOf(username)
         for user in followerList:
             followInfo["followers"].append({
                 "name": user["name"],
@@ -442,7 +442,7 @@ class Database:
         return followInfo
     
     @staticmethod
-    def getProfileDiary(profile):
+    def getProfileDiary(profile:dict):
         """
         Função: Recuperar o diário de um usuário na ordem cronológica correta.
         Recebe: dicionário de usuário (Equivalente á User.toDict())
@@ -452,41 +452,41 @@ class Database:
         return res
     
     @staticmethod
-    def searchMediaByQuery(category, query):
+    def searchMediaByQuery(category:str, query:str):
         """
         Função: Realizar uma busca por uma obra em sua respectiva API.
         Recebe: Categoria (que vai revelar a API que deve ser usada) e a query da busca.
         Retorna: Lista de dicionários onde cada dicionário corresponde á uma obra, com suas informações necessárias para renderizar a página de busca.
         """
-        queryResult = []
+        queryResult:list = []
         if category == "movie":
-            temp = TMDB.search("movie", query)
+            temp:list = TMDB.search("movie", query)
             for result in temp:
                 queryResult.append(
                     MovieModelSearch(result).build()
                 )
         elif category == "serie":
-            temp = TMDB.search("tv", query)
+            temp:list = TMDB.search("tv", query)
             for result in temp:
                 if result["origin_country"] == [] or result["origin_country"][0] == "JP": continue
                 queryResult.append(
                     SerieModelSearch(result).build()
                 )
         elif category == "anime":
-            temp = TMDB.search("tv", query)
+            temp:list = TMDB.search("tv", query)
             for result in temp:
                 if result["origin_country"] == [] or result["origin_country"][0] != "JP": continue
                 queryResult.append(
                     AnimeModelSearch(result).build()
                 )
         elif category == "game":
-            temp = IGDB.search(query)
+            temp:list = IGDB.search(query)
             for result in temp:
                 queryResult.append(
                     GameModelSearch(result).build()
                 )
         elif category == "book":
-            temp = GoogleBooks.search(query)
+            temp:list = GoogleBooks.search(query)
             for result in temp:
                 queryResult.append(
                     BookModelSearch(result).build()
@@ -499,7 +499,7 @@ class Database:
         return queryResult
     
     @staticmethod
-    def searchSingleMedia(category, id):
+    def searchSingleMedia(category:str, id:str):
         """
         Função: Recuperar informações de uma mídia específica.
         Recebe: categoria da obra e ID dela na API
@@ -509,19 +509,19 @@ class Database:
             print("Erro no identificador da requisição")
             return
         if category == "movie":
-            mediaObj = TMDB.getByID("movie", id)
+            mediaObj:dict = TMDB.getByID("movie", id)
             mediaObj = MovieModelPage(mediaObj)
         elif category == "serie":
-            mediaObj = TMDB.getByID("tv", id)
+            mediaObj:dict = TMDB.getByID("tv", id)
             mediaObj = SerieModelPage(mediaObj)
         elif category == "anime":
-            mediaObj = TMDB.getByID("tv", id)
+            mediaObj:dict = TMDB.getByID("tv", id)
             mediaObj = AnimeModelPage(mediaObj)
         elif category == "game":
-            mediaObj = IGDB.getByID(id)
+            mediaObj:dict = IGDB.getByID(id)
             mediaObj = GameModelPage(mediaObj)
         elif category == "book":
-            mediaObj = GoogleBooks.getByID(id)
+            mediaObj:dict = GoogleBooks.getByID(id)
             mediaObj = BookModelPage(mediaObj)
         else:
             print("Erro na categoria da requisição")
@@ -529,14 +529,14 @@ class Database:
         return mediaObj.build()
     
     @staticmethod
-    def editReview(reviewObj):
+    def editReview(reviewObj:dict):
         """
         Função: Editar uma review no banco.
         Recebe: dicionário de review (Equivalente á Review.toDict())
         Retorna: None.
         """
         try:
-            id = reviewObj["_id"]
+            id:str = reviewObj["_id"]
             ReviewsCollection.replace_one({"_id": id}, reviewObj)
             return None
         except:
@@ -544,13 +544,13 @@ class Database:
             return None
     
     @staticmethod
-    def deleteReview(review):
+    def deleteReview(review:dict):
         """
         Função: Deletar review do banco de dados.
         Recebe: dicionário da review (Equivalente á Review.toDict())
         Retorna: None.
         """
-        id = review["_id"]
+        id:str = review["_id"]
         try:
             ReviewsCollection.delete_one({"_id": id})
             return None
@@ -559,7 +559,7 @@ class Database:
             return None
         
     @staticmethod
-    def deleteReviewByID(id):
+    def deleteReviewByID(id:str):
         """
         Função: Deletar review do banco usando o ID dela.
         Recebe: ID da review no banco (no formato <user_origin>_<category>_<api_id>)
@@ -572,13 +572,13 @@ class Database:
             return None
     
     @staticmethod
-    def refreshUser(user):
+    def refreshUser(user:dict):
         """
         Função: Atualizar usuário no banco.
         Recebe: dicionário de usuário (Equivalente á User.toDict())
         Retorna: None.
         """
-        id = user["_id"]
+        id:str = user["_id"]
         try:
             UsersCollection.replace_one({"_id": id}, user)
             return None
@@ -587,13 +587,13 @@ class Database:
             return None
     
     @staticmethod
-    def refreshMedia(media):
+    def refreshMedia(media:dict):
         """
         Função: Atualizar mídia no banco.
         Recebe: dicionário de mídia (Equivalente á Media.toDict())
         Retorna: None.
         """
-        id = media["_id"]
+        id:str = media["_id"]
         try:
             MediaCollection.replace_one({"_id": id}, media)
             return None

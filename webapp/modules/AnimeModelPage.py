@@ -2,13 +2,13 @@ from .mediaModelPage import MediaModelPage
 
 class AnimeModelPage(MediaModelPage):
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         super().__init__(mediaObj)
     
     def build(self):
-        mediaObj = self.mediaObj
+        mediaObj:dict = self.mediaObj
         print(mediaObj)
-        temp_episode = 0
+        temp_episode:int = 0
         if mediaObj.get('seasons'):
             for season in mediaObj["seasons"]:
                 temp_episode += season["episode_count"]

@@ -1,9 +1,9 @@
 class MediaModelPage:
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         self.mediaObj = mediaObj
     
-    def build(self, category, id, title, description, poster_path, score, release_year, banner_path, genre, size):
+    def build(self, category:str, id:str, title:str, description:str, poster_path:str, score:float, release_year:str, banner_path:str, genre:list, size:str):
         return {
             "category": category,
             "id": id,

@@ -7,8 +7,8 @@ class Media(DBElementsAbstract):
     def generateMediaId(category, api_id):
         return "{}_{}".format(category, api_id)
     
-    def __init__(self, api_id, category, name, description, score, posterPath, bannerPath, originCountry, releaseDate, viewsList=[], realDate=None, strDate=None):
-        self._id = Media.generateMediaId(category, api_id)
+    def __init__(self, api_id:str, category:str, name:str, description:str, score:float, posterPath:str, bannerPath:str, originCountry:str, releaseDate:str, viewsList:list=[], realDate:str=None, strDate:str=None):
+        self._id:str = Media.generateMediaId(category, api_id)
         self.api_id = api_id
         self.category = category
         self.name = name
@@ -19,7 +19,7 @@ class Media(DBElementsAbstract):
         self.originCountry = originCountry # País de origem
         self.releaseDate = releaseDate # Data de lançamento
         self.viewsList = viewsList # Lista de usuários que viram
-        self.viewsNumber = len(viewsList)
+        self.viewsNumber:int = len(viewsList)
         self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
         # self.reviews = reviews # {"owner_id": review_object ou review_id}

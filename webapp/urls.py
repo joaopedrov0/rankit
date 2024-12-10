@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-urlpatterns = [
+urlpatterns:list = [
     path('profile/<str:username>/', views.profile, name='profile'),
     # path('rota', views.qualFunçãoDeViews, name="nome pro formulário saber a url q ele tem q mandar as parada")
     path('cadastro', views.cadastro, name='cadastro'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('profile/<str:username>/unfollow/', views.unfollow, name="unfollow"),
     path('removeAsSeen/<str:mediaType>/<str:mediaID>', views.removeAsSeen, name='removeAsSeen'),
     path('credits/', views.credits, name='credits'),
+    path('watchlist/<str:category>/<str:id>', views.watchlist, name='watchlist')
 ]

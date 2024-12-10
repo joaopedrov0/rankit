@@ -5,10 +5,10 @@ from .dbElementsAbstract import DBElementsAbstract
 class Review(DBElementsAbstract):
     
     @staticmethod
-    def generateReviewId(origin, category, mediaId):
+    def generateReviewId(origin:str, category:str, mediaId:str):
         return "{}_{}_{}".format(origin, category, mediaId)
     
-    def __init__(self, user_origin, category, mediaId, content={}, realDate=None, strDate=None):
+    def __init__(self, user_origin:str, category:str, mediaId:str, content:dict={}, realDate:str=None, strDate:str=None):
         self._id = Review.generateReviewId(user_origin, category, mediaId)
         self.user_origin = user_origin
         self.mediaTarget = Media.generateMediaId(category, mediaId)

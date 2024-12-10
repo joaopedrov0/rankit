@@ -1,17 +1,19 @@
 import requests
 import json
 
+from typing import Type
+
 class GoogleBooks:
     
     @staticmethod
-    def search(query):
-        res = requests.get('https://www.googleapis.com/books/v1/volumes?q={}&h1=pt-BR'.format(query))
+    def search(query:str):
+        res:Type[requests.models.Response] = requests.get('https://www.googleapis.com/books/v1/volumes?q={}&h1=pt-BR'.format(query))
         res = json.loads(res.content.decode('utf8'))
         return res["items"]
 
     @staticmethod
-    def getByID(id):
-        res = requests.get('https://www.googleapis.com/books/v1/volumes/{}?h1=pt-BR'.format(id))
+    def getByID(id:str):
+        res:Type[requests.models.Response] = requests.get('https://www.googleapis.com/books/v1/volumes/{}?h1=pt-BR'.format(id))
         res = json.loads(res.content.decode('utf8'))
         return res
 
