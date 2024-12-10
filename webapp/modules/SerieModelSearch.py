@@ -2,11 +2,11 @@ from .mediaModelSearch import MediaModelSearch
 
 class SerieModelSearch(MediaModelSearch):
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         super().__init__(mediaObj)
     
     def build(self):
-        mediaObj = self.mediaObj
+        mediaObj:dict = self.mediaObj
         mediaObj = {
             "category": "serie",
             "id": mediaObj["id"],

@@ -4,15 +4,15 @@ from datetime import datetime
 
 class BookModelPage(MediaModelPage):
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         super().__init__(mediaObj)
     
     def build(self):
-        mediaObj = self.mediaObj
-        publishedDate = None
-        tags = None
+        mediaObj:dict = self.mediaObj
+        publishedDate:str = None
+        tags:list = None
         if mediaObj["volumeInfo"].get("publishedDate"):
-            temp = mediaObj["volumeInfo"]["publishedDate"].split('-')
+            temp:list = mediaObj["volumeInfo"]["publishedDate"].split('-')
             publishedDate = temp[0]
             # publishedDate = "/".join(temp)
         if mediaObj["volumeInfo"].get("categories"):

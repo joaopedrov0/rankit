@@ -6,67 +6,67 @@ from .dbElementsAbstract import DBElementsAbstract
 class User(DBElementsAbstract):
     
     def __init__(self, 
-                 name, 
-                 username, 
-                 email, 
-                 password, 
-                 icon=0, 
-                 banner=0, 
-                 bio='', 
-                 followers=[], 
-                 followersCount=0,
-                 following=[], 
-                 followingCount=0,
-                 watched={
+                 name:str, 
+                 username:str, 
+                 email:str, 
+                 password:str, 
+                 icon:int=0, 
+                 banner:int=0, 
+                 bio:str='', 
+                 followers:list=[], 
+                 followersCount:int=0,
+                 following:list=[], 
+                 followingCount:int=0,
+                 watched:dict={
                     "movie": {},
                     "serie": {},
                     "anime": {},
                     "game": {},
                     "book": {}
                 },
-                 watchedNumber=0,
-                 watchList={
-                    "movie": {}, # {"media": mediaObj, "watching:" True|False}
+                 watchedNumber:int=0,
+                 watchList:dict={
+                    "movie": {}, # {"media": True|False}
                     "serie": {},
                     "anime": {},
                     "game": {},
                     "book": {}
                 },
-                 watchListSize=0,
-                 reviewsNumber=0,
-                 diary=[],
-                 favorites={
+                 watchListSize:int=0,
+                 reviewsNumber:int=0,
+                 diary:list=[],
+                 favorites:dict={
                     "movie": [],
                     "serie": [],
                     "anime": [],
                     "game": [],
                     "book": []
                  },
-                 realDate=None,
-                 strDate=None,
-                 config={}):
-        self.name = name # Nome qualquer
-        self.username = username # Nome de usuário (único)
-        self.icon = icon # Código do ícone
-        self.banner = banner # Código do banner
-        self.bio = bio # Bio (até 200 char)
-        self.email = email # Email
-        self.password =  self.hashpw(password)# Senha...
-        self.followers = followers # Quem segue ele (lista de ids)
-        self.followersCount = followersCount if followersCount else len(followers)
-        self.following = following # Quem ele segue (lista de ids)
-        self.followingCount = followingCount if followingCount else len(following)
-        self.watched = watched # Mídias que ele já assistiu, em ordem de preferência
-        self.watchedNumber = watchedNumber
-        self.watchList = watchList # Mídias que pretende consumir // está assistindo {estado: pretende assistir | assistindo}
-        self.watchListSize = watchListSize
+                 realDate:str=None,
+                 strDate:str=None,
+                 config:dict={}):
+        self.name:str = name # Nome qualquer
+        self.username:str = username # Nome de usuário (único)
+        self.icon:int = icon # Código do ícone
+        self.banner:int = banner # Código do banner
+        self.bio:str = bio # Bio (até 200 char)
+        self.email:str = email # Email
+        self.password:bytes =  self.hashpw(password)# Senha...
+        self.followers:list = followers # Quem segue ele (lista de ids)
+        self.followersCount:int = followersCount if followersCount else len(followers)
+        self.following:list = following # Quem ele segue (lista de ids)
+        self.followingCount:int = followingCount if followingCount else len(following)
+        self.watched:dict = watched # Mídias que ele já assistiu, em ordem de preferência
+        self.watchedNumber:int = watchedNumber
+        self.watchList:dict = watchList # Mídias que pretende consumir // está assistindo {estado: pretende assistir | assistindo}
+        self.watchListSize:int = watchListSize
         # self.reviews = reviews # Lista com códigos das reviews do usuário
-        self.reviewsNumber = reviewsNumber
-        self.diary = diary
-        self.favorites = favorites
-        self.config = config # Configurações de personalização do usuário
-        self.realDate = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.strDate = strDate if strDate else date.today().strftime("%d/%m/%Y")
+        self.reviewsNumber:int = reviewsNumber
+        self.diary:list = diary
+        self.favorites:dict = favorites
+        self.config:dict = config # Configurações de personalização do usuário
+        self.realDate:str = realDate if realDate else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.strDate:str = strDate if strDate else date.today().strftime("%d/%m/%Y")
         
     def toDict(self):
         """Converte o usuário pra um dicionário (pra poder colocar no db 😉)"""
@@ -95,6 +95,6 @@ class User(DBElementsAbstract):
             
         }
 
-    def hashpw(self, password):
+    def hashpw(self, password:str): # retorna :bytes
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     

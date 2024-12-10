@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from .models import Database
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseNotModified, JsonResponse
+from django.http import HttpResponse, HttpResponseNotModified, JsonResponse, HttpRequest
 from .modules import User, Media, Review, DatabaseCRUDInterface, DatabaseRenderInterface
 from datetime import datetime, date
 from .modules.loginManager import LoginManager
+
+from typing import Type
 
 DatabaseCRUDInterface.register(Database)
 DatabaseRenderInterface.register(Database)
@@ -19,9 +21,9 @@ BANNER_LIST = fs_manager.listdir('/banner')
 
 LOGIN_MANAGER = LoginManager()
 
-def home(request):
+def home(request: Type[HttpRequest]):
     
-    reviews = Database.getReviewsToRenderHome()
+    reviews:list = Database.getReviewsToRenderHome()
     
     if LOGIN_MANAGER.isLoggedRequest(request): # Se estiver logado
         userID = LOGIN_MANAGER.getUserByRequest(request)
@@ -30,14 +32,14 @@ def home(request):
     else: # Se não estiver logado
         return render(request, 'home.html', {"logged":False, "reviews": reviews})
 
-def profile(request, username):
+def profile(request: Type[HttpRequest], username: str):
     
-    currentProfile = Database.getUserByUsername(username) # Recupera o perfil atual
+    currentProfile:dict = Database.getUserByUsername(username) # Recupera o perfil atual
     
-    logged = False # Verificar se cliente está logado
-    selfProfile = False # Verificar se o cliente está no próprio perfil
-    following = False # Verificar se o cliente segue o perfil alvo
-    clientProfile = None # Perfil do cliente
+    logged:bool = False # Verificar se cliente está logado
+    selfProfile:bool = False # Verificar se o cliente está no próprio perfil
+    following:bool = False # Verificar se o cliente segue o perfil alvo
+    clientProfile:dict = None # Perfil do cliente
     
     if LOGIN_MANAGER.isLoggedRequest(request): # Se o cliente estiver logado
         logged = True
@@ -58,13 +60,13 @@ def profile(request, username):
         # Se o perfil existir, gera as informações de seguidores, diário e reviews
         
         # Gerando informações de seguidores
-        followInfo = Database.getFollowInfo(username)
+        followInfo:dict = Database.getFollowInfo(username)
         
         # Gerando diário
-        diary = Database.getProfileDiary(currentProfile)
+        diary:dict = Database.getProfileDiary(currentProfile)
         
         # Gerando reviews para renderizar
-        reviews = Database.getReviewsToRenderProfile(currentProfile)
+        reviews:list = Database.getReviewsToRenderProfile(currentProfile)
         
         return render(request, 'profile.html', {
             "currentProfile": currentProfile, 
@@ -82,7 +84,7 @@ def profile(request, username):
         return render(request, 'not-found.html')
 
 @csrf_exempt
-def cadastro(request):
+def cadastro(request: Type[HttpRequest]):
     
     # Se for requisição GET ele retorna a página, se for POST ele reconhece como uma resposta de formulário
         
@@ -91,16 +93,16 @@ def cadastro(request):
         return render(request, 'cadastro.html')
     
     elif request.method == 'POST':
-        username = request.POST.get('username')
+        username:str = request.POST.get('username')
         
         if Database.getUserByUsername(username) == None:
             # Se não existir um usuário com esse username
             
-            name = request.POST.get('name').strip()
+            name:str = request.POST.get('name').strip()
             username = request.POST.get('username').strip()
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            password_confirm = request.POST.get('confirm-password')
+            email:str = request.POST.get('email')
+            password:str = request.POST.get('password')
+            password_confirm:str = request.POST.get('confirm-password')
             
             if password != password_confirm:
                 return render(request, 'cadastro.html', {"unmatchpassword": True})
@@ -108,7 +110,7 @@ def cadastro(request):
             if name and username and email and password:
                 # Se todos os campos estiverem preenchidos
                 
-                newUser = User(
+                newUser:Type[User] = User(
                     name,
                     username,
                     email,
@@ -131,7 +133,7 @@ def cadastro(request):
         return redirect("login")
     
 @csrf_exempt
-def login(request):
+def login(request: Type[HttpRequest]):
     
     # Se for requisição GET ele retorna a página, se for POST ele reconhece como uma resposta de formulário
     
@@ -141,20 +143,20 @@ def login(request):
     
     elif request.method == 'POST':
         
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username:str = request.POST.get('username')
+        password:str = request.POST.get('password')
 
         if not username and password:
             return render(request, 'login.html', {"error": True})
 
-        token = LOGIN_MANAGER.login(username, password)
+        token:str = LOGIN_MANAGER.login(username, password)
 
         if token:
-            user = Database.getUserByID(LOGIN_MANAGER.getUserByToken(token))
+            user:dict = Database.getUserByID(LOGIN_MANAGER.getUserByToken(token))
 
             LOGIN_MANAGER.cache(user["_id"], user["username"], user["name"], user["icon"])
 
-            response = redirect('home')
+            response:Type[HttpResponse] = redirect('home')
             response.set_cookie('sessionToken', token)
             
             return response
@@ -163,26 +165,26 @@ def login(request):
     
         
 
-def search(request):
-    user = LOGIN_MANAGER.recoverCached(LOGIN_MANAGER.getUserByRequest(request))
+def search(request: Type[HttpRequest]):
+    user:dict = LOGIN_MANAGER.recoverCached(LOGIN_MANAGER.getUserByRequest(request))
     if user:
         return render(request, 'search.html', {"logged":True, "user": user})
     else:
         return render(request, 'search.html', {"logged":False})
 
-def searchMedia(request, category, query):
+def searchMedia(request: Type[HttpRequest], category:str, query:str):
     
-    res = JsonResponse({"result": Database.searchMediaByQuery(category, query)})
+    res:Type[HttpResponse] = JsonResponse({"result": Database.searchMediaByQuery(category, query)})
     return res
 
-def media(request, category, id):
+def media(request: Type[HttpRequest], category:str, id:str):
     
-    user = LOGIN_MANAGER.recoverCachedByRequest(request)
+    user:dict = LOGIN_MANAGER.recoverCachedByRequest(request)
     
     # Recuperando a mídia
-    mediaObj = Database.searchSingleMedia(category, id)
+    mediaObj:dict = Database.searchSingleMedia(category, id)
     
-    universalMediaId = Media.generateMediaId(category, id)
+    universalMediaId:str = Media.generateMediaId(category, id)
     
     # Cria uma instância no banco se já não houver
     if Database.getMediaByID(universalMediaId) == None:
@@ -190,7 +192,7 @@ def media(request, category, id):
             Database.registerMedia(Media(id, category, mediaObj["title"], mediaObj["description"], mediaObj["score"], mediaObj["poster_path"], mediaObj["banner_path"], None, mediaObj["release_year"]))
 
     # Gerando lista de reviews
-    reviews = Database.getReviewsToRenderMedia(category, universalMediaId, user["username"] if user else None)
+    reviews:dict = Database.getReviewsToRenderMedia(category, universalMediaId, user["username"] if user else None)
 
     # Verificando se está logado
     
@@ -199,9 +201,7 @@ def media(request, category, id):
         # Sobrescreve user com o usuário completo pra saber se ele consumiu a obra
         user = Database.getUserByUsername(user["username"])
         
-        universalMediaId = "{}_{}".format(category, id)
-        
-        seen = True if universalMediaId in user["watched"][category] else False
+        seen:bool = True if universalMediaId in user["watched"][category] else False
         
         return render(request, 'media.html', {
             "logged":True, 
@@ -213,12 +213,12 @@ def media(request, category, id):
     else:
         return render(request, 'media.html', {"logged":False, "media": mediaObj, "seen": False, "reviews":reviews})
 
-def notfound(request):
+def notfound(request: Type[HttpRequest]):
     # Você realmente quer que eu explique o que isso faz?
     return render(request, 'not-found.html')
 
 @csrf_exempt
-def markAsSeen(request, mediaType, mediaID):
+def markAsSeen(request: Type[HttpRequest], mediaType:str, mediaID:str):
     """
     Recebe uma requisição de um usuário idealmente logado com um tipo de mídia e seu respectivo id, 
     - Marca a obra na lista de vistos do usuário
@@ -226,7 +226,7 @@ def markAsSeen(request, mediaType, mediaID):
     - Adiciona a avaliação do usuário na listas de avaliações da obra
     """
     
-    response = HttpResponseNotModified()
+    response:Type[HttpResponseNotModified] = HttpResponseNotModified()
     if not request.method == "POST":
         response.headers = {"request-status":"Not POST method"}
         return response
@@ -235,20 +235,20 @@ def markAsSeen(request, mediaType, mediaID):
         
         clientID = LOGIN_MANAGER.getUserByRequest(request)
         
-        user = Database.getUserByID(clientID) 
+        user:dict = Database.getUserByID(clientID) 
         
-        universalMediaId = Media.generateMediaId(mediaType, mediaID)
+        universalMediaId:str = Media.generateMediaId(mediaType, mediaID)
         
-        reviewQuality = request.POST.get('review-quality')
-        reviewText = request.POST.get('review-text')
+        reviewQuality:str = request.POST.get('review-quality')
+        reviewText:str = request.POST.get('review-text')
         
-        contentReview = {
+        contentReview:dict = {
             "review-quality": reviewQuality if reviewQuality else None,
             "review-text": reviewText if reviewText else None,
         }
         
         # Tentando recuperar review existente
-        existingReview = Database.getReviewByID(Review.generateReviewId(user["username"], mediaType, mediaID))
+        existingReview:dict = Database.getReviewByID(Review.generateReviewId(user["username"], mediaType, mediaID))
         
         # Se a review já existir
         if existingReview:
@@ -262,7 +262,7 @@ def markAsSeen(request, mediaType, mediaID):
             return response
     
         # Adicionando ao diário
-        currentMedia = Database.getMediaByID(Media.generateMediaId(mediaType, mediaID))
+        currentMedia:dict = Database.getMediaByID(Media.generateMediaId(mediaType, mediaID))
         
         user["diary"].append({
             "media_id": currentMedia["_id"],
@@ -280,7 +280,7 @@ def markAsSeen(request, mediaType, mediaID):
         # Adicionando na tabela de reviews do banco de dados
         if contentReview["review-quality"] or contentReview["review-text"]:
             user["reviewsNumber"] += 1
-            review = Review(user["username"], mediaType, mediaID, contentReview)
+            review:Type[Review] = Review(user["username"], mediaType, mediaID, contentReview)
             Database.registerReview(review)
         
         # Atualizando perfil do usuário
@@ -296,20 +296,20 @@ def markAsSeen(request, mediaType, mediaID):
         return response
     else:
         # Se tentar dar review sem login
-        return redirect(login)
+        return redirect('login')
     
 @csrf_exempt
-def editProfile(request):
+def editProfile(request: Type[HttpRequest]):
     if LOGIN_MANAGER.isLoggedRequest(request):
         if request.method == "POST":
 
-            name = request.POST.get('name')
-            bio = request.POST.get('bio')
-            icon = request.POST.get('icon')
-            banner = request.POST.get('banner')
+            name:str = request.POST.get('name')
+            bio:str = request.POST.get('bio')
+            icon:int = request.POST.get('icon')
+            banner:int = request.POST.get('banner')
             
             id = LOGIN_MANAGER.getUserByRequest(request)
-            currentUser = Database.getUserByID(id)
+            currentUser:dict = Database.getUserByID(id)
             
             currentUser["name"] = name
             currentUser["bio"] = bio
@@ -320,14 +320,14 @@ def editProfile(request):
             
             LOGIN_MANAGER.updateCache(currentUser["_id"], currentUser["username"], currentUser["name"], currentUser["icon"])
             
-            response = redirect('profile', currentUser["username"])
+            response:Type[HttpResponse] = redirect('profile', currentUser["username"])
             
             return response
     
-        logged = LOGIN_MANAGER.isLoggedRequest(request)
+        logged:bool = LOGIN_MANAGER.isLoggedRequest(request)
     
-        icons = []
-        banners = []
+        icons:list = []
+        banners:list = []
         
         for i in range(0, len(ICONS_LIST)):
             icons.append(i)
@@ -335,7 +335,7 @@ def editProfile(request):
         for j in range(0, len(BANNER_LIST)):
             banners.append(j)
         
-        currentProfile = Database.getUserByID(LOGIN_MANAGER.getUserByRequest(request))
+        currentProfile:dict = Database.getUserByID(LOGIN_MANAGER.getUserByRequest(request))
         
         if currentProfile:
             # Se o perfil existir
@@ -351,15 +351,15 @@ def editProfile(request):
         
         return render(request, "not-found.html")
 
-def logout(request):
+def logout(request: Type[HttpRequest]):
     id = LOGIN_MANAGER.getUserByRequest(request)
     LOGIN_MANAGER.deleteLoginByCache(id)
-    response = redirect('home')
+    response:Type[HttpResponse] = redirect('home')
     response.delete_cookie('sessionToken')
     return response
 
 @csrf_exempt
-def follow(request, username):
+def follow(request: Type[HttpRequest], username:str):
     if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
     
@@ -369,8 +369,8 @@ def follow(request, username):
         # Tentou seguir ele mesmo kkkkkkkkkkkk
         return HttpResponseNotModified()
     
-    user = Database.getUserByID(userID)
-    followTarget = Database.getUserByUsername(username)
+    user:dict = Database.getUserByID(userID)
+    followTarget:dict = Database.getUserByUsername(username)
     
     if followTarget["username"] in user["following"]:
         # Usuário já segue o alvo
@@ -389,7 +389,7 @@ def follow(request, username):
         return HttpResponseNotModified()
 
 @csrf_exempt
-def unfollow(request, username):
+def unfollow(request: Type[HttpRequest], username:str):
     if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
     
@@ -399,8 +399,8 @@ def unfollow(request, username):
         # Tentou dar unfollow nele mesmo 💔
         return HttpResponseNotModified()
     
-    user = Database.getUserByID(userID)
-    followTarget = Database.getUserByUsername(username)    
+    user:dict = Database.getUserByID(userID)
+    followTarget:dict = Database.getUserByUsername(username)    
     
     if not followTarget["username"] in user["following"]:
         # Usuário não segue o alvo
@@ -419,7 +419,7 @@ def unfollow(request, username):
         return HttpResponseNotModified()
     
 @csrf_exempt
-def removeAsSeen(request, mediaType, mediaID):
+def removeAsSeen(request: Type[HttpRequest], mediaType:str, mediaID:str):
     if not request.method == "POST":
         return HttpResponseNotModified()
     
@@ -427,11 +427,11 @@ def removeAsSeen(request, mediaType, mediaID):
         return redirect('login')
     
     userID = LOGIN_MANAGER.getUserByRequest(request)
-    user = Database.getUserByID(userID)
+    user:dict = Database.getUserByID(userID)
     user["watched"][mediaType].pop(Media.generateMediaId(mediaType, mediaID))
     user["watchedNumber"] -= 1
     user["reviewsNumber"] -= 1
-    temp = []
+    temp:list = []
     for page in user["diary"]:
         if Media.generateMediaId(mediaType, mediaID) == page["media_id"]:
             continue
@@ -440,7 +440,7 @@ def removeAsSeen(request, mediaType, mediaID):
         
     Database.deleteReviewByID(Review.generateReviewId(user["username"], mediaType, mediaID))
     
-    media = Database.getMediaByID(Media.generateMediaId(mediaType, mediaID))
+    media:dict = Database.getMediaByID(Media.generateMediaId(mediaType, mediaID))
     media["viewsList"].remove(user["username"])
     media["viewsNumber"] -= 1
 
@@ -450,9 +450,9 @@ def removeAsSeen(request, mediaType, mediaID):
     
     return HttpResponseNotModified()
 
-def credits(request):
-    logged = False
-    clientProfile = None
+def credits(request: Type[HttpRequest]):
+    logged:bool = False
+    clientProfile:dict = None
     if LOGIN_MANAGER.isLoggedRequest(request): # Se o cliente estiver logado
         logged = True
         
@@ -462,13 +462,13 @@ def credits(request):
     return render(request, 'credits.html', {"logged": logged, "user": clientProfile})
 
 @csrf_exempt
-def watchlist(request: object, category: str, id: str):
+def watchlist(request: Type[HttpRequest], category: str, id: str):
     if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
-    response =  HttpResponseNotModified()
+    response:Type[HttpResponseNotModified] =  HttpResponseNotModified()
     clientID = LOGIN_MANAGER.getUserByRequest(request)
-    user = Database.getUserByID(clientID)
-    universalMediaId = Media.generateMediaId(category, id)
+    user:dict = Database.getUserByID(clientID)
+    universalMediaId:str = Media.generateMediaId(category, id)
     if universalMediaId in user["watched"][category]:
         return response
     if universalMediaId in user["watchList"][category]:
@@ -480,13 +480,13 @@ def watchlist(request: object, category: str, id: str):
     return response
         
 @csrf_exempt
-def watching(request: object, category: str, id:str):
+def watching(request: Type[HttpRequest], category: str, id:str):
     if not LOGIN_MANAGER.isLoggedRequest(request):
         return redirect('login')
-    response = HttpResponseNotModified()
+    response:Type[HttpResponseNotModified] = HttpResponseNotModified()
     clientID = LOGIN_MANAGER.getUserByRequest(request)
-    user = Database.getUserByID(clientID)
-    universalMediaId = Media.generateMediaId(category, id)
+    user:dict = Database.getUserByID(clientID)
+    universalMediaId:str = Media.generateMediaId(category, id)
     if universalMediaId in user["watched"][category]:
         return response
     if not universalMediaId in user["watchList"][category]:

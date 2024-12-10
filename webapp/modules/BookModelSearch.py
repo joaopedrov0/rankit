@@ -4,14 +4,14 @@ from datetime import datetime
 
 class BookModelSearch(MediaModelSearch):
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         super().__init__(mediaObj)
     
     def build(self):
-        mediaObj = self.mediaObj
-        publishedDate = None
+        mediaObj:dict = self.mediaObj
+        publishedDate:str = None
         if mediaObj["volumeInfo"].get("publishedDate"):
-            temp = mediaObj["volumeInfo"]["publishedDate"].split('-')
+            temp:list = mediaObj["volumeInfo"]["publishedDate"].split('-')
             publishedDate = temp[0]
             # publishedDate = "/".join(temp)
         mediaObj = {

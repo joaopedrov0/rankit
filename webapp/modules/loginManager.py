@@ -1,9 +1,11 @@
 import bcrypt
 import secrets
 from webapp.models import Database
+from django.http import HttpRequest
+from typing import Type
 
 class LoginCache:
-    def __init__(self, username, name, icon):
+    def __init__(self, username:str, name:str, icon:str):
         self.username = username
         self.name = name
         self.icon = icon
@@ -21,18 +23,18 @@ class LoginManager:
     Essa classe deve gerenciar os logins e a autenticação de sessões da aplicação
     """
     def __init__(self):
-        self.tokenList = {} # "token":"_id"
-        self.cacheLogged = {} # "_id":LoginCache {"username": username, "name": name, "icon": icon}
+        self.tokenList:dict = {} # "token":"_id"
+        self.cacheLogged:dict = {} # "_id":LoginCache {"username": username, "name": name, "icon": icon}
         # self.tokenList = self.getSessionData
 
-    def login(self, username, password):
+    def login(self, username:str, password:str):
         # Check if user exists
-        user = Database.getUserByUsername(username)
+        user:dict = Database.getUserByUsername(username)
         if user:
             # Check the password
             if self.authenticate(user, password):
                 # Generate a session token
-                token = self.getToken()
+                token:str = self.getToken()
                 self.tokenList[token] = user["_id"]
                 # SessionsCollection.insertOne({"token":token,"id":user["_id"]})
                 return token
@@ -46,13 +48,13 @@ class LoginManager:
 
     def authenticate(self, user, password):
         print(password)
-        passMatches = bcrypt.checkpw(password.encode('utf-8'), user["password"])
+        passMatches:bool = bcrypt.checkpw(password.encode('utf-8'), user["password"])
         if passMatches:
             return True
         else:
             return False
 
-    def validateToken(self, token, origin):
+    def validateToken(self, token:bytes, origin:bytes):
         #return bcrypt.checkpw(origin, token) Talvez isso resolva a linha abaixo
         return bcrypt.checkpw(origin, token)
     
@@ -62,16 +64,16 @@ class LoginManager:
     def isLogged(self, id):
         return id in list(self.tokenList.values())
     
-    def isLoggedToken(self, token):
+    def isLoggedToken(self, token:str):
         return token in list(self.tokenList.keys())
     
-    def getUserByToken(self, token):
+    def getUserByToken(self, token:str):
         return self.tokenList[token]
     
-    def cache(self, _id, username, name, icon):
+    def cache(self, _id, username:str, name:str, icon:str):
         self.cacheLogged[_id] = LoginCache(username, name, icon)
     
-    def updateCache(self, _id, username, name, icon):
+    def updateCache(self, _id, username:str, name:str, icon:str):
         if _id in self.cacheLogged:
             self.cache(_id, username, name, icon)
         else:
@@ -79,8 +81,8 @@ class LoginManager:
             return None
         
         
-    def isLoggedRequest(self, request):
-        accessToken = request.COOKIES.get('sessionToken')
+    def isLoggedRequest(self, request:Type[HttpRequest]):
+        accessToken:str = request.COOKIES.get('sessionToken')
         if not accessToken:
             return False
         if self.isLoggedToken(accessToken):
@@ -88,14 +90,14 @@ class LoginManager:
         else:
             return False
         
-    def getUserByRequest(self, request):
+    def getUserByRequest(self, request:Type[HttpRequest]):
         """
         Recebe requisição do usuário
         
         Retorna ID do usuário se estiver logado ou None se não estiver
         """
         if self.isLoggedRequest(request):
-            accessToken = request.COOKIES.get('sessionToken')
+            accessToken:str = request.COOKIES.get('sessionToken')
             return self.getUserByToken(accessToken)
         return None
         
@@ -104,7 +106,7 @@ class LoginManager:
             return None
         return self.cacheLogged[_id].toDict() if self.cacheLogged[_id] else None
     
-    def recoverCachedByRequest(self, request):
+    def recoverCachedByRequest(self, request:Type[HttpRequest]):
         if self.isLoggedRequest(request):
             id = self.getUserByRequest(request)
             return self.recoverCached(id)

@@ -4,12 +4,12 @@ from datetime import datetime
 
 class GameModelPage(MediaModelPage):
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         super().__init__(mediaObj)
     
     def build(self):
-        mediaObj = self.mediaObj
-        tags = []
+        mediaObj:dict = self.mediaObj
+        tags:list = []
         if mediaObj.get('genres'):
             for genre in mediaObj["genres"]:
                 # tags.append(genre["name"])

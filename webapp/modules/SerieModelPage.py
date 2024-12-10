@@ -2,12 +2,12 @@ from .mediaModelPage import MediaModelPage
 
 class SerieModelPage(MediaModelPage):
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         super().__init__(mediaObj)
     
     def build(self):
-        mediaObj = self.mediaObj
-        temp_episode = 0
+        mediaObj:dict = self.mediaObj
+        temp_episode:int = 0
         for season in mediaObj["seasons"]:
             temp_episode += season["episode_count"]
         mediaObj = {

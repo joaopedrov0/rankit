@@ -2,12 +2,12 @@ from .mediaModelPage import MediaModelPage
 
 class MovieModelPage(MediaModelPage):
     
-    def __init__(self, mediaObj):
+    def __init__(self, mediaObj:dict):
         super().__init__(mediaObj)
     
     def build(self):
-        mediaObj = self.mediaObj
-        temp_size = str(mediaObj["runtime"]) + 'm' if mediaObj["runtime"] < 60 else (str(mediaObj["runtime"]//60) + 'h' + str(mediaObj["runtime"]%60) + 'm')
+        mediaObj:dict = self.mediaObj
+        temp_size:str = str(mediaObj["runtime"]) + 'm' if mediaObj["runtime"] < 60 else (str(mediaObj["runtime"]//60) + 'h' + str(mediaObj["runtime"]%60) + 'm')
         mediaObj = {
             "category": "movie",
             "id": mediaObj["id"],
