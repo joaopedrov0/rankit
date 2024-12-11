@@ -57,8 +57,11 @@
                 {% endif %}
                 {% if reviews %}
                 <div class="reviews feed">
+                    
                     <h2>Atividades recentes</h2>
                     {% for review in reviews %}
+                        {% comment %} {% if forloop.counter0 < 10 %} {% endcomment %}
+                        
                         <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">
                             {{review.target_name}}
                         </a>
@@ -81,6 +84,7 @@
                                 </a>
                             </div>
                         </div>
+                        {% comment %} {% endif %} {% endcomment %}
                     {% endfor %}
 
     
