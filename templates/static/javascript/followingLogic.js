@@ -8,6 +8,8 @@ function follow(){
     // fetch('follow/', {method: 'POST'})
 
     followersCounter.innerText = parseInt(followersCounter.innerText) + 1
+
+    revealSuggestions()
 }
 
 function unfollow(){

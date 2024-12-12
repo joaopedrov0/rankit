@@ -3,7 +3,7 @@ import bcrypt
 import secrets
 from datetime import date, datetime
 from typing import Type
-from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieModelPage, MovieModelPage, AnimeModelSearch, SerieModelSearch, MovieModelSearch, IGDB, GameModelSearch, GameModelPage, DBElementsAbstract, GoogleBooks, BookModelPage, BookModelSearch
+from .modules import TMDB, MediaModelSearch, QuickSort, AnimeModelPage, SerieModelPage, MovieModelPage, AnimeModelSearch, SerieModelSearch, MovieModelSearch, IGDB, GameModelSearch, GameModelPage, DBElementsAbstract, GoogleBooks, BookModelPage, BookModelSearch, Graph
 
 # import webapp.modules as modules # Nossas classes estão aqui
 # modules.DBElemensInterface.register(modules.User) # Registrando user como usuário da interface do db
@@ -601,6 +601,66 @@ class Database:
             print("Erro na atualização de mídia")
             return None
     
-    
+    @staticmethod
+    def getFollowSuggestions(usernameOrigin:str, userTarget:dict, followInfo:dict):
+        
+        if len(userTarget["followers"]) == 0 and len(userTarget["following"]) == 0:
+            return None
+        
+        userOrigin = Database.getUserByUsername(usernameOrigin) # Recupera o perfil do usuário logado
+        
+        res = []
+        graph = Graph.Graph()
+        
+        allInfo = {}
+        
+        temp = [*followInfo["followers"], *followInfo["following"]]
+        
+        for el in temp:
+            allInfo[el["username"]] = el
+        
+        # Conectando usuário alvo do perfil
+        for user in followInfo["followers"]:
+            graph.connectByData(user["username"], userTarget["username"], force=True)
+        for user in followInfo["following"]:
+            graph.connectByData(userTarget["username"], user["username"], force=True)
+            
+        # Conectando usuário de origem
+        for user in userOrigin["followers"]:
+            graph.connectByData(user, userOrigin["username"], force=True)
+        for user in userOrigin["following"]:
+            graph.connectByData(userOrigin["username"], user, force=True)
+        
+        
+        followersOnly = []
+        following = []
+        print(graph)
+        print(usernameOrigin)
+        print(userTarget)
+        origin = graph.getNodeByValue(usernameOrigin)
+        target = graph.getNodeByValue(userTarget["username"])
+        for user in graph.registeredNodes:
+            if user == target or user == origin:
+                continue
+            if not origin.isConnectedTo(user):
+                print(origin.data, ' is not connected to ', user.data)
+                
+                if target.isConnectedTo(user):
+                    print(target.data, ' is connected to', user.data)
+                    following.append(allInfo[user.data])
+                    continue
+                
+                if user.isConnectedTo(target):
+                    print(user.data, ' is connected to ', target.data)
+                    followersOnly.append(allInfo[user.data])
+                    continue
+        res = [*following, *followersOnly]
+        if len(res) > 0:
+                    
+            return res
+        
+        else:
+            
+            return None
     
     

@@ -1,11 +1,8 @@
 from webapp.models import UsersCollection, MediaCollection, ReviewsCollection
 
-from webapp.modules import QuickSort
+from webapp.modules import QuickSort, Graph
 
 from datetime import date, datetime
-
-
-
 
 # print(RawgGames.search("Outer wilds"))
 
@@ -73,16 +70,16 @@ from datetime import date, datetime
     
 #     UsersCollection.replace_one({"_id": user["_id"]}, user)
     
-allUsers = list(UsersCollection.find())
-for user in allUsers:
-    user["watchList"] = {
-        "movie": {},
-        "serie": {},
-        "anime":{},
-        "game":{},
-        "book":{}
-    }
-    UsersCollection.replace_one({"_id": user["_id"]}, user)
+# allUsers = list(UsersCollection.find())
+# for user in allUsers:
+#     user["watchList"] = {
+#         "movie": {},
+#         "serie": {},
+#         "anime":{},
+#         "game":{},
+#         "book":{}
+#     }
+#     UsersCollection.replace_one({"_id": user["_id"]}, user)
 
 
 

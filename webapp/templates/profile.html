@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="/static/style/profile.css">
     <link rel="stylesheet" href="/static/style/reviews.css">
     <link rel="stylesheet" href="/static/style/diary.css">
+    {% if followSuggestions %}
+    <link rel="stylesheet" href="/static/style/followSuggestions.css">
+    {% endif %}
 </head>
 <body>
     <div class="modal-blocker hidden">
@@ -102,6 +105,17 @@
         </div>
     </div>
     <main>
+            {% if followSuggestions %}
+            <div class="followSuggestions container {%if following%} expanded {%endif%}">
+                {% for user in followSuggestions %}
+                    <a href="/profile/{{user.username}}" class="followSuggestions-box">
+                        <img class="followSuggestion-image" src="/static/img/icon/{{user.icon}}.png" />
+                        <span class="followSuggestion-name">{{user.name}}</span>
+                        <span class="followSuggestion-username">@{{user.username}}</span>
+                    </a>
+                {% endfor %}
+            </div>
+            {% endif %}
         <div class="container">
             <div class="col6">
                 {% if currentProfile.bio %}
@@ -181,5 +195,8 @@
     <script src="/static/javascript/floatingMenu.js"></script>
     <script src="/static/javascript/followingLogic.js"></script>
     <script src="/static/javascript/floatingFollowInfo.js"></script>
+    {% if logged %}
+    <script src="/static/javascript/followSuggestions.js"></script>
+    {% endif %}
 </body>
 </html>

@@ -18,5 +18,5 @@ urlpatterns:list = [
     path('profile/<str:username>/unfollow/', views.unfollow, name="unfollow"),
     path('removeAsSeen/<str:mediaType>/<str:mediaID>', views.removeAsSeen, name='removeAsSeen'),
     path('credits/', views.credits, name='credits'),
-    path('watchlist/<str:category>/<str:id>', views.watchlist, name='watchlist')
+    path('watchlist/<str:category>/<str:id>', views.watchlist, name='watchlist'),
 ]

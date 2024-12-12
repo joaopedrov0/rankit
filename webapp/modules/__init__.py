@@ -19,3 +19,4 @@ from .GameModelSearch import GameModelSearch
 from .BookModelSearch import BookModelSearch
 from .igdb import IGDB
 from .googleBooks import GoogleBooks
+from . import Graph

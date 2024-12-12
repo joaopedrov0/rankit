@@ -41,20 +41,7 @@ def profile(request: Type[HttpRequest], username: str):
     following:bool = False # Verificar se o cliente segue o perfil alvo
     clientProfile:dict = None # Perfil do cliente
     
-    if LOGIN_MANAGER.isLoggedRequest(request): # Se o cliente estiver logado
-        logged = True
-        
-        clientID = LOGIN_MANAGER.getUserByRequest(request)
-        
-        selfProfile = True if currentProfile["_id"] == clientID else False
-        
-        clientProfile = LOGIN_MANAGER.recoverCached(clientID)
-        
-        if selfProfile:
-            following = False
-        else:
-            if clientProfile["username"] in currentProfile["followers"]:
-                following = True
+    followSuggestions:dict = None
 
     if currentProfile:
         # Se o perfil existir, gera as informações de seguidores, diário e reviews
@@ -68,6 +55,25 @@ def profile(request: Type[HttpRequest], username: str):
         # Gerando reviews para renderizar
         reviews:list = Database.getReviewsToRenderProfile(currentProfile)
         
+        if LOGIN_MANAGER.isLoggedRequest(request): # Se o cliente estiver logado
+            logged = True
+            
+            clientID = LOGIN_MANAGER.getUserByRequest(request)
+            
+            selfProfile = True if currentProfile["_id"] == clientID else False
+            
+            clientProfile = LOGIN_MANAGER.recoverCached(clientID)
+            
+            
+            if selfProfile:
+                following = False
+            else:
+                if clientProfile["username"] in currentProfile["followers"]:
+                    following = True
+            
+            # if not following:
+            followSuggestions = Database.getFollowSuggestions(clientProfile["username"], currentProfile, followInfo)
+        
         return render(request, 'profile.html', {
             "currentProfile": currentProfile, 
             "logged": logged, 
@@ -76,7 +82,8 @@ def profile(request: Type[HttpRequest], username: str):
             "diary": diary, 
             "following": following, 
             "followInfo": followInfo,
-            "clientProfile": clientProfile
+            "clientProfile": clientProfile,
+            "followSuggestions": followSuggestions
             })
 
     else:
@@ -374,7 +381,8 @@ def follow(request: Type[HttpRequest], username:str):
     
     if followTarget["username"] in user["following"]:
         # Usuário já segue o alvo
-        return redirect('error', "Ops, parece que você tentou seguir alguém mais de uma vez...") # ! FAZER ROTA DE ERRO (PASSANDO A MENSAGEM COMO PARÂMETRO DE CONTEXTO)
+        # return redirect('not-found', "Ops, parece que você tentou seguir alguém mais de uma vez...") # ! FAZER ROTA DE ERRO (PASSANDO A MENSAGEM COMO PARÂMETRO DE CONTEXTO)
+        return HttpResponseNotModified()
     
     if user and followTarget:
         user["followingCount"] += 1
@@ -498,3 +506,12 @@ def watching(request: Type[HttpRequest], category: str, id:str):
         
     return response
     pass # essa rota é pra marcar/desmarcar o que o usuário está vendo/consumindo atualmente
+
+# def followSuggestions(request:Type[HttpRequest], username:str):
+#     if LOGIN_MANAGER.isLoggedRequest(request):
+#         client = LOGIN_MANAGER.recoverCachedByRequest(request)
+#         res:Type[HttpResponse] = JsonResponse({"followSuggestions": Database.getFollowSuggestions(client["username"], username)})
+#         return res
+#     else:
+#         res:Type[HttpResponse] = HttpResponseNotModified()
+#         return res

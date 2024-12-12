@@ -1,0 +1,51 @@
+.followSuggestions{
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 5px;
+    height: 0;
+
+    transition: height 700ms ease-in-out;
+}
+
+.followSuggestions.expanded{
+    height: 175px;
+}
+
+.followSuggestions a.followSuggestions-box{
+    width: 100px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.followSuggestions a.followSuggestions-box:hover{
+    background-color: var(--default-grey-bg-light);
+}
+
+.followSuggestions a.followSuggestions-box .followSuggestion-image{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.followSuggestions a.followSuggestions-box .followSuggestion-name{
+    
+}
+
+.followSuggestions a.followSuggestions-box .followSuggestion-username{
+    opacity: 0.7;
+    
+}
+
+.followSuggestion-name, .followSuggestion-username{
+    white-space: nowrap;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
