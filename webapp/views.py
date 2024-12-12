@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Database
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseNotModified, JsonResponse, HttpRequest
-from .modules import User, Media, Review, DatabaseCRUDInterface, DatabaseRenderInterface
+from .modules import User, Media, Review, DatabaseCRUDInterface, DatabaseRenderInterface, ReviewsQueue
 from datetime import datetime, date
 from .modules.loginManager import LoginManager
 
@@ -24,6 +24,11 @@ LOGIN_MANAGER = LoginManager()
 def home(request: Type[HttpRequest]):
     
     reviews:list = Database.getReviewsToRenderHome()
+    reviews.reverse()
+    queue = ReviewsQueue(15)
+    for review in reviews:
+        queue.push(review)
+    reviews = queue.returnArray()
     
     if LOGIN_MANAGER.isLoggedRequest(request): # Se estiver logado
         userID = LOGIN_MANAGER.getUserByRequest(request)
@@ -259,7 +264,7 @@ def markAsSeen(request: Type[HttpRequest], mediaType:str, mediaID:str):
         
         # Se a review já existir
         if existingReview:
-            if existingReview['content']["review-quality"] or existingReview['content']["review-text"]:
+            if contentReview["review-quality"] or contentReview["review-text"]:
                 existingReview["content"] = contentReview
                 Database.editReview(existingReview)
             else:

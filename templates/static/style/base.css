@@ -21,6 +21,7 @@ font-family: "Lilita One", sans-serif;
 @import url('./footer.css');
 @import url('./header.css');
 @import url('./floating-menu.css');
+@import url('./category-tags.css');
 
 *{
     margin: 0;

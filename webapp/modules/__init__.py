@@ -6,6 +6,7 @@ from .tmdb import TMDB
 # from .mediaModelPage import MediaModelPage
 from .mediaModelSearch import MediaModelSearch
 from .QuickSort import QuickSort
+from .reviewsQueue import ReviewsQueue
 from .databaseInterface import DatabaseCRUDInterface, DatabaseRenderInterface
 from .AnimeModelPage import AnimeModelPage
 from .SerieModelPage import SerieModelPage

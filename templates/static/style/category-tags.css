@@ -1,0 +1,32 @@
+.category-tag{
+    
+    border-radius: 5px;
+    padding: 4px 4px;
+    font-size: 0.9rem;
+		margin: 0px 0px 0px 15px;
+}
+
+.category-tag::before{
+    content: '#';
+}
+
+.category-tag.movie{
+    background-color: rgba(228, 70, 70, 0.4);
+    color: rgb(233, 24, 24);
+}
+.category-tag.serie{
+	background-color: rgba(228, 70, 228, 0.4);
+    color: rgb(233, 24, 233);
+}
+.category-tag.anime{
+	background-color: rgba(228, 150, 70, 0.4);
+    color: rgb(233, 58, 24);
+}
+.category-tag.game{
+	background-color: rgba(70, 228, 70, 0.4);
+    color: rgb(24, 233, 24);
+}
+.category-tag.book{
+	background-color: rgba(228, 228, 70, 0.4);
+    color: rgb(233, 233, 24);
+}

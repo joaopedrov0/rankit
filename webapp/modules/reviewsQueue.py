@@ -1,17 +1,25 @@
-from .review import Review
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
 
-class Reviews:
-    def __init__(self):
+
+class ReviewsQueue:
+    def __init__(self, maxsize=None):
         self.head = None
         self.tail = None
+        self.size = 0
+        self.maxsize = maxsize
     
     def isEmpty(self): # Verifica se está vazia
         if self.head == None:
             return True
         return False
 
-    def push(self, new_data, author_id): # Insere uma avaliação no começo da lista
-        new_node = Review(new_data, author_id)
+    def push(self, new_data): # Insere uma avaliação no começo da lista
+        new_node = Node(new_data)
+
+        self.size += 1
 
         if self.isEmpty():
             self.head = new_node
@@ -20,10 +28,13 @@ class Reviews:
         else:
             new_node.next = self.head
             self.head = new_node
+            
+        if self.maxsize and self.size > self.maxsize:
+            self.pop()
 
-    def pushArray(self, array, author_id): # Insere várias avaliações no começo da lista
+    def pushArray(self, array): # Insere várias avaliações no começo da lista
         for review in array:
-            self.push(review, author_id)
+            self.push(review)
     
     def print(self): # Imprime a lista de avaliações
         if self.isEmpty():
@@ -55,6 +66,7 @@ class Reviews:
             print('Lista vazia!')
         
         else:
+            self.size -= 1
             penult = self.head
             last = self.head
 

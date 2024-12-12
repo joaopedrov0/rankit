@@ -63,7 +63,7 @@
                         {% comment %} {% if forloop.counter0 < 10 %} {% endcomment %}
                         
                         <a class="review_target" href="/media/{{review.target_category}}/{{review.target_api_id}}">
-                            {{review.target_name}}
+                            {{review.target_name}}<span class="category-tag {{review.target_category}}">{{review.target_category}}s</span>
                         </a>
                         <div class="review-box">
                             <a class="review-box-poster" href="/media/{{review.target_category}}/{{review.target_api_id}}">

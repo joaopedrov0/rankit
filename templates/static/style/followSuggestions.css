@@ -1,5 +1,6 @@
-.followSuggestions{
+.followSuggestions.container{
     display: flex;
+    flex-direction: row;
     overflow-x: auto;
     overflow-y: hidden;
     padding: 5px;
