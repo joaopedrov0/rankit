@@ -52,7 +52,7 @@ class QuickSort:
         before = []
         after = []
         passedPivot = False
-        for elem in arr:
+        for elem in arr: # O(n)
             if not passedPivot and elem == pivot: 
                 passedPivot = True
                 continue 
@@ -63,6 +63,7 @@ class QuickSort:
                 self.swapcount += 1
                 after.append(elem)
 
+        # Pior Caso: O(n) | Melhor Caso: Ω(1)
         return [before, pivot, after]
 
     def checkBefore(self, elem1, elem2, key):

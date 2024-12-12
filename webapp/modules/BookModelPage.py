@@ -17,7 +17,7 @@ class BookModelPage(MediaModelPage):
             # publishedDate = "/".join(temp)
         if mediaObj["volumeInfo"].get("categories"):
             tags = []
-            for tag in mediaObj["volumeInfo"]["categories"]:
+            for tag in mediaObj["volumeInfo"]["categories"]: # O(n)
                 tags.append({"name": tag})
         mediaObj = {
             "category": "book",
@@ -32,5 +32,6 @@ class BookModelPage(MediaModelPage):
             "size": mediaObj["volumeInfo"]["pageCount"] if mediaObj["volumeInfo"].get("pageCount") else None,
             }
         return mediaObj
+        # Pior Caso: O(n) | Melhor Caso: Ω(1)
     
    

@@ -10,7 +10,7 @@ class AnimeModelPage(MediaModelPage):
         print(mediaObj)
         temp_episode:int = 0
         if mediaObj.get('seasons'):
-            for season in mediaObj["seasons"]:
+            for season in mediaObj["seasons"]: # O(n)
                 temp_episode += season["episode_count"]
         print(mediaObj["genres"])
         mediaObj = {
@@ -29,3 +29,4 @@ class AnimeModelPage(MediaModelPage):
                     },
             }
         return mediaObj
+        # Pior Caso: O(n) | Melhor Caso: Ω(1)

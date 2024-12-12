@@ -24,7 +24,7 @@ class RawgGames:
             data = response.json()
             print(data)
             games = []
-            for item in data.get('results', []):
+            for item in data.get('results', []): # O(n)
                 translated_info = {
                     'title': item.get('name', 'Título não disponível'),
                     'id': item.get('id', 'ID não disponível'),
@@ -43,6 +43,8 @@ class RawgGames:
         except Exception as e:
             print(f"Erro ao buscar jogos: {e}")
             return []
+        
+        # Pior Caso: O(n) | Melhor Caso: Ω(1)
 
 
 # rawg_games = RawgGames()
