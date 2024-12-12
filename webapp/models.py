@@ -248,10 +248,10 @@ class Database:
         reviews:list = Database.getAllReviews()
         users:list = Database.getAllUsers()
         medias:list = Database.getAllMedia()
-        for review in reviews:
-            for user in users:
+        for review in reviews: # O(n)
+            for user in users: # O(n)
                 if user["username"] == review["user_origin"]:
-                    for media in medias:
+                    for media in medias: # O(n)
                         if media["_id"] == review["mediaTarget"]:
                             temp.append({
                                 "icon": user["icon"],
@@ -267,6 +267,8 @@ class Database:
                                 "realDate": review["realDate"],
                                 "poster_path": media["posterPath"]
                             })
+
+        # Pior Caso: O(n³) | Melhor Caso: Ω(1)
         return temp
     
     @staticmethod
@@ -284,11 +286,11 @@ class Database:
         if reviews:
             res:list = []
             # Buscar review
-            for review in reviews:
+            for review in reviews: # O(n)
                 media_id:str = review["mediaTarget"]
                 currentMedia:dict = None
                 # Buscar objeto de mídia
-                for media in watched:
+                for media in watched: # O(n)
                     if media["_id"] == media_id:
                         currentMedia = media
                         break
@@ -310,6 +312,7 @@ class Database:
                 
         else:
             return None
+        # Pior Caso: O(n²) | Melhor Caso: Ω(1)
     
     @staticmethod
     def getReviewsToRenderMedia(category:str, media_id:str, username:str=None): # Return reviews in format "list of dict"
@@ -326,10 +329,10 @@ class Database:
         if reviews:
             reviewers:list = Database.getReviewersByMedia(category, media_id)
             
-            for review in reviews:
+            for review in reviews: # O(n)
                 # Para cada review
                 currentAuthor:dict = None
-                for author in reviewers:
+                for author in reviewers: # O(n)
                     # Para cada usuário
                     if review["user_origin"] == author["username"]:
                         # Se usuário for o autor, currentAuthor recebe usuário
@@ -369,6 +372,7 @@ class Database:
             
         else:
             return None
+        # Pior Caso: O(n²) | Melhor Caso: Ω(1)
         
     @staticmethod
     def getAllMedia():
@@ -426,19 +430,21 @@ class Database:
             "following": []
         }
         followingList:list = Database.getWhoUserIsFollowing(username)
-        for user in followingList:
+        for user in followingList: # O(n)
             followInfo["following"].append({
                 "name": user["name"],
                 "username": user["username"],
                 "icon": user["icon"]
             })
         followerList:list = Database.getFollowersOf(username)
-        for user in followerList:
+        for user in followerList: # O(m)
             followInfo["followers"].append({
                 "name": user["name"],
                 "username": user["username"],
                 "icon": user["icon"]
             })
+        
+        # Pior Caso: O(n + m) | Melhor Caso: Ω(1)
         return followInfo
     
     @staticmethod
@@ -461,33 +467,33 @@ class Database:
         queryResult:list = []
         if category == "movie":
             temp:list = TMDB.search("movie", query)
-            for result in temp:
+            for result in temp: # O(n)
                 queryResult.append(
                     MovieModelSearch(result).build()
                 )
         elif category == "serie":
             temp:list = TMDB.search("tv", query)
-            for result in temp:
+            for result in temp: # O(n)
                 if result["origin_country"] == [] or result["origin_country"][0] == "JP": continue
                 queryResult.append(
                     SerieModelSearch(result).build()
                 )
         elif category == "anime":
             temp:list = TMDB.search("tv", query)
-            for result in temp:
+            for result in temp: # O(n)
                 if result["origin_country"] == [] or result["origin_country"][0] != "JP": continue
                 queryResult.append(
                     AnimeModelSearch(result).build()
                 )
         elif category == "game":
             temp:list = IGDB.search(query)
-            for result in temp:
+            for result in temp: # O(n)
                 queryResult.append(
                     GameModelSearch(result).build()
                 )
         elif category == "book":
             temp:list = GoogleBooks.search(query)
-            for result in temp:
+            for result in temp: # O(n)
                 queryResult.append(
                     BookModelSearch(result).build()
                 )
@@ -497,6 +503,7 @@ class Database:
             print("Erro na categoria da requisição")
             return
         return queryResult
+        # Pior Caso: O(n) | Melhor Caso: Ω(1)
     
     @staticmethod
     def searchSingleMedia(category:str, id:str):

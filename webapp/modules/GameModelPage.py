@@ -15,7 +15,7 @@ class GameModelPage(MediaModelPage):
                 # tags.append(genre["name"])
                 tags.append(genre)
         if mediaObj.get('themes'):
-            for theme in mediaObj["themes"]:
+            for theme in mediaObj["themes"]: # O(n)
                 # tags.append(theme["name"])
                 tags.append(theme)
         mediaObj = {
@@ -31,5 +31,6 @@ class GameModelPage(MediaModelPage):
             "size": None,
             }
         return mediaObj
+        # Pior Caso: O(n) | Melhor Caso: Ω(1)
     
    
