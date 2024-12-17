@@ -32,27 +32,42 @@ Rank.it é uma plataforma que visa permitir o registro e compartilhamento de opi
 - 🕐 Diário dividido pelas categorias lateralmente
 
 # Ideias
-- Adicionar favoritos no perfil
-- Adicionar likes em avaliação
-- Adicionar limites no número de sugestões para seguir (se ñ aparece 1000)
-- Adicionar Autor/Diretor/etc na pág de mídia
-- Adicionar mais opções de foto de perfi e banner
-- Adicionar rank pessoal
-- Opção de review privada
+.Geral
+- Registrar dominio, nome, redes sociais
+- pesquisar sobre licenças de projeto (código)
+- Versão do site em inglês
+- Adicionar opção de língua no menu
 - Adicionar pesquisa por usuários
-- Data de início e fim (filmes, séries, jogos, livros)
-- Review geral e por temporada (em séries/animes)
-- Adicionar horas de jogo do usuário
-- Contador de mídias
 - Adicionar API de música (MusicBrainz API / Last.fm API)
 - Melhor API de livros
-- Adicionar seção Novidades
-- Adicionar recomendados para você na home
 - Corrigir problemas de língua portuguesa
-- Adicionar versão ingles do site
 - Adicionar sistema de notificação (novo seguidor, um filme da sua watchlist lançou, 10 pessoas curtiram sua review)
-- Adicionar opção de criar listas normais e ranqueadas (ex: top filmes do Nolan / Melhores filmes de terror de 2019)
+
+.Home
+- Melhorar home
+- Adicionar seção Novidades
+- Adicionar recomendados para você
+
+.Página de Mídia
+- não redirecionar da avaliação para o login se estiver deslogado, só informar que precisa estar logado para avaliar, assim a pessoa n perde oq escreveu, pode copiar etc
+- Adicionar likes em reviews
+- Adicionar opção de review ser privada ou pública
+- Adicionar data de início e fim (séries, jogos, livros)
+- Adicionar review geral e por temporada (em séries/animes)
+- Adicionar limite de caracteres no comentário
+- Adicionar Autor/Diretor/etc nas informações da mídia
 - Expandir reviews (nota para direção, roteiro, efeitos vizuais, trilha, etc)
+
+.Página de Usuário
+- Adicionar limites no número de sugestões para seguir 
+- Adicionar limite de caracteres na biografia
+- Ocultar o nome do usuario nas reviews quando na página do usuário
+- Adicionar favoritos no perfil
+- Adicionar criação de listas normais e ranqueadas (ex: top filmes do Nolan / Melhores filmes de terror de 2019)
+- Adicionar rank pessoal
+- Adicionar mais opções de foto de perfi e banner
+- Adicionar contador de mídias
+- Adicionar horas de jogo do usuário
 
 # Para devs
 
